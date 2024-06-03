@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Dashboard</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        
+       <!--Primero el móvil, no tender a hacer zoom, sino levantar a escala natural siempre y cuando haya
+       sido pensado como un sitio responsive, y anular el comportamiento de ajustar a los límites del dispositivo
+       el contenido, cuando este sobresalga-->
+       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+       <link rel="stylesheet" href="./css/dashboard.css">
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+   </head>
+    </head>
+    <body>
+		<main class="container-fluid">
+			<header class="row text-center pb-5">
+				<h1 class="text-uppercase">
+					<span><img src="./css/img/bitcoin.webp" alt=""></span>
+					BitWeb
+					<span><img src="./css/img/bitcoin.webp" alt=""></span>
+				</h1>
+				<nav class="col-12 mb-5">
+					<ul class="list-unstyled list-inline text-center">
+						<li class="list-inline-item">
+							<a href="#crear" class="p-2 rounded">Crear Transacción</a>
+						</li>
+						<li class="list-inline-item">
+							<a href="#trans" class="p-2 rounded">Lista Transacciones</a>
+						</li>
+						<li class="list-inline-item">
+							<a href="#monto" class="p-2 rounded">Monto Final Inversiones</a>
+						</li>
+						<li class="list-inline-item">
+							<a href="#graficos" class="p-2 rounded">Gráficos</a>
+						</li>
+					</ul>
+				</nav>
+			</header>
+			<section class=" row justify-content-center text-center mt-2 pt-3">
+				<h2 class="col-12 w-100" id="crear">Crear Transacción</h2>
+				<!-- <figure class="d-none d-md-block col-md-5">
+					<img src="img/encasa.jpg" class="img-fluid" alt="">
+				</figure> -->
+				<article class="col-8 col-md-3">
+					<label for="slcTipoTrans">Tipo:</label>
+					<select name="" id="slcTipoTrans">
+						<option value="1">Compra</option>
+						<option value="2">Venta</option>
+					</select> <br>
+					<label for="slcTipoTrans">Moneda:</label>
+					<select name="" id="slcTipoTrans">
+						<option value="1">bitcoin</option>
+					</select><br>
+					<label for="numCantidadMon">Cantidad:</label>
+					<input type="number" id="numCantidadMon"/>
+					
+				</article>
+			</section>
+
+			<section class="row justify-content-center mb-4">
+				<h2 class="text-center" id="trans">Lista Transacciones</h2>
+			</section>
+
+			<section class="row justify-content-center text-center py-4">
+				<h2 class="col-12 mb-4" id="monto">Monto Final Inversiones</h2>
+			</section>
+
+			<section class="row justify-content-center text-center py-4" id="graficos">
+			</section>
+
+			<footer class="row text-center pt-3 colorPrincipal">
+				<nav class="col-12">
+					<ul class="list-inline">
+						<li class="list-inline-item"></li>
+						<li class="list-inline-item"></li>
+						<li class="list-inline-item"></li>
+					</ul>
+				</nav>
+			</footer>
+		</main>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    </body>
+</html>
