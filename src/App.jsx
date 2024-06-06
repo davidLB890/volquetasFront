@@ -1,9 +1,13 @@
 import Login from './components/Login';
-import Singin from './components/Singin';
+//import Singin from './components/Singin';
 import Dashboard from './components/Dashboard';
 import {useFetch} from '../useFetch'
 import { useRef } from 'react'
 import { BrowserRouter, Router, Route, Routes } from 'react-router-dom';
+import CrearUsuarios from './components/CrearUsuarios';
+import CrearEmpleados from './components/CrearEmpleados';
+import CrearCamiones from './components/CrearCamiones';
+import ConfirmarUsuario from './components/ConfirmarUsuario';
 
 const App = () => {
 
@@ -11,9 +15,11 @@ const App = () => {
 
      <BrowserRouter>
         <Routes>
-          
           <Route path="/" element={<Login/>}/>
-          <Route path="/singin" element={<Singin/>}/>
+          {<Route path="/usuarios" element={<CrearUsuarios/>}/> }
+          {<Route path="/usuarios/confirmar" element={<ConfirmarUsuario/>}/> }
+          {<Route path="/empleados" element={<CrearEmpleados/>}/> }
+          {<Route path="/camiones" element={<CrearCamiones/>}/> }
           <Route path="/dashboard" element={<Dashboard/>}/>
           {/* <Route path="*" element={<NotFound/>}/> */}
 

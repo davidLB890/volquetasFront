@@ -3,40 +3,43 @@ import { useState } from "react"
 import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const Singin = () => {
+const CrearEmpleados = () => {
 
     const nombre = useRef(null);
+    const cedula = useRef(null);
     const rol = useRef(null);
-    const email = useRef(null);
-    const password = useRef(null);
-    const password2 = useRef(null);
-    const activo = useRef(null);
-    const telefono = useRef(null);
-    const [telefonos, setTelefonos] = useState([]);
+    //const telefono = useRef(null);
+    //const [telefonos, setTelefonos] = useState([]);}
+    
     const [botonIngreso, setBotonIngreso] = useState(false);
     const [error, setError] = useState("");
     let navigate = useNavigate();
 
-    //CON ESTA FUNCIÓN HAGO EL REGISTRO SEGÚN LOS DATOS BRINDADOS POR EL USUARIO
-    const registroUsu = () => {
-        let nom = (nombre.current.value);
-        let r = (rol.current.value);
-        let em = (email.current.value);
-        let contra = (password.current.value);
-        let contra2 = (password2.current.value);
+    let usuarioToken = localStorage.getItem('apiToken');
 
-        fetch("http://localhost:3000/api/usuarios", {
+    useEffect(() => {
+        if (usuarioToken === null || usuarioToken === "undefined") {
+          navigate("/");
+        }
+    }, []);
+
+    //CON ESTA FUNCIÓN HAGO EL REGISTRO SEGÚN LOS DATOS BRINDADOS POR EL USUARIO
+    const registrarEmpleado = () => {
+        let name = (nombre.current.value);
+        let ci = (cedula.current.value);
+        let r = (rol.current.value);
+        
+        fetch("http://localhost:3000/api/empleados", {
             method:"POST",
             headers:{
+            "authorization": usuarioToken,
             "Content-Type": "application/json",
             },
             body: JSON.stringify({
-            nombre: nom,
+            nombre: name,
+            cedula: ci,
             rol: r,
-            email: em,
-            telefonos: telefonos,
-            password: contra,
-            confirmPassword: contra2 // Corregido aquí
+            //telefonos: telefonos,
         })
         }).then(r => r.json())
         .then(datos =>{
@@ -46,7 +49,7 @@ const Singin = () => {
         } else {
           console.log("Usuario creado correctamente", datos);
           // Redirigir o realizar otra acción aquí
-      }
+    }
   })
   .catch(error => {
       console.error('Error al conectar con el servidor:', error);
@@ -54,7 +57,7 @@ const Singin = () => {
 
     }
 
-    useEffect(() => {
+    /* useEffect(() => {
         habilitarBoton();
     }, [telefonos]);
 
@@ -68,34 +71,28 @@ const Singin = () => {
 
     const eliminarTelefono = (index) => {
         setTelefonos(telefonos.filter((_, i) => i !== index));
-    };
+    }; */
 
     const habilitarBoton = () => {
-        let nom = nombre.current.value;
-        let contra = password.current.value;
-        let contra2 = password2.current.value;
+        let name = nombre.current.value;
+        let ci = cedula.current.value;
         let r = rol.current.value;
-        let em = email.current.value;
+
         let val = 0;
-          if (nom !== "") {
+
+        if (name !== "") {
             val++;
         }
-        if (contra !== "") {
-            val++;
-        }
-        if (contra2 !== "") {
-            val++;
-        } 
-        if (em !== "") {
+        if (ci !== "") {
             val++;
         }
         if (r !== "") {
             val++;
         } 
-        if (telefonos.length > 0) {
+        /*if (telefonos.length > 0) {
             val++;
-        } 
-        if (val === 6) {
+        }  */
+        if (val === 3) {
             setBotonIngreso(true);
         } else {
             setBotonIngreso(false);
@@ -107,7 +104,7 @@ const Singin = () => {
         <div className="d-flex justify-content-center h-100">
             <div className="card">
                 <div className="card-header">
-                    <h3>Register</h3>
+                    <h3>Registro de empleado</h3>
                 </div>
                 <div className="card-body">
                     <form>
@@ -115,26 +112,20 @@ const Singin = () => {
                             <input ref={nombre} type="text" className="form-control" placeholder="Nombre" required onChange={habilitarBoton}/>
                         </div>
 
+                        <div className="input-group form-group">
+                            <input ref={cedula} type="text" className="form-control" placeholder="Cédula" required onChange={habilitarBoton}/>
+                        </div>
+
                         <div className="input-group form-group" onChange={habilitarBoton}>
                             <select ref={rol} className="form-control">
                                 <option value="">Seleccione su rol</option>
                                 <option value="normal">Normal</option>
                                 <option value="admin">Admin</option>
+                                <option value="chofer">Chofer</option>
                             </select>
                         </div>
-
-                        <div className="input-group form-group">
-                            <input ref={email} type="text" className="form-control" placeholder="Email" required onChange={habilitarBoton}/>
-                        </div>
-
-                        <div className="input-group form-group">
-                            <input ref={password} type="password" className="form-control" placeholder="Contraseña" required onChange={habilitarBoton}/>
-                        </div>
-                        <div className="input-group from-group">
-                            <input ref={password2} type="password" className="form-control" placeholder="Confirm password" onChange={habilitarBoton} />
-                        </div>
                         
-                        <div className="input-group form-group">
+                        {/* <div className="input-group form-group">
                             <input ref={telefono} type="text" className="form-control" placeholder="Add phone number"/>
                             <button type="button" className="btn btn-primary" onClick={agregarTelefono}>Add</button>
                         </div>
@@ -145,25 +136,15 @@ const Singin = () => {
                                     <button type="button" className="btn btn-danger btn-sm" onClick={() => eliminarTelefono(index)}>Remove</button>
                                 </li>
                             ))}
-                        </ul>
-
-                        <input id="login_btn" type="button" onClick={registroUsu} disabled={!botonIngreso} value="Registrarse" className="btn float-right login_btn" />
-
+                        </ul> */}
+                        <div className="text-center">
+                            <input id="crearEmpleado_btn" type="button" onClick={registrarEmpleado} disabled={!botonIngreso} value="Crear Empelado" className="btn btn-primary styled-button" />
+                        </div>
                     </form>
-                </div>
-
-                <div className="card-footer">
-
-                    <div className="d-flex justify-content-center links">
-                        ¿Ya tenés una cuenta?<Link to="/">Ingresar</Link>
-                    </div>
-
                 </div>
             </div>
         </div>
-
     )
-
 }
 
-export default Singin
+export default CrearEmpleados

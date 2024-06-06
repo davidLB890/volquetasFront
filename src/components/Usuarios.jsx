@@ -9,7 +9,7 @@ const Usuarios = () => {
             <h1>Usuarios</h1>
             <ul>
                 {usuarios.map(usuario => (
-                    <li key={usuario.id}>{usuario.nombre}</li>
+                    <li key={usuario.id}>{usuario.email}</li>
                 ))}
             </ul>
         </div>

@@ -6,12 +6,12 @@ import { useDispatch, useSelector } from "react-redux"
 import * as bootstrap from 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Usuarios from "./Usuarios";
-
+import ConfirmarUsuario from "./ConfirmarUsuario";
 
 const Dashboard = () => {
-
   /* let usuarioId = localStorage.getItem('id'); */
   let usuarioToken = localStorage.getItem('apiToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
  
   let navigate = useNavigate();
   const dispatch = useDispatch();
@@ -21,28 +21,26 @@ const Dashboard = () => {
       console.log("No hay token");
       navigate("/");
     } else {
-        //fetch(`https://crypto.develotion.com/transacciones.php?idUsuario=${usuarioId}`, {
-          fetch("http://localhost:3000/api/usuarios", {
-            method: "GET",
-            headers: {
-              "authorization": usuarioToken,
-              "Content-Type": "application/json",
-            }
-          }).then(r => r.json())
-            .then(datos => {
-              //console.log(datos.transacciones);
-              
-              if (datos.error) {
-                console.error(datos.error);
-                navigate("/");
-                console.log("token malo");
-              }else{
-                dispatch(guardarUsuarios(datos));
-              }
-              
-              
-              //dispatch(guardarUsuarios(usuarios))
-            })
+      //fetch(`https://crypto.develotion.com/transacciones.php?idUsuario=${usuarioId}`, {
+      fetch(`${apiUrl}usuarios`, {
+        method: "GET",
+        headers: {
+          "authorization": usuarioToken,
+          "Content-Type": "application/json",
+        }
+      }).then(r => r.json())
+        .then(datos => {
+          //console.log(datos.transacciones);
+          
+          if (datos.error) {
+            console.error(datos.error);
+            navigate("/");
+            console.log("token malo");
+          }else{
+            dispatch(guardarUsuarios(datos));
+          }
+          //dispatch(guardarUsuarios(datos))
+        })
     }
   }, []);
 
@@ -60,13 +58,12 @@ const Dashboard = () => {
           {/* <input type="button" value="logout" onClick={cerrarSesion}/> */}
         </header>
 
-        <article className="col-6">
+        <section className="row text-center">
           <Usuarios />
-        
-        </article>
+        </section>
 
         <section className="row text-center">
-
+          <ConfirmarUsuario />
         </section>
 
         <section className="row text-center">

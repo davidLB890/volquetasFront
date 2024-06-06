@@ -10,11 +10,12 @@ const Login = () => {
     const [error, setError] = useState("");
     let navigate = useNavigate();
 
+    //Se ingresa según los datos brindados por el usuario
     const Ingresar = () => {
         let em = email.current.value;
         let contra = password.current.value;
 
-        fetch("http://localhost:3000/api/login", {
+        fetch("http://localhost:3000/api/usuarios/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -25,9 +26,9 @@ const Login = () => {
             })
         }).then(r => r.json())
         .then(datos => {
-            if (datos.codigo === 409) {
+            if (datos.error) {
                 console.log(datos.error);
-                setError(datos.mensaje);
+                setError(datos.error);
             } else { 
                 console.log(datos);
                 let token = datos.token;
@@ -39,6 +40,7 @@ const Login = () => {
         });
     }; 
 
+    //con esto habilito el botón de ingreso si los campos no están vacíos
     const habilitarBoton = () => {
         let usuario = email.current.value;
         let contra = password.current.value;
@@ -59,8 +61,8 @@ const Login = () => {
     return (
         <div className="d-flex justify-content-center">
             <div className="card">
-                <div className="card-header">
-                    <h3>Sign In</h3>
+                <div className="card-header text-center">
+                    <h3>Inicia sesión</h3>
                 </div>
                 <div className="card-body">
                     <form>
@@ -71,13 +73,18 @@ const Login = () => {
                         <div className="input-group form-group">
                             <input ref={password} type="password" className="form-control" placeholder="password" onChange={habilitarBoton} />
                         </div>
-                        <input id="login_btn" type="button" onClick={Ingresar} disabled={!botonIngreso} value="Login" className="btn float-right login_btn" />
+                        
+                        <div className="text-center">
+                            <input id="l_btn" type="button" onClick={Ingresar} disabled={!botonIngreso} value="Login" className="btn btn-primary styled-button" />
+                        </div>
                     </form>
+
+                    
                 </div>
-                <div className="card-footer">
-                    <div className="d-flex justify-content-center links">
+                <div className="card-footer text-center">
+                    {/* <div className="d-flex justify-content-center links">
                         Presiona <Link to="/singin">aquí </Link> para registrarte 
-                    </div>
+                    </div> */}
                     <span>{error}</span>
                 </div>
             </div>
