@@ -1,28 +1,31 @@
 import Login from './components/Login';
 //import Singin from './components/Singin';
 import Dashboard from './components/Dashboard';
-import {useFetch} from '../useFetch'
 import { useRef } from 'react'
 import { BrowserRouter, Router, Route, Routes } from 'react-router-dom';
-import CrearUsuarios from './components/CrearUsuarios';
-import CrearEmpleados from './components/CrearEmpleados';
-import CrearCamiones from './components/CrearCamiones';
-import ConfirmarUsuario from './components/ConfirmarUsuario';
+import CrearEmpleados from './components/EmpleadosFolder/CrearEmpleados';
+import CrearCamiones from './components/CamionesFolder/CrearCamiones';
+import ConfirmarUsuario from './components/UsuariosFolder/ConfirmarUsuario';
+import CrearUsuarios from './components/UsuariosFolder/CrearUsuarios';
+import Empleados from './components/EmpleadosFolder/Empleados';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
 
   return (
 
      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login/>}/>
+        <Routes>  
+          {<Route path="/" element={<Dashboard/>}/>}
+          {<Route path="/login" element={<Login/>}/>}
           {<Route path="/usuarios" element={<CrearUsuarios/>}/> }
           {<Route path="/usuarios/confirmar" element={<ConfirmarUsuario/>}/> }
           {<Route path="/empleados" element={<CrearEmpleados/>}/> }
+          {<Route path="/empleadosssss" element={<Empleados/>}/> }
           {<Route path="/camiones" element={<CrearCamiones/>}/> }
-          <Route path="/dashboard" element={<Dashboard/>}/>
+          {/* <Route path="/dashboard" element={<Dashboard/>}/> */}
           {/* <Route path="*" element={<NotFound/>}/> */}
-
+          {/* <Route path="/" element={<Login/>}/> */}
         </Routes>
      </BrowserRouter>
 

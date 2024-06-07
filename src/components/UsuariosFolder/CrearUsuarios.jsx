@@ -2,6 +2,8 @@ import { useEffect } from "react"
 import { useState } from "react"
 import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { crearUsuario, obtenerEmpleados } from "../../api";
+import axios from "axios";
 
 const CrearUsuarios = () => {
 
@@ -21,67 +23,51 @@ const CrearUsuarios = () => {
 
     //Verifica que haya token, si no, lo redirige al login
     useEffect(() => {
-        if (localStorage.getItem('apiToken') === null) {
-          console.log("No hay token");
+        // Verifica el token al montar el componente
+        if (localStorage.getItem("apiToken") === null) {
           navigate("/");
         } else {
-              fetch("http://localhost:3000/api/empleados", {
-                method: "GET",
-                headers: {
-                  "authorization": usuarioToken,
-                  "Content-Type": "application/json",
-                }
-              }).then(r => r.json())
-                .then(datos => {
-                  if (datos.error) {
-                    console.error(datos.error);
-                    navigate("/");
-                    console.log("token malo");
-                  }else{
-                    let empleados = datos;
-                    console.log(empleados);
-                    setEmpleados(empleados);    
-                  } 
-                  //dispatch(guardarUsuarios(usuarios))
-                })
-        }
-    }, []);    
-
-    //CON ESTA FUNCIÓN HAGO EL REGISTRO SEGÚN LOS DATOS BRINDADOS POR EL USUARIO
-    const registrarUsuario = () => {
-        //let nom = (nombre.current.value);
-        let r = (rol.current.value);
-        let em = (email.current.value);
-        let contra = (password.current.value);
-        let contra2 = (password2.current.value);
-        let empId = (empleadoId.current.value);
-
-        fetch("http://localhost:3000/api/usuarios", {
-            method:"POST",
-            headers:{
-            "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-            //nombre: nom,
-            rol: r,
-            email: em,
-            //telefonos: telefonos,
-            password: contra,
-            confirmPassword: contra2, 
-            empleadoId: empId
+          // Realiza la solicitud para obtener los empleados
+          obtenerEmpleados(usuarioToken)
+            .then((response) => {
+              const empleados = response.data;
+              setEmpleados(empleados);
             })
-        }).then(r => r.json())
-        .then(datos =>{
-        console.log(datos);
-        if(datos.error){
-          console.error(datos.error);
-        } else {
-          console.log("Usuario creado correctamente", datos);
-          // Redirigir o realizar otra acción aquí
-        }}).catch(error => {
-        console.error('Error al conectar con el servidor:', error);
+            .catch((error) => {
+              console.error("Error al obtener empleados:", error);
+              navigate("/");
+            });
+        }
+      }, []);
+    
+      const registrarUsuario = () => {
+        // Lógica para registrar un usuario usando axios
+        const r = rol.current.value;
+        const em = email.current.value;
+        const contra = password.current.value;
+        const contra2 = password2.current.value;
+        const empId = empleadoId.current.value;
+    
+        crearUsuario({
+          rol: r,
+          email: em,
+          password: contra,
+          confirmPassword: contra2,
+          empleadoId: empId,
+            })
+          .then((response) => {
+            const datos = response.data;
+            if (datos.error) {
+              console.error(datos.error);
+            } else {
+              console.log("Usuario creado correctamente", datos);
+              // Realizar alguna acción adicional si es necesario
+            }
+          })
+          .catch((error) => {
+            console.error("Error al conectar con el servidor:", error);
         });
-    }
+      };
 
     const habilitarBoton = () => {
         let contra = password.current.value;

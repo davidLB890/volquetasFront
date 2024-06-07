@@ -1,9 +1,89 @@
 import { useRef } from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { loginUsuario } from '../api';  // Asegúrate de importar la función
 import "../styles/login.css";
 
 const Login = () => {
+    const email = useRef(null);
+    const password = useRef(null);
+    const [botonIngreso, setBotonIngreso] = useState(false);
+    const [error, setError] = useState("");
+    let navigate = useNavigate();
+
+    // Se ingresa según los datos brindados por el usuario
+    const Ingresar = async () => {
+        let em = email.current.value;
+        let contra = password.current.value;
+
+        
+        loginUsuario(em, contra)
+        .then((response) => {
+            const datos = response.data;
+            if (datos.error) {
+              console.error(datos.error);
+            } else {
+              console.log("Usuario ingresado correctamente", datos);
+              navigate("/");
+              // Realizar alguna acción adicional si es necesario
+            }
+          })
+          .catch((error) => {
+            setError(error.response.data.error);
+            //console.error("Error al conectar con el servidor:", error.response.data.error);
+        });
+      };
+
+    // Con esto habilito el botón de ingreso si los campos no están vacíos
+    const habilitarBoton = () => {
+        let usuario = email.current.value;
+        let contra = password.current.value;
+        let val = 0;
+        if (usuario !== "") {
+            val++;
+        }
+        if (contra !== "") {
+            val++;
+        }
+        if (val === 2) {
+            setBotonIngreso(true);
+        } else {
+            setBotonIngreso(false);
+        }
+    };
+
+    return (
+        <div className="d-flex justify-content-center">
+            <div className="card">
+                <div className="card-header text-center">
+                    <h3>Inicia sesión</h3>
+                </div>
+                <div className="card-body">
+                    <form>
+                        <div className="input-group form-group">
+                            <input ref={email} type="text" className="form-control" placeholder="username" onChange={habilitarBoton} />
+                        </div>
+
+                        <div className="input-group form-group">
+                            <input ref={password} type="password" className="form-control" placeholder="password" onChange={habilitarBoton} />
+                        </div>
+                        
+                        <div className="text-center">
+                            <input id="l_btn" type="button" onClick={Ingresar} disabled={!botonIngreso} value="Login" className="btn btn-primary styled-button" />
+                        </div>
+                    </form>
+                </div>
+                <div className="card-footer text-center">
+                    <span>{error}</span>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Login;
+
+/* const Login = () => {
     const email = useRef(null);
     const password = useRef(null);
     const [botonIngreso, setBotonIngreso] = useState(false);
@@ -82,17 +162,17 @@ const Login = () => {
                     
                 </div>
                 <div className="card-footer text-center">
-                    {/* <div className="d-flex justify-content-center links">
+                    { <div className="d-flex justify-content-center links">
                         Presiona <Link to="/singin">aquí </Link> para registrarte 
-                    </div> */}
+                    </div> }
                     <span>{error}</span>
                 </div>
             </div>
         </div>
     );
-};
+}; */
 
-export default Login;
+/* export default Login; */
 
 
 /* const Login = () => {

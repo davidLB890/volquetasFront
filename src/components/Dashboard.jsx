@@ -5,8 +5,10 @@ import { guardarUsuarios } from "../features/usuariosSlice";
 import { useDispatch, useSelector } from "react-redux" 
 import * as bootstrap from 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Usuarios from "./Usuarios";
-import ConfirmarUsuario from "./ConfirmarUsuario";
+import Usuarios from "./UsuariosFolder/Usuarios";
+import ConfirmarUsuario from "./UsuariosFolder/ConfirmarUsuario";
+import axios from "axios"; // Importa axios
+import { obtenerUsuarios } from "../api"; // Importa la función obtenerUsuarios desde api.js
 
 const Dashboard = () => {
   /* let usuarioId = localStorage.getItem('id'); */
@@ -17,32 +19,27 @@ const Dashboard = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (localStorage.getItem('apiToken') === null) {
+    if (usuarioToken === null) {
       console.log("No hay token");
       navigate("/");
     } else {
-      //fetch(`https://crypto.develotion.com/transacciones.php?idUsuario=${usuarioId}`, {
-      fetch(`${apiUrl}usuarios`, {
-        method: "GET",
-        headers: {
-          "authorization": usuarioToken,
-          "Content-Type": "application/json",
-        }
-      }).then(r => r.json())
-        .then(datos => {
-          //console.log(datos.transacciones);
-          
+      // Realiza la solicitud para obtener los usuarios usando axios
+      obtenerUsuarios(usuarioToken)
+        .then((response) => {
+          const datos = response.data;
           if (datos.error) {
             console.error(datos.error);
             navigate("/");
-            console.log("token malo");
-          }else{
+          } else {
             dispatch(guardarUsuarios(datos));
           }
-          //dispatch(guardarUsuarios(datos))
         })
+        .catch((error) => {
+          console.error("Error al obtener usuarios:", error);
+          navigate("/");
+        });
     }
-  }, []);
+  }, [dispatch, navigate, usuarioToken]);
 
   /* const cerrarSesion = () => {
     localStorage.clear();
