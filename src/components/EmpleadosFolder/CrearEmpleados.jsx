@@ -1,52 +1,65 @@
 import { useEffect, useState, useRef } from "react"
 import { Link, useNavigate } from "react-router-dom";
 import { crearEmpleado } from "../../api";
+import useAuth from "../../hooks/useAuth";
 
 const CrearEmpleados = () => {
     const nombre = useRef(null);
     const cedula = useRef(null);
     const rol = useRef(null);
+    const fechaDeIngreso = useRef(null);
     const [botonIngreso, setBotonIngreso] = useState(false);
     const [error, setError] = useState("");
-    let navigate = useNavigate();
 
-    let usuarioToken = localStorage.getItem('apiToken');
+    let navigate = useNavigate();
+    const getToken = useAuth();
 
     useEffect(() => {
-        if (usuarioToken === null || usuarioToken === "undefined") {
+        const usuarioToken = getToken();
+        if (!usuarioToken) {
             navigate("/");
         }
-    }, [usuarioToken, navigate]);
+    }, [getToken, navigate]);
 
     // CON ESTA FUNCIÓN HAGO EL REGISTRO SEGÚN LOS DATOS BRINDADOS POR EL USUARIO
     const registrarEmpleado = async () => {
+        const usuarioToken = getToken();
+
         const name = nombre.current.value;
         const ci = cedula.current.value;
         const r = rol.current.value;
+        const fecha = fechaDeIngreso.current.value;
 
-        crearEmpleado({
-            nombre: name,
-            cedula: ci,
-            rol: r
-            }, usuarioToken)
-            .then((response) => {
+        try {
+            const response = await crearEmpleado({
+              nombre: name,
+              cedula: ci,
+              rol: r,
+              fechaEntrada: fecha
+            }, usuarioToken); // Asegúrate de que usuarioToken esté definido y sea válido
+        
             const datos = response.data;
+        
             if (datos.error) {
-                console.error(datos.error);
+              console.error(datos.error);
+              setError(datos.error);
             } else {
-                console.log("Usuario creado correctamente", datos);
-                // Realizar alguna acción adicional si es necesario
+              console.log("Usuario creado correctamente", datos);
+              // Redirigir o realizar otra acción aquí, si es necesario
             }
-            })
-            .catch((error) => {
-            console.error("Error al conectar con el servidor:", error);
-        });
+          } catch (error) {
+            console.error('Error al conectar con el servidor:', error.response?.data || error.message);
+            if (error.response?.status === 401) {
+              navigate("/login");
+            }
+          }
     }
 
     const habilitarBoton = () => {
         let name = nombre.current.value;
         let ci = cedula.current.value;
         let r = rol.current.value;
+        let fecha = fechaDeIngreso.current.value;
 
         let val = 0;
 
@@ -59,8 +72,11 @@ const CrearEmpleados = () => {
         if (r !== "") {
             val++;
         }
+        if (fecha !== "") {
+            val++;
+        }
 
-        if (val === 3) {
+        if (val === 4) {
             setBotonIngreso(true);
         } else {
             setBotonIngreso(false);
@@ -92,8 +108,16 @@ const CrearEmpleados = () => {
                             </select>
                         </div>
 
+                        <div className="input-group form-group">
+                            <input ref={fechaDeIngreso} type="date" className="form-control" placeholder="Fecha de ingreso" required onChange={habilitarBoton}/>
+                        </div>
+
                         <div className="text-center">
                             <input id="crearEmpleado_btn" type="button" onClick={registrarEmpleado} disabled={!botonIngreso} value="Crear Empleado" className="btn btn-primary styled-button" />
+                        </div>
+
+                        <div>
+
                         </div>
                     </form>
                 </div>

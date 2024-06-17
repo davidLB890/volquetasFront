@@ -5,24 +5,32 @@ import { guardarUsuarios } from "../features/usuariosSlice";
 import { useDispatch, useSelector } from "react-redux" 
 import * as bootstrap from 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Usuarios from "./UsuariosFolder/Usuarios";
 import ConfirmarUsuario from "./UsuariosFolder/ConfirmarUsuario";
 import axios from "axios"; // Importa axios
 import { obtenerUsuarios } from "../api"; // Importa la función obtenerUsuarios desde api.js
+import useAuth from "../hooks/useAuth";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import  CustomNavbar from "./Navbar";
+import CrearUsuarios from "./UsuariosFolder/CrearUsuarios";
+import CrearEmpleados from "./EmpleadosFolder/CrearEmpleados";
+import Empleados from "./EmpleadosFolder/Empleados";
+
+
 
 const Dashboard = () => {
   /* let usuarioId = localStorage.getItem('id'); */
-  let usuarioToken = localStorage.getItem('apiToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
+  //let usuarioToken = localStorage.getItem('apiToken');
  
   let navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const getToken = useAuth();
+  
   useEffect(() => {
+    const usuarioToken = getToken();
     if (usuarioToken === null) {
       console.log("No hay token");
-      navigate("/");
-    } else {
+      navigate("/login");
+    } /* else {
       // Realiza la solicitud para obtener los usuarios usando axios
       obtenerUsuarios(usuarioToken)
         .then((response) => {
@@ -35,41 +43,24 @@ const Dashboard = () => {
           }
         })
         .catch((error) => {
-          console.error("Error al obtener usuarios:", error);
+          console.error("Error al obtener usuarios:", error.response.data.error);
           navigate("/");
         });
-    }
-  }, [dispatch, navigate, usuarioToken]);
-
-  /* const cerrarSesion = () => {
-    localStorage.clear();
-    navigate("/");
-  } */
+    } */
+  }, [dispatch, navigate, getToken]);
 
   return (
-/*     <body> */
+
       <main className="container-fluid">
+        
 
         <header className="row text-center">
-          <h1>Volquetas</h1>
-          {/* <input type="button" value="logout" onClick={cerrarSesion}/> */}
+          <h1></h1>
         </header>
 
-        <section className="row text-center">
-          <Usuarios />
-        </section>
 
-        <section className="row text-center">
-          <ConfirmarUsuario />
-        </section>
-
-        <section className="row text-center">
-
-        </section>
-        <footer></footer>
 
       </main>
-/*     </body> */
       
 
   )

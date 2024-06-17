@@ -1,7 +1,9 @@
 import { useRef } from "react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { loginUsuario } from '../api';  // Asegúrate de importar la función
+import { useNavigate } from "react-router-dom";
+import { loginUsuario } from '../api'; 
+import { useLocation } from 'react-router-dom';
+import { obtenerUsuarios } from "../api";
 import "../styles/login.css";
 
 const Login = () => {
@@ -9,30 +11,68 @@ const Login = () => {
     const password = useRef(null);
     const [botonIngreso, setBotonIngreso] = useState(false);
     const [error, setError] = useState("");
+
     let navigate = useNavigate();
+    const location = useLocation();
+    const sessionExpired = location.state?.sessionExpired;
 
     // Se ingresa según los datos brindados por el usuario
     const Ingresar = async () => {
         let em = email.current.value;
         let contra = password.current.value;
-
-        
-        loginUsuario(em, contra)
-        .then((response) => {
+        try {
+            const response = await loginUsuario(em, contra);
             const datos = response.data;
             if (datos.error) {
-              console.error(datos.error);
+                console.error(datos.error);
             } else {
-              console.log("Usuario ingresado correctamente", datos);
-              navigate("/");
-              // Realizar alguna acción adicional si es necesario
+                console.log("Usuario ingresado correctamente", datos);
+                saveToken(datos.token);
+                try {
+                    await saveUser(em, datos.token);
+                } catch (error) {
+                    console.error('Error al guardar el usuario:', error);
+                    setError('Error al guardar el usuario');
+                    return; // Sal de la función si ocurre un error al guardar el usuario
+                }
+                navigate("/");
             }
-          })
-          .catch((error) => {
+        } catch (error) {
+            if (error.response && error.response.data) {
+                setError(error.response.data.error);
+            } else {
+                setError('Ocurrió un error inesperado. Inténtelo más tarde.');
+            }
+        }
+    };
+    
+    const saveToken = (token) => {
+        const timestamp = new Date().getTime(); // Tiempo actual en milisegundos
+        localStorage.setItem('apiToken', token);
+        localStorage.setItem('tokenTimestamp', timestamp);
+    };
+
+    const saveUser = async (email, token) => {
+        try {
+            const response = await obtenerUsuarios(token);
+            const datos = response.data;
+            const usuario = datos.find(usuario => usuario.email === email);
+            if (usuario) {
+                localStorage.setItem('userRol', usuario.rol);
+                localStorage.setItem('userId', usuario.id);
+                console.log(localStorage.getItem('userRol'));
+            }else{
+                setError('Usuario no encontrado');
+            }
+          
+        } catch (error) {
+          if (error.response && error.response.data) {
             setError(error.response.data.error);
-            //console.error("Error al conectar con el servidor:", error.response.data.error);
-        });
-      };
+          } else {
+            setError('Ocurrió un error inesperado. Inténtelo más tarde.');
+          }
+        }
+    };
 
     // Con esto habilito el botón de ingreso si los campos no están vacíos
     const habilitarBoton = () => {
@@ -58,6 +98,11 @@ const Login = () => {
                 <div className="card-header text-center">
                     <h3>Inicia sesión</h3>
                 </div>
+                {sessionExpired && (
+                    <div className="alert alert-warning">
+                        Sesión expirada. Por favor, inicia sesión de nuevo.
+                    </div>
+                )}
                 <div className="card-body">
                     <form>
                         <div className="input-group form-group">

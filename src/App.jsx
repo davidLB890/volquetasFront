@@ -2,37 +2,58 @@ import Login from './components/Login';
 //import Singin from './components/Singin';
 import Dashboard from './components/Dashboard';
 import { useRef } from 'react'
-import { BrowserRouter, Router, Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import CrearEmpleados from './components/EmpleadosFolder/CrearEmpleados';
 import CrearCamiones from './components/CamionesFolder/CrearCamiones';
 import ConfirmarUsuario from './components/UsuariosFolder/ConfirmarUsuario';
 import CrearUsuarios from './components/UsuariosFolder/CrearUsuarios';
 import Empleados from './components/EmpleadosFolder/Empleados';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import  CustomNavbar from "./components/Navbar";
+import CustomFooter from './components/Footer';
+import Camiones from './components/CamionesFolder/Camiones';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 const App = () => {
 
-  return (
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [userRole, setUserRole] = useState(null); // Aquí almacenarás el userRole después de la autenticación
 
-     <BrowserRouter>
-        <Routes>  
-          {<Route path="/" element={<Dashboard/>}/>}
-          {<Route path="/login" element={<Login/>}/>}
-          {<Route path="/usuarios" element={<CrearUsuarios/>}/> }
-          {<Route path="/usuarios/confirmar" element={<ConfirmarUsuario/>}/> }
-          {<Route path="/empleados" element={<CrearEmpleados/>}/> }
-          {<Route path="/empleadosssss" element={<Empleados/>}/> }
-          {<Route path="/camiones" element={<CrearCamiones/>}/> }
-          {/* <Route path="/dashboard" element={<Dashboard/>}/> */}
-          {/* <Route path="*" element={<NotFound/>}/> */}
-          {/* <Route path="/" element={<Login/>}/> */}
-        </Routes>
-     </BrowserRouter>
+  useEffect(() => {
+      // Lógica para obtener el userRole después de la autenticación
+      const storedUserRole = localStorage.getItem('userRol');
+      setUserRole(storedUserRole);
+  }, [navigate]);
+
+  // Verifica si la ruta actual es la de login
+  const isLoginPage = location.pathname === '/login';
+
+  return (
+    <div>
+      {!isLoginPage && <CustomNavbar userRole={userRole}/>}
+
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/usuarios" element={<CrearUsuarios />} />
+        <Route path="/usuarios/confirmar" element={<ConfirmarUsuario />} />
+        <Route path="/empleados/crear" element={<CrearEmpleados />} />
+        <Route path="/empleados" element={<Empleados />} />
+       <Route path="/camiones" element={<Camiones />} /> 
+       <Route path="/camiones/crear" element={<CrearCamiones />} /> 
+      /</Routes>
+
+      {!isLoginPage && <CustomFooter />}
+
+    </div>
+    
 
   );
 }
 
-export default App;
+export default App; 
 
 /* function App() {
 

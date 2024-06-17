@@ -2,7 +2,9 @@ import { useEffect } from "react"
 import { useState } from "react"
 import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { crearUsuario, obtenerEmpleados } from "../../api";
+import { crearUsuario, obtenerEmpleados, obtenerUsuarios } from "../../api";
+import useAuth from "../../hooks/useAuth";
+import Usuarios from "../UsuariosFolder/Usuarios";
 import axios from "axios";
 
 const CrearUsuarios = () => {
@@ -15,32 +17,101 @@ const CrearUsuarios = () => {
     const empleadoId = useRef(null);
 
     const [empleados, setEmpleados] = useState([]);
+    const [usuarios, setUsuarios] = useState([]);
+    const [empleadosFiltrados, setEmpleadosFiltrados] = useState([]);
     const [botonCrear, setBotonCrear] = useState(false);
     const [error, setError] = useState("");
-    let navigate = useNavigate();
 
-    let usuarioToken = localStorage.getItem('apiToken');
+    let navigate = useNavigate();
+    const getToken = useAuth();
+
+    //let usuarioToken = localStorage.getItem('apiToken');
+
 
     //Verifica que haya token, si no, lo redirige al login
     useEffect(() => {
-        // Verifica el token al montar el componente
-        if (localStorage.getItem("apiToken") === null) {
-          navigate("/");
+        const usuarioToken = getToken();
+        if (usuarioToken === null) {
+            navigate("/login");
         } else {
-          // Realiza la solicitud para obtener los empleados
-          obtenerEmpleados(usuarioToken)
-            .then((response) => {
-              const empleados = response.data;
-              setEmpleados(empleados);
-            })
-            .catch((error) => {
-              console.error("Error al obtener empleados:", error);
-              navigate("/");
-            });
+            // Realiza la solicitud para obtener los empleados
+            obtenerEmpleados(usuarioToken)
+                .then((response) => {
+                    const empleados = response.data;
+                    setEmpleados(empleados);
+                    // Filtrar empleados inmediatamente después de obtenerlos
+                    filtrarEmpleados(empleados, usuarios);
+                })
+                .catch((error) => {
+                    console.error("Error al obtener empleados:", error);
+                    navigate("/");
+                });
+
+            // Realiza la solicitud para obtener los usuarios
+            obtenerUsuarios(usuarioToken)
+                .then((response) => {
+                    const usuarios = response.data;
+                    setUsuarios(usuarios);
+                    // Filtrar empleados inmediatamente después de obtenerlos
+                    filtrarEmpleados(empleados, usuarios);
+                })
+                .catch((error) => {
+                    console.error("Error al obtener usuarios:", error.response.data.error);
+                    navigate("/");
+                });
         }
-      }, []);
+    }, [getToken, navigate]);
+
+    useEffect(() => {
+        // Filtrar empleados cada vez que cambien empleados y usuarios
+        filtrarEmpleados(empleados, usuarios);
+    }, [empleados, usuarios]);
+
+    const filtrarEmpleados = (empleados, usuarios) => {
+        if (empleados.length > 0 && usuarios.length > 0) {
+            // Filtrar empleados habilitados
+            let filtrados = empleados.filter(emp => emp.habilitado === true);
+          
+            // Filtrar empleados que no están asignados a ningún usuario
+            let filtrados2 = filtrados.filter(emp => {
+              return !usuarios.some(usuario => usuario.empleadoId === emp.id);
+            });
+          
+            setEmpleadosFiltrados(filtrados2);
+        }
+    };
+
+    const registrarUsuario = async () => {
+        const r = rol.current.value;
+        const em = email.current.value;
+        const contra = password.current.value;
+        const contra2 = password2.current.value;
+        const empId = empleadoId.current.value;
+
+        try {
+            const response = await crearUsuario({
+                rol: r,
+                email: em,
+                password: contra,
+                confirmPassword: contra2,
+                empleadoId: empId,
+            });
+            const datos = response.data;
+            if (datos.error) {
+                console.error(datos.error);
+            } else {
+                console.log("Usuario creado correctamente", datos);
+            }
+        } catch (error) {
+            if (error.data) {
+                console.error("Error al crear usuario:", error.data.error);
+            } else {
+                console.error("Error inesperado:", error.error || error.message);
+            }
+        }
+    };
     
-      const registrarUsuario = () => {
+/*       const registrarUsuario = () => {
         // Lógica para registrar un usuario usando axios
         const r = rol.current.value;
         const em = email.current.value;
@@ -65,9 +136,10 @@ const CrearUsuarios = () => {
             }
           })
           .catch((error) => {
-            console.error("Error al conectar con el servidor:", error);
+            console.error(error.response.data.error);
         });
-      };
+
+      }; */
 
     const habilitarBoton = () => {
         let contra = password.current.value;
@@ -131,13 +203,19 @@ const CrearUsuarios = () => {
                         <div className="input-group form-group">
                             <select ref={empleadoId} name="slcEmpleado" id="empSlc" className="form-control" onChange={habilitarBoton}>
                                 <option value="">Seleccione empleado</option>
-                                {empleados.map(emp => <option key={emp.id} value={emp.id}> {emp.nombre} </option>)}
+                                {empleadosFiltrados.map(emp => <option key={emp.id} value={emp.id}> {emp.nombre} </option>)}
                             </select>
                         </div>
 
                         <div className="text-center">
                             <input id="crearUsuario_btn" type="button" onClick={registrarUsuario} disabled={!botonCrear} value="Crear Usuario" className="btn btn-primary styled-button" />
                         </div>
+
+                        {/* <div>
+                            <section className="row text-center">
+                                <Usuarios />
+                            </section>
+                        </div> */}
                         
                     </form>
                 </div>
