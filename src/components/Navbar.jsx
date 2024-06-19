@@ -33,6 +33,10 @@ const CustomNavbar = ({userRole}) => {
               <NavDropdown.Item as={Link} to="/camiones/crear">Crear camión</NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/camiones">Camiones</NavDropdown.Item>
             </NavDropdown>
+            <NavDropdown title="Volquetas" id="basic-nav-dropdown">
+              <NavDropdown.Item as={Link} to="/">Ubicación</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/">Otras</NavDropdown.Item>
+            </NavDropdown>
             {/* Agrega más NavDropdowns aquí según sea necesario */}
           </Nav>
           <input type="button" value="logout" onClick={cerrarSesion}/>

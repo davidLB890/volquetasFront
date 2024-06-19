@@ -29,6 +29,9 @@ api.interceptors.response.use(
   }
 );
 
+
+
+
 //EMPLEADOS
 //check 
 //volver a hacer porque me falta agregrale fecha de inicio y salida
@@ -51,13 +54,17 @@ export const eliminarEmpleado = (empleadoId, usuarioToken) => {
 };
 
 //check
-export const cambiarEstadoEmpleado = (empleadoId, empleado, usuarioToken) => {
-  return axios.patch(`${API_URL}/empleados/${empleadoId}/estado`, empleado, {
-    headers: {
-      'Authorization': usuarioToken, 
-    }
-  });
-};
+  export const cambiarEstadoEmpleado = (empleadoId, usuarioToken) => {
+
+    let hoy = new Date();
+    let fechaSalida = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+
+    return axios.patch(`${API_URL}/empleados/${empleadoId}/estado`, {fechaSalida}, {
+      headers: {
+        'Authorization': usuarioToken, 
+      }
+    });
+  };
 
 //chek
 export const obtenerEmpleados = (usuarioToken) => {
@@ -72,6 +79,9 @@ export const obtenerEmpleados = (usuarioToken) => {
 export const obtenerEmpleado = (empleadoId) => {
   return axios.get(`${API_URL}/empleados/${empleadoId}`);
 };
+
+
+
 
 //USUARIOS
 //check
@@ -104,6 +114,9 @@ export const obtenerUsuarios = (usuarioToken) => {
       }
     });
 };
+
+
+
 
 //CAMIONES
 //check
@@ -149,6 +162,55 @@ export const putCamion = (camionId, camion, usuarioToken) => {
   return axios.put(`${API_URL}/camiones/${camionId}`, camion, {
     headers: {
       'Authorization': usuarioToken, 
+    }
+  });
+};
+
+
+
+//HISTÓRICO-CAMION
+
+export const getHistoricoCamion = (camionId, usuarioToken) => {
+  return axios.get(`${API_URL}/historico-camion/${camionId}`, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
+    }
+  });
+}
+
+export const postHistoricoCamion = (camionId, choferId, fechaInicio, usuarioToken) => {
+  const body = {
+    camionId: camionId,
+    empleadoId: choferId,
+    fechaInicio: fechaInicio
+  };
+  return axios.post(`${API_URL}/historico-camion`, body, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
+    }
+  });
+}
+
+
+
+
+//SERVICIOS
+export const postServicio = (servicio, usuarioToken) => {
+  return axios.post(`${API_URL}/servicios`, servicio, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
+    }
+  });
+}
+
+export const getServicioPorCamion = (camionId, usuarioToken) => {
+  return axios.get(`${API_URL}/servicios/${camionId}`, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
     }
   });
 };

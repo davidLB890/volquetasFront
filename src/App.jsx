@@ -8,6 +8,7 @@ import CrearCamiones from './components/CamionesFolder/CrearCamiones';
 import ConfirmarUsuario from './components/UsuariosFolder/ConfirmarUsuario';
 import CrearUsuarios from './components/UsuariosFolder/CrearUsuarios';
 import Empleados from './components/EmpleadosFolder/Empleados';
+import AsignarChofer from './components/CamionesFolder/AsignarChofer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import  CustomNavbar from "./components/Navbar";
 import CustomFooter from './components/Footer';
@@ -43,6 +44,7 @@ const App = () => {
         <Route path="/empleados" element={<Empleados />} />
        <Route path="/camiones" element={<Camiones />} /> 
        <Route path="/camiones/crear" element={<CrearCamiones />} /> 
+        {/* <Route path="/hc" element={<AsignarChofer />} />  */}
       /</Routes>
 
       {!isLoginPage && <CustomFooter />}

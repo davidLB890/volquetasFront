@@ -81,10 +81,19 @@ const Empleados = () => {
 
   const cambiarEstadoDelEmpleado = async (empleadoId) => {
     const usuarioToken = getToken();
-    let empleado = empleados.find((emp) => emp.id === empleadoId)
+
+    //let empleado = empleados.find((emp) => emp.id === empleadoId)
+
+    /*let empleadoNuevo = {
+      cedula: empleado.cedula,
+      nombre: empleado.nombre,
+      rol: empleado.rol,
+    }*/
+
+    //let estado = !empleado.habilitado;
 
     try {
-      const response = await cambiarEstadoEmpleado(empleadoId, empleado, usuarioToken);
+      const response = await cambiarEstadoEmpleado(empleadoId, usuarioToken);
       const datos = response.data;
 
        if (datos.error) {
