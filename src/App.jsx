@@ -6,8 +6,9 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import CrearEmpleados from './components/EmpleadosFolder/CrearEmpleados';
 import CrearCamiones from './components/CamionesFolder/CrearCamiones';
 import ConfirmarUsuario from './components/UsuariosFolder/ConfirmarUsuario';
-import CrearUsuarios from './components/UsuariosFolder/CrearUsuarios';
+import Singin from './components/Singin';
 import Empleados from './components/EmpleadosFolder/Empleados';
+import Jornales from './components/JornalesFolder/Jornales';
 import AsignarChofer from './components/CamionesFolder/AsignarChofer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import  CustomNavbar from "./components/Navbar";
@@ -15,6 +16,7 @@ import CustomFooter from './components/Footer';
 import Camiones from './components/CamionesFolder/Camiones';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import ListaJornales from './components/JornalesFolder/ListaJornales';
 
 const App = () => {
 
@@ -30,24 +32,27 @@ const App = () => {
 
   // Verifica si la ruta actual es la de login
   const isLoginPage = location.pathname === '/login';
+  const isSinginPage = location.pathname === '/singin';
 
   return (
     <div>
-      {!isLoginPage && <CustomNavbar userRole={userRole}/>}
+      {!isLoginPage && !isSinginPage && <CustomNavbar userRole={userRole}/>}
 
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/usuarios" element={<CrearUsuarios />} />
+        <Route path="/singin" element={<Singin />} />
         <Route path="/usuarios/confirmar" element={<ConfirmarUsuario />} />
         <Route path="/empleados/crear" element={<CrearEmpleados />} />
         <Route path="/empleados" element={<Empleados />} />
+        <Route path="/empleados/jornales" element={<Jornales />} />
+       <Route path="/lj" element={<ListaJornales />} /> 
        <Route path="/camiones" element={<Camiones />} /> 
        <Route path="/camiones/crear" element={<CrearCamiones />} /> 
         {/* <Route path="/hc" element={<AsignarChofer />} />  */}
       /</Routes>
 
-      {!isLoginPage && <CustomFooter />}
+      {!isLoginPage && !isSinginPage && <CustomFooter />}
 
     </div>
     

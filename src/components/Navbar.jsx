@@ -21,13 +21,13 @@ const CustomNavbar = ({userRole}) => {
           <Nav className="me-auto">
           {userRole === 'admin' && (
               <NavDropdown title="Usuarios" id="basic-nav-dropdown">
-                <NavDropdown.Item as={Link} to="/usuarios">Crear usuario</NavDropdown.Item>
                 <NavDropdown.Item as={Link} to="/usuarios/confirmar">Confirmar usuarios</NavDropdown.Item>
               </NavDropdown>
             )}
             <NavDropdown title="Empleados" id="basic-nav-dropdown">
               <NavDropdown.Item as={Link} to="/empleados/crear">Crear empleado</NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/empleados">Empleados</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/empleados/jornales">Jornales</NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="Camiones" id="basic-nav-dropdown">
               <NavDropdown.Item as={Link} to="/camiones/crear">Crear camión</NavDropdown.Item>

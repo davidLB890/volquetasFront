@@ -46,21 +46,6 @@ const Empleados = () => {
     }
   }, [cambios, getToken]);
 
- /*  useEffect(() => {
-    // Actualiza la lista de empleados si se realizó un cambio
-    if (cambios) {
-      obtenerEmpleados(usuarioToken)
-        .then((response) => {
-          const empleados = response.data;
-          setEmpleados(empleados);
-          setCambios(false);
-        })
-        .catch((error) => {
-          console.error("Error al obtener empleados:", error);
-        });
-    }
-  }, [cambios]);  */
-
   const eliminar = async (empleadoId) => {
     const usuarioToken = getToken();
 
@@ -82,16 +67,6 @@ const Empleados = () => {
   const cambiarEstadoDelEmpleado = async (empleadoId) => {
     const usuarioToken = getToken();
 
-    //let empleado = empleados.find((emp) => emp.id === empleadoId)
-
-    /*let empleadoNuevo = {
-      cedula: empleado.cedula,
-      nombre: empleado.nombre,
-      rol: empleado.rol,
-    }*/
-
-    //let estado = !empleado.habilitado;
-
     try {
       const response = await cambiarEstadoEmpleado(empleadoId, usuarioToken);
       const datos = response.data;
@@ -109,20 +84,6 @@ const Empleados = () => {
         navigate("/login");
       }
     } 
-
-/*      cambiarEstadoEmpleado(empleadoId, empleado, usuarioToken)
-    .then((response) => {
-      const datos = response.data;
-      if (datos.error) {
-          console.error(datos.error);
-      } else {
-          console.log(datos);
-          setCambios(true);
-      }
-      })
-      .catch((error) => {
-      console.error("Error al conectar con el servidor:", error.response.data.error);
-      }); */ 
   };  
 
   // Función para filtrar los empleados
@@ -202,15 +163,15 @@ const Empleados = () => {
               <td>{empleado.habilitado ? 'Habilitado' : 'Deshabilitado'}</td>
               <td>{empleado.rol}</td>
               <td>
+                <Button variant="danger" onClick={() => eliminar(empleado.id)}>
+                  Eliminar
+                </Button>
                 <Button
                   variant={empleado.habilitado ? 'danger' : 'success'}
                   onClick={() => cambiarEstadoDelEmpleado(empleado.id)}
                   className="me-2"
                 >
                   {empleado.habilitado ? 'Deshabilitar' : 'Habilitar'}
-                </Button>
-                <Button variant="danger" onClick={() => eliminar(empleado.id)}>
-                  Eliminar
                 </Button>
               </td>
             </tr>

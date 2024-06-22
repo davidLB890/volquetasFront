@@ -3,6 +3,8 @@ import { getServicioPorCamion } from "../../api";
 import { Container, Button, Table, Alert } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 
+//`$ ${servicio.precio} ${servicio.moneda === 'peso'?'UYU':'USD'}`
+
 const ServiciosCamion = ({ camionId }) => {
   const [servicios, setServicios] = useState([]);
   const [mostrarServicios, setMostrarServicios] = useState(false);

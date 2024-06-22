@@ -3,6 +3,8 @@ import useAuth from '../../hooks/useAuth';
 import { postHistoricoCamion, obtenerEmpleados } from '../../api';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 
+//'arreglo', 'service','chequeo','pintura'
+
 const AsignarChofer = ({ camionId }) => {
   const [choferIdSeleccionado, setChoferIdSeleccionado] = useState('');
   const [choferes, setChoferes] = useState([]);

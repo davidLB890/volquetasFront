@@ -15,8 +15,8 @@ api.interceptors.response.use(
   error => {
     if (error.response) {
       // Errores de respuesta del servidor (códigos 4xx y 5xx)
-      console.error(error.response.status, error.response.data);
-      return Promise.reject(error.response);
+      //console.error(error.response.status, error.response.data);
+      return Promise.reject(error.response.data); // Devolvemos el error específico de la respuesta
     } else if (error.request) {
       // Errores de solicitud (sin respuesta del servidor)
       console.error('Error de solicitud', error.request);
@@ -28,6 +28,7 @@ api.interceptors.response.use(
     }
   }
 );
+
 
 
 
@@ -75,6 +76,14 @@ export const obtenerEmpleados = (usuarioToken) => {
       }
     });
 };
+
+export const getEmpleadosSinUsuario = () => {
+  return axios.get(`${API_URL}/empleados/sin-usuario-activos`, {
+    headers: {
+      'Content-Type': 'application/json', 
+    }
+  })};
+
 
 export const obtenerEmpleado = (empleadoId) => {
   return axios.get(`${API_URL}/empleados/${empleadoId}`);
@@ -214,3 +223,16 @@ export const getServicioPorCamion = (camionId, usuarioToken) => {
     }
   });
 };
+
+
+
+
+//JORNALES
+export const getJornalesEmpleado = (empleadoId, fechaInicio, fechaFin, usuarioToken) => {
+  return axios.get(`${API_URL}/jornales/${empleadoId}/${fechaInicio}/${fechaFin}`, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
+    }
+  });
+}
