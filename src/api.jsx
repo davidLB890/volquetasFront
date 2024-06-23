@@ -35,7 +35,6 @@ api.interceptors.response.use(
 
 //EMPLEADOS
 //check 
-//volver a hacer porque me falta agregrale fecha de inicio y salida
 export const crearEmpleado = (empleado, usuarioToken) => { 
   return axios.post(`${API_URL}/empleados`, empleado, {
     headers: {
@@ -45,6 +44,7 @@ export const crearEmpleado = (empleado, usuarioToken) => {
   });
 }
 
+//check
 export const eliminarEmpleado = (empleadoId, usuarioToken) => {
   return axios.delete(`${API_URL}/empleados/${empleadoId}`, {
     headers: {
@@ -77,6 +77,11 @@ export const obtenerEmpleados = (usuarioToken) => {
     });
 };
 
+//check
+export const obtenerEmpleado = (empleadoId) => {
+  return axios.get(`${API_URL}/empleados/${empleadoId}`);
+};
+//check
 export const getEmpleadosSinUsuario = () => {
   return axios.get(`${API_URL}/empleados/sin-usuario-activos`, {
     headers: {
@@ -84,10 +89,15 @@ export const getEmpleadosSinUsuario = () => {
     }
   })};
 
+export const putEmpleado = (empleadoId, empleado, usuarioToken) => {
+  return axios.put(`${API_URL}/empleados/${empleadoId}`, empleado, {
+    headers: {
+      'Authorization': usuarioToken, 
+    }
+  });
+}
 
-export const obtenerEmpleado = (empleadoId) => {
-  return axios.get(`${API_URL}/empleados/${empleadoId}`);
-};
+
 
 
 
@@ -179,8 +189,16 @@ export const putCamion = (camionId, camion, usuarioToken) => {
 
 //HISTÓRICO-CAMION
 
-export const getHistoricoCamion = (camionId, usuarioToken) => {
-  return axios.get(`${API_URL}/historico-camion/${camionId}`, {
+export const getHistoricoCamion = (usuarioToken) => {
+  return axios.get(`${API_URL}/historico-camion/asignacion`, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
+    }
+  });
+}
+export const getHistoricoCamionEmpleado = (empleadoId, usuarioToken) => {
+  return axios.get(`${API_URL}/historico-camion?empleadoId=${empleadoId}`, {
     headers: {
       'Authorization': usuarioToken, 
       'Content-Type': 'application/json', 
@@ -236,3 +254,14 @@ export const getJornalesEmpleado = (empleadoId, fechaInicio, fechaFin, usuarioTo
     }
   });
 }
+
+
+//TELÉFONOS
+export const postTelefono = (telefonoData, usuarioToken) => {
+  return axios.post(`${API_URL}/telefonos`, telefonoData, {
+    headers: {
+      'Authorization': usuarioToken,
+      'Content-Type': 'application/json',
+    }
+  });
+};

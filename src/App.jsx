@@ -1,22 +1,21 @@
-import Login from './components/Login';
-//import Singin from './components/Singin';
-import Dashboard from './components/Dashboard';
-import { useRef } from 'react'
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Route, Routes, useLocation } from 'react-router-dom';
+import Login from './components/Login';
+import Singin from './components/Singin';
+import Dashboard from './components/Dashboard';
+import CustomNavbar from "./components/Navbar";
+import CustomFooter from './components/Footer';
 import CrearEmpleados from './components/EmpleadosFolder/CrearEmpleados';
 import CrearCamiones from './components/CamionesFolder/CrearCamiones';
 import ConfirmarUsuario from './components/UsuariosFolder/ConfirmarUsuario';
-import Singin from './components/Singin';
 import Empleados from './components/EmpleadosFolder/Empleados';
 import Jornales from './components/JornalesFolder/Jornales';
-import AsignarChofer from './components/CamionesFolder/AsignarChofer';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import  CustomNavbar from "./components/Navbar";
-import CustomFooter from './components/Footer';
 import Camiones from './components/CamionesFolder/Camiones';
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import ListaJornales from './components/JornalesFolder/ListaJornales';
+import AgregarTelefono from './components/AgregarTelefono';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import HistorialCamiones from './components/CamionesFolder/HistorialCamiones';
 
 const App = () => {
 
@@ -42,68 +41,26 @@ const App = () => {
         <Route path="/" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/singin" element={<Singin />} />
+        {/* USUARIOS */}
         <Route path="/usuarios/confirmar" element={<ConfirmarUsuario />} />
         <Route path="/empleados/crear" element={<CrearEmpleados />} />
+        <Route path="/empleados/telefonos" element={<AgregarTelefono />} />
+        {/* EMPLEADOS */}
         <Route path="/empleados" element={<Empleados />} />
         <Route path="/empleados/jornales" element={<Jornales />} />
        <Route path="/lj" element={<ListaJornales />} /> 
+       {/* CAMIONES */}
        <Route path="/camiones" element={<Camiones />} /> 
        <Route path="/camiones/crear" element={<CrearCamiones />} /> 
+       <Route path="/camiones/historial" element={<HistorialCamiones />} /> 
+
         {/* <Route path="/hc" element={<AsignarChofer />} />  */}
       /</Routes>
 
       {!isLoginPage && !isSinginPage && <CustomFooter />}
 
     </div>
-    
-
   );
 }
 
 export default App; 
-
-/* function App() {
-
-  const { data, loading, error, handleAbortRequest } = useFetch('http://localhost:3000/api/volquetas')
-  const nroVolque = useRef(null);
-  const ubi = useRef(null);
-
-  const crearVolqueta =  () => {
-    let nroVol = nroVolque.current.value;
-    let ubiActual = ubi.current.value;
-    fetch('http://localhost:3000/api/volquetas', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        nroVolqueta: nroVol,
-        ubiActual: ubiActual,
-      })
-    })
-  }
-
-  return (
-    <div className='App'>
-      <h1>Vite + React</h1>
-       <div className='card'>
-          <ul>
-            {error && <p>Error: {error}</p>}
-            {loading && <p>Loading...</p>}
-            {data?.map((volqueta) => (
-              <li key={volqueta.id}>{volqueta.nroVolqueta}{" "+ volqueta.ubiActual}</li>
-            ))}
-          </ul>
-          <ul>
-            <input ref={nroVolque} type="string" placeholder="Ingrese numero"></input>
-            <input ref={ubi} type="string" placeholder="Ingrese ubicación"></input>
-          </ul>
-          <ul>
-            <button onClick={crearVolqueta}>Crear volqueta</button>
-          </ul>
-
-      </div> 
-    </div>
-  )
-} */
-

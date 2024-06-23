@@ -77,10 +77,10 @@ const Login = () => {
                 <div className="card-body">
                     <form>
                         <div className="input-group form-group">
-                            <input ref={email} type="text" className="form-control" placeholder="username"/>
+                            <input ref={email} type="text" className="form-control" placeholder="usuario"/>
                         </div>
                         <div className="input-group form-group">
-                            <input ref={password} type="password" className="form-control" placeholder="password"/>
+                            <input ref={password} type="password" className="form-control" placeholder="contraseña"/>
                         </div>
                         <AlertMessage type="error" message={error} />
                         <div className="text-center">

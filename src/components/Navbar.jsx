@@ -25,13 +25,12 @@ const CustomNavbar = ({userRole}) => {
               </NavDropdown>
             )}
             <NavDropdown title="Empleados" id="basic-nav-dropdown">
-              <NavDropdown.Item as={Link} to="/empleados/crear">Crear empleado</NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/empleados">Empleados</NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/empleados/jornales">Jornales</NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="Camiones" id="basic-nav-dropdown">
-              <NavDropdown.Item as={Link} to="/camiones/crear">Crear camión</NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/camiones">Camiones</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/camiones/historial">Historial camiones</NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="Volquetas" id="basic-nav-dropdown">
               <NavDropdown.Item as={Link} to="/">Ubicación</NavDropdown.Item>

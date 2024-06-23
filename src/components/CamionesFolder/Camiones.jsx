@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { deleteCamion, putCamion, getCamiones } from '../../api';
 import { useNavigate } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
-import CrearServicio from '../ServiciosFolder/CrearServicios';
 import ServiciosCamion from '../ServiciosFolder/Servicios';
 import AsignarChofer from './AsignarChofer';
 import useAuth from '../../hooks/useAuth';
-import HistorialCamion from './HistorialCamion';
+import "../../styles/camiones.css";
 
 const Camiones = () => {
   const [camiones, setCamiones] = useState([]);
@@ -18,7 +17,6 @@ const Camiones = () => {
   const [mostrarFormularioServicio, setMostrarFormularioServicio] = useState(null); // Camion ID or null
   const [mostrarServiciosCamion, setMostrarServiciosCamion] = useState(null); // Camion ID or null
   const [mostrarAsignarChofer, setMostrarAsignacion] = useState(null); // Camion ID or null
-  const [mostrarHistorialCamionChofer, setMostrarHistorialCamionChofer] = useState(null); // Camion ID or null
 
   let navigate = useNavigate();
   const getToken = useAuth();
@@ -113,14 +111,14 @@ const Camiones = () => {
 
   const showCamiones = (camionId) => {
     setMostrarAsignacion((prev) => prev === camionId ? null : camionId);
-    setMostrarHistorialCamionChofer(camionId === mostrarHistorialCamionChofer ? null : camionId);
   }
-
-
 
   return (
     <div className="container">
-      <h1>Lista de Camiones</h1>
+      <div className='header'>
+        <h1>Lista de Camiones</h1>
+        <Button variant="primary" onClick={() => navigate("/camiones/crear")}>Nuevo Camión</Button>
+      </div>
       <table className="table table-striped">
         <thead>
           <tr>
@@ -218,21 +216,12 @@ const Camiones = () => {
                       <Button variant="danger" onClick={() => eliminar(camion.id)}>Eliminar</Button>
                       <Button variant="primary" onClick={() => cambiar(camion)}>Modificar</Button>
                       <Button variant="info" onClick={() => showServicios(camion.id)}>Servicios</Button>
-                      <Button variant="warning" onClick={() => showCamiones(camion.id)}>Choferes</Button>
+                      <Button variant="warning" onClick={() => showCamiones(camion.id)}>Chofer</Button>
                     </>
                   )}
                 </td>
               </tr>
-              {mostrarFormularioServicio === camion.id && (
-                <tr>
-                  <td colSpan="6">
-                    <CrearServicio
-                      idCamion={camion.id}
-                      /* onSuccess={handleCrearServicioSuccess} */
-                    />
-                  </td>
-                </tr>
-              )}
+
               {mostrarServiciosCamion === camion.id && (
                 <tr>
                   <td colSpan="6">
@@ -244,13 +233,6 @@ const Camiones = () => {
                 <tr>
                   <td colSpan="6">
                     <AsignarChofer camionId={camion.id} />
-                  </td>
-                </tr>
-              )}
-              {mostrarHistorialCamionChofer === camion.id && (
-                <tr>
-                  <td colSpan="6">
-                    <HistorialCamion camionId={camion.id} />
                   </td>
                 </tr>
               )}

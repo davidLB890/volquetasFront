@@ -1,77 +1,66 @@
 import React, { useState, useEffect } from "react";
 import { getServicioPorCamion } from "../../api";
-import { Container, Button, Table, Alert } from "react-bootstrap";
+import { Container, Table, Alert } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
-
-//`$ ${servicio.precio} ${servicio.moneda === 'peso'?'UYU':'USD'}`
+import CrearServicio from "./CrearServicios";
 
 const ServiciosCamion = ({ camionId }) => {
   const [servicios, setServicios] = useState([]);
-  const [mostrarServicios, setMostrarServicios] = useState(false);
   const [error, setError] = useState('');
 
   const getToken = useAuth();
 
+  const fetchServicios = async () => {
+    const usuarioToken = getToken();
+
+    try {
+      const response = await getServicioPorCamion(camionId, usuarioToken);
+      const datos = response.data;
+      setServicios(datos);
+    } catch (error) {
+      console.error("Error al obtener servicios del camión:", error);
+      setError('Error al obtener los servicios del camión.');
+    }
+  };
+
   useEffect(() => {
-    const fetchServicios = async () => {
-      const usuarioToken = getToken();
-
-      try {
-        const response = await getServicioPorCamion(camionId, usuarioToken);
-        const datos = response.data;
-        setServicios(datos);
-      } catch (error) {
-        console.error("Error al obtener servicios del camión:", error);
-        setError('Error al obtener los servicios del camión.');
-      }
-    };
-
     fetchServicios();
   }, [camionId, getToken]);
 
-  const toggleMostrarServicios = () => {
-    setMostrarServicios(!mostrarServicios);
-  };
-
   return (
     <Container>
-      <Button variant="info" onClick={toggleMostrarServicios} className="mb-3">
-        {mostrarServicios ? "Ocultar Servicios" : "Mostrar servicios de este camión"}
-      </Button>
-      {mostrarServicios && (
-        <>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Tipo</th>
-                <th>Fecha</th>
-                <th>Precio</th>
-                <th>Descripción</th>
-                <th>Camión id</th>
+      <>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Tipo</th>
+              <th>Fecha</th>
+              <th>Precio</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {servicios.map((servicio, index) => (
+              <tr key={servicio.id}>
+                <td>{index + 1}</td>
+                <td>{servicio.tipo}</td>
+                <td>{servicio.fecha}</td>
+                <td>{servicio.precio}</td>
+                <td>{servicio.descripcion}</td>
               </tr>
-            </thead>
-            <tbody>
-              {servicios.map((servicio, index) => (
-                <tr key={servicio.id}>
-                  <td>{index + 1}</td>
-                  <td>{servicio.tipo}</td>
-                  <td>{servicio.fecha}</td>
-                  <td>{servicio.precio}</td>
-                  <td>{servicio.descripcion}</td>
-                  <td>{servicio.camionId}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-          {error && <Alert variant="danger">{error}</Alert>}
-        </>
-      )}
+            ))}
+          </tbody>
+        </Table>
+        <CrearServicio idCamion={camionId} onSuccess={fetchServicios} />
+        {error && <Alert variant="danger">{error}</Alert>}
+      </>
     </Container>
   );
 };
 
 export default ServiciosCamion;
+
 
 
 

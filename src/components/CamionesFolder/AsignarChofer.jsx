@@ -57,11 +57,8 @@ const AsignarChofer = ({ camionId }) => {
 
   return (
     <Container>
-        <Button variant="info" onClick={toggleMostrar} className="mb-3">
-            {mostrar ? "Cancelar" : "Asignar un chofer"}
-        </Button>
-        {mostrar && (
             <Row className="align-items-end">
+              <h3>Asignar chofer</h3>
                 <Col md={8}>
                 <Form.Group controlId="selectChofer">
                     <Form.Control
@@ -99,7 +96,6 @@ const AsignarChofer = ({ camionId }) => {
                 </Button>
                 </Col>
             </Row>
-        )}
     </Container>
   );
 };
