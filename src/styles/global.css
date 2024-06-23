@@ -1,0 +1,10 @@
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif; /* Ajusta según tu preferencia */
+  }
+  
+  .content {
+    padding-top: 56px; /* Ajusta según la altura real del Navbar */
+  }

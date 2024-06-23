@@ -5,6 +5,7 @@ import { Button, Form, Collapse } from 'react-bootstrap';
 import useAuth from '../../hooks/useAuth';
 import AlertMessage from "../AlertMessage";
 import "../../styles/empleados.css";
+import "../../styles/global.css"
 
 const Empleados = () => {
   const [empleados, setEmpleados] = useState([]);

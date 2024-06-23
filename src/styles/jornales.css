@@ -1,0 +1,15 @@
+.trabajo {
+    background-color: #e61c1c; /* Rojo claro para trabajos */
+}
+
+.licencia {
+background-color: #cceeff; /* Azul claro para licencias */
+}
+
+.enfermedad {
+background-color: #ccffcc; /* Verde claro para enfermedades */
+}
+
+.falta {
+background-color: #ed3d3d; /* Rojo oscuro para faltas */
+}

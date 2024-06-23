@@ -3,18 +3,28 @@
 //todo Opción de elegir un rango de fechas
 //todo dentro de cada empleado un botón para agregar un jornal (AGREGARjORNALES)
 import React, { useEffect, useState } from 'react';
-import { Container, ListGroup } from 'react-bootstrap';
+import { Container, ListGroup, Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { obtenerEmpleados } from '../../api';
 import ListaJornales from './ListaJornales'; // Asegúrate de importar tu componente ListaJornales
+import "../../styles/jornales.css"
 
 const Jornales = () => {
   const [empleadosPorRol, setEmpleadosPorRol] = useState({});
+  const [fechaInicio, setFechaInicio] = useState('');
+  const [fechaFin, setFechaFin] = useState('');
   const navigate = useNavigate();
   const getToken = useAuth();
 
   useEffect(() => {
+    const today = new Date();
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
+    
+    setFechaInicio(firstDayOfMonth);
+    setFechaFin(lastDayOfMonth);
+
     const fetchEmpleados = async () => {
       const usuarioToken = getToken();
       if (!usuarioToken) {
@@ -57,12 +67,42 @@ const Jornales = () => {
     setEmpleadosPorRol(updatedEmpleadosPorRol);
   };
 
+  const titulosPorRol = {
+    chofer: "Choferes",
+    normal: "Oficina",
+    admin: "Administradores",
+  };
+
   return (
-    <Container>
+<Container>
       <h1 className="mt-4 mb-4">Jornales de Empleados</h1>
+      <Form className="mb-4">
+        <div className="row">
+          <div className="col">
+            <Form.Group controlId="fechaInicio">
+              <Form.Label>Fecha de Inicio</Form.Label>
+              <Form.Control
+                type="date"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+              />
+            </Form.Group>
+          </div>
+          <div className="col">
+            <Form.Group controlId="fechaFin">
+              <Form.Label>Fecha de Fin</Form.Label>
+              <Form.Control
+                type="date"
+                value={fechaFin}
+                onChange={(e) => setFechaFin(e.target.value)}
+              />
+            </Form.Group>
+          </div>
+        </div>
+      </Form>
       {Object.keys(empleadosPorRol).map((rol) => (
         <div key={rol}>
-          <h2 className="mt-4 mb-3">{rol}</h2>
+          <h2 className="mt-4 mb-3">{titulosPorRol[rol] || rol}</h2>
           <ListGroup>
             {empleadosPorRol[rol].map((empleado) => (
               <React.Fragment key={empleado.id}>
@@ -75,8 +115,12 @@ const Jornales = () => {
                 </ListGroup.Item>
                 {empleado.isSelected && (
                   <ListGroup.Item>
-                    {/* Mostrar los datos adicionales del empleado */}
-                    <ListaJornales empleadoId={empleado.id} />
+                    <ListaJornales 
+                      empleadoId={empleado.id} 
+                      empleadoRol={rol} 
+                      fechaInicio={fechaInicio} 
+                      fechaFin={fechaFin} 
+                    />
                   </ListGroup.Item>
                 )}
               </React.Fragment>

@@ -13,7 +13,7 @@ const CustomNavbar = ({userRole}) => {
     }
 
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg="light" expand="lg" className='fixed-top'>
       <Container>
         <Navbar.Brand as={Link} to="/">Volketas 10</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />

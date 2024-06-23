@@ -255,6 +255,32 @@ export const getJornalesEmpleado = (empleadoId, fechaInicio, fechaFin, usuarioTo
   });
 }
 
+export const postJornal = (jornal, usuarioToken) => {
+  return axios.post(`${API_URL}/jornales`, jornal, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
+    }
+  });
+};
+
+export const deleteJornal = (jornalId, usuarioToken) => {
+  return axios.delete(`${API_URL}/jornales/${jornalId}`, {
+    headers: {
+      'Authorization': usuarioToken,
+      'Content-Type': 'application/json',
+    },
+  });
+};
+
+export const putJornal = (jornalId, jornal, usuarioToken) => {
+  return axios.put(`${API_URL}/jornales/${jornalId}`, jornal, {
+    headers: {
+      'Authorization': usuarioToken, 
+    }
+  });
+};
+
 
 //TELÉFONOS
 export const postTelefono = (telefonoData, usuarioToken) => {

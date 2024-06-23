@@ -15,6 +15,7 @@ import Camiones from './components/CamionesFolder/Camiones';
 import ListaJornales from './components/JornalesFolder/ListaJornales';
 import AgregarTelefono from './components/AgregarTelefono';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import "./styles/global.css"
 import HistorialCamiones from './components/CamionesFolder/HistorialCamiones';
 
 const App = () => {
@@ -36,7 +37,7 @@ const App = () => {
   return (
     <div>
       {!isLoginPage && !isSinginPage && <CustomNavbar userRole={userRole}/>}
-
+      <div className='content'>
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
@@ -56,7 +57,7 @@ const App = () => {
 
         {/* <Route path="/hc" element={<AsignarChofer />} />  */}
       /</Routes>
-
+      </div>
       {!isLoginPage && !isSinginPage && <CustomFooter />}
 
     </div>
