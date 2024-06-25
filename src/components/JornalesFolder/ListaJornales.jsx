@@ -10,11 +10,12 @@ import useAuth from '../../hooks/useAuth';
 import ModificarJornal from './ModificarJornal'; // Importamos el nuevo componente
 import '../../styles/jornales.css';
 
-const ListaJornales = ({ empleadoId, empleadoRol, fechaInicio, fechaFin }) => {
+const ListaJornales = ({ empleadoId, empleadoNombre, empleadoRol, fechaInicio, fechaFin }) => {
   const [jornales, setJornales] = useState([]);
   const [datos, setDatos] = useState([]);
   const [error, setError] = useState('');
   const [showModificar, setShowModificar] = useState(false);
+  const [showAgregar, setShowAgregar] = useState(false);
   const [jornalSeleccionado, setJornalSeleccionado] = useState(null);
 
   const navigate = useNavigate();
@@ -88,6 +89,10 @@ const ListaJornales = ({ empleadoId, empleadoRol, fechaInicio, fechaFin }) => {
     fetchJornales();
   };
 
+  const handleMostrarAgregar = (empleadoId, empleadoRol) => {
+    setShowAgregar(true);
+  };
+
   return (
     <>
       {datos.length > 0 ? (
@@ -157,7 +162,15 @@ const ListaJornales = ({ empleadoId, empleadoRol, fechaInicio, fechaFin }) => {
 
       {error && <Alert variant="danger">{error}</Alert>}
 
-      <AgregarJornal empleadoId={empleadoId} empleadoRol={empleadoRol} onJornalAgregado={fetchJornales} />
+      <Button variant="info" onClick={() => handleMostrarAgregar(empleadoId, empleadoNombre)}>Agregar Jornal</Button>
+      
+      <AgregarJornal
+        show={showAgregar}
+        onHide={() => setShowAgregar(false)}
+        empleadoId={empleadoId}
+        empleadoNombre={empleadoNombre}
+        onJornalAgregado={fetchJornales}
+      />
 
       <ModificarJornal
         show={showModificar}

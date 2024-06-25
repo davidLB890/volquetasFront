@@ -6,6 +6,7 @@ import useAuth from '../../hooks/useAuth';
 import AlertMessage from "../AlertMessage";
 import "../../styles/empleados.css";
 import "../../styles/global.css"
+import AgregarTelefono from '../AgregarTelefono';
 
 const Empleados = () => {
   const [empleados, setEmpleados] = useState([]);
@@ -14,10 +15,12 @@ const Empleados = () => {
   const [filtroRol, setFiltroRol] = useState('');
   const [filtroCedula, setFiltroCedula] = useState('');
   const [editando, setEditando] = useState(null);
-  const [formValues, setFormValues] = useState({ nombre: '', cedula: '', rol: ''});
+  const [formValues, setFormValues] = useState({ nombre: '', cedula: '', rol: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [telefonosVisible, setTelefonosVisible] = useState({});
+  const [showAgregar, setShowAgregar] = useState(false);
+  const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState(null);
 
   let navigate = useNavigate();
   const getToken = useAuth();
@@ -93,12 +96,12 @@ const Empleados = () => {
       if (error.status === 401) {
         navigate("/login");
       }
-      }
-      };
-      
+    }
+  };
+
   const modificar = (empleado) => {
     setEditando(empleado.id);
-    setFormValues({ nombre: empleado.nombre, cedula: empleado.cedula, rol: empleado.rol })
+    setFormValues({ nombre: empleado.nombre, cedula: empleado.cedula, rol: empleado.rol });
   };
 
   const handleInputChange = (e) => {
@@ -128,16 +131,22 @@ const Empleados = () => {
     setEditando(null);
   };
 
-
-  const agregar = (empleadoId, empleadoNombre) => {
-    navigate("/empleados/telefonos", { state: { id: empleadoId, nombre: empleadoNombre } });
-  };
-
   const toggleTelefonos = (empleadoId) => {
     setTelefonosVisible(prevState => ({
       ...prevState,
       [empleadoId]: !prevState[empleadoId]
     }));
+  };
+
+  const handleMostrarAgregar = (empleado) => {
+    setEmpleadoSeleccionado(empleado);
+    setShowAgregar(true);
+  };
+
+  const handleTelefonoAgregado = () => {
+    setShowAgregar(false);
+    setEmpleadoSeleccionado(null);
+    setCambios(true);
   };
 
   const empleadosFiltrados = empleados.filter((empleado) => {
@@ -242,29 +251,21 @@ const Empleados = () => {
                 </td>
                 <td></td>
                 <td>
-                {editando === empleado.id ? (
-                  <>
-                  <Button variant="success" onClick={aceptarCambio}>Aceptar</Button>
-                  <Button variant="secondary" onClick={cancelarCambio}>Cancelar</Button>
-                </>
-              ) : (
-                <>
-                  <Button variant="danger" onClick={() => eliminar(empleado.id)}>
-                    Eliminar
-                  </Button>
-                  <Button variant="primary" onClick={() => modificar(empleado)}>
-                    Modificar
-                  </Button>
-                  <Button variant="dark" onClick={() => toggleTelefonos(empleado.id)}>
-                    Teléfonos
-                  </Button>
-                  <Button variant={empleado.habilitado ? 'secondary' : 'light'}
-                    onClick={() => cambiarEstadoDelEmpleado(empleado.id)}
-                    className="me-2">
-                    {empleado.habilitado ? 'Deshabilitar' : 'Habilitar'}
-                  </Button>
-                </>
-                )}
+                  {editando === empleado.id ? (
+                    <>
+                      <Button variant="success" onClick={aceptarCambio}>Aceptar</Button>
+                      <Button variant="secondary" onClick={cancelarCambio}>Cancelar</Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button variant="danger" onClick={() => eliminar(empleado.id)}>Eliminar</Button>
+                      <Button variant="primary" onClick={() => modificar(empleado)}>Modificar</Button>
+                      <Button variant="dark" onClick={() => toggleTelefonos(empleado.id)}>Teléfonos</Button>
+                      <Button variant={empleado.habilitado ? 'secondary' : 'light'} onClick={() => cambiarEstadoDelEmpleado(empleado.id)}>
+                        {empleado.habilitado ? 'Deshabilitar' : 'Habilitar'}
+                      </Button>
+                    </>
+                  )}
                 </td>
               </tr>
               <tr>
@@ -279,10 +280,8 @@ const Empleados = () => {
                         ) : (
                           <li>No tiene teléfonos registrados</li>
                         )}
-                        <Button variant="secondary" onClick={() => agregar(empleado.id, empleado.nombre)}>
-                          Agregar teléfono
-                        </Button>
                       </ul>
+                      <Button variant="secondary" onClick={() => handleMostrarAgregar(empleado)}>Agregar Teléfono</Button>
                     </div>
                   </Collapse>
                 </td>
@@ -291,8 +290,19 @@ const Empleados = () => {
           ))}
         </tbody>
       </table>
+      
+      {empleadoSeleccionado && (
+        <AgregarTelefono
+          show={showAgregar}
+          onHide={() => setShowAgregar(false)}
+          empleadoId={empleadoSeleccionado.id}
+          nombre={empleadoSeleccionado.nombre}
+          onTelefonoAgregado={handleTelefonoAgregado}
+        />
+      )}
     </div>
   );
 };
 
 export default Empleados;
+

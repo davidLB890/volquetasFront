@@ -78,7 +78,7 @@ const ModificarJornalModal = ({ show, onHide, jornal, onJornalModificado }) => {
             <Form.Control
               type="text"
               value={nuevoJornal.horasExtra}
-              onChange={(e) => setNuevoJornal({ ...nuevoJornal, horasExtra: e.target.value })}
+              readOnly
             />
           </Form.Group>
           <Form.Group controlId="formTipo">

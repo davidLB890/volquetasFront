@@ -117,6 +117,7 @@ const Jornales = () => {
                   <ListGroup.Item>
                     <ListaJornales 
                       empleadoId={empleado.id} 
+                      empleadoNombre={empleado.nombre} 
                       empleadoRol={rol} 
                       fechaInicio={fechaInicio} 
                       fechaFin={fechaFin} 

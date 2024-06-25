@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { deleteCamion, putCamion, getCamiones } from '../../api';
+import { deleteCamion, getCamiones } from '../../api';
 import { useNavigate } from 'react-router-dom';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Container } from 'react-bootstrap';
+import ModificarCamion from './ModificarCamiones';
 import ServiciosCamion from '../ServiciosFolder/Servicios';
 import AsignarChofer from './AsignarChofer';
 import useAuth from '../../hooks/useAuth';
@@ -12,109 +13,87 @@ const Camiones = () => {
   const [cambios, setCambios] = useState(true);
   const [filtroMatricula, setFiltroMatricula] = useState('');
   const [filtroModelo, setFiltroModelo] = useState('');
-  const [editandoCamion, setEditandoCamion] = useState(null);
-  const [formValues, setFormValues] = useState({ matricula: '', modelo: '', anio: '', estado: '' });
-  const [mostrarFormularioServicio, setMostrarFormularioServicio] = useState(null); // Camion ID or null
-  const [mostrarServiciosCamion, setMostrarServiciosCamion] = useState(null); // Camion ID or null
-  const [mostrarAsignarChofer, setMostrarAsignacion] = useState(null); // Camion ID or null
+  const [mostrarModificarCamion, setMostrarModificarCamion] = useState(null);
+  const [mostrarFormularioServicio, setMostrarFormularioServicio] = useState(null);
+  const [mostrarServiciosCamion, setMostrarServiciosCamion] = useState(null);
+  const [mostrarAsignarChofer, setMostrarAsignarChofer] = useState(null);
 
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const getToken = useAuth();
 
   useEffect(() => {
-    const usuarioToken = getToken();
-    if (usuarioToken === null) {
-      navigate("/login");
-    } else {
-      if (cambios) {
+    const fetchCamiones = async () => {
+      const usuarioToken = getToken();
+      if (!usuarioToken) {
+        navigate("/login");
+      } else {
         try {
-          getCamiones(usuarioToken)
-            .then((response) => {
-              const camiones = response.data;
-              setCamiones(camiones);
-              setCambios(false);
-            })
-            .catch((error) => {
-              console.error("Error al obtener camiones:", error.response.data.error);
-              if (error.response.status === 401) {
-                navigate("/login");
-              }
-            });
+          const response = await getCamiones(usuarioToken);
+          setCamiones(response.data);
+          setCambios(false);
         } catch (error) {
-          console.error("Error al obtener camiones:", error.response.data.error);
-          if (error.status === 401) {
+          console.error("Error al obtener camiones:", error.response?.data?.error || error.message);
+          if (error.response?.status === 401) {
             navigate("/login");
           }
         }
       }
+    };
+
+    if (cambios) {
+      fetchCamiones();
     }
   }, [cambios, getToken, navigate]);
 
-  const eliminar = async (camionId) => {
+  const handleEliminar = async (camionId) => {
     const usuarioToken = getToken();
 
-    deleteCamion(camionId, usuarioToken)
-      .then((response) => {
-        const datos = response.data;
-        if (datos.error) {
-          console.error(datos.error);
-        } else {
-          console.log(datos);
-          setCambios(true);
-        }
-      })
-      .catch((error) => {
-        console.error("Error al conectar con el servidor:", error.response.data.error);
-      });
-  };
-
-  const cambiar = (camion) => {
-    setEditandoCamion(camion.id);
-    setFormValues({ matricula: camion.matricula, modelo: camion.modelo, anio: camion.anio, estado: camion.estado });
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues({ ...formValues, [name]: value });
-  };
-
-  const aceptarCambio = async () => {
-    const usuarioToken = getToken();
     try {
-      const response = await putCamion(editandoCamion, formValues, usuarioToken);
+      await deleteCamion(camionId, usuarioToken);
       setCambios(true);
-      setEditandoCamion(null);
-
-      const datos = response.data;
-
-      console.log(datos);
     } catch (error) {
-      console.error("Error al actualizar el camión:", error.response.data.error);
+      console.error("Error al conectar con el servidor:", error.response?.data?.error || error.message);
     }
   };
 
-  const cancelarCambio = () => {
-    setEditandoCamion(null);
+  const handleModificar = (camion) => {
+    setMostrarModificarCamion(camion);
+  };
+
+  const handleActualizarCamion = (camionActualizado) => {
+    const camionesActualizados = camiones.map(c => (c.id === camionActualizado.id ? camionActualizado : c));
+    setCamiones(camionesActualizados);
+  };
+
+  const handleCancelarModificar = () => {
+    setMostrarModificarCamion(null);
+  };
+
+  const handleFiltrarMatricula = (e) => {
+    setFiltroMatricula(e.target.value);
+  };
+
+  const handleFiltrarModelo = (e) => {
+    setFiltroModelo(e.target.value);
+  };
+
+  const handleMostrarServicios = (camionId) => {
+    setMostrarServiciosCamion((prev) => prev === camionId ? null : camionId);
+    setMostrarFormularioServicio(camionId === mostrarFormularioServicio ? null : camionId);
+  };
+
+  const handleMostrarAsignarChofer = (camionId) => {
+    setMostrarAsignarChofer((prev) => prev === camionId ? null : camionId);
   };
 
   const camionesFiltrados = camiones.filter((camion) => {
-    return (
-      (filtroMatricula === '' || camion.matricula.toLowerCase().startsWith(filtroMatricula.toLowerCase())) &&
-      (filtroModelo === '' || camion.modelo.toString().startsWith(filtroModelo))
-    );
+    const matriculaMatches = camion.matricula.toLowerCase().startsWith(filtroMatricula.toLowerCase());
+    const modeloMatches = camion.modelo.toString().toLowerCase().startsWith(filtroModelo.toLowerCase());
+    return (filtroMatricula === '' || matriculaMatches) && (filtroModelo === '' || modeloMatches);
   });
 
-  const showServicios = (camionId) => {
-    setMostrarServiciosCamion((prev) => prev === camionId ? null : camionId);
-    setMostrarFormularioServicio(camionId === mostrarFormularioServicio ? null : camionId);
-  }
-
-  const showCamiones = (camionId) => {
-    setMostrarAsignacion((prev) => prev === camionId ? null : camionId);
-  }
-
   return (
-    <div className="container">
+    <Container>
       <div className='header'>
         <h1>Lista de Camiones</h1>
         <Button variant="primary" onClick={() => navigate("/camiones/crear")}>Nuevo Camión</Button>
@@ -136,7 +115,7 @@ const Camiones = () => {
                 type="text"
                 placeholder="Filtrar por Matricula"
                 value={filtroMatricula}
-                onChange={(e) => setFiltroMatricula(e.target.value)}
+                onChange={handleFiltrarMatricula}
               />
             </th>
             <th>
@@ -144,7 +123,7 @@ const Camiones = () => {
                 type="text"
                 placeholder="Filtrar por Modelo"
                 value={filtroModelo}
-                onChange={(e) => setFiltroModelo(e.target.value)}
+                onChange={handleFiltrarModelo}
               />
             </th>
             <th></th>
@@ -157,71 +136,28 @@ const Camiones = () => {
             <React.Fragment key={camion.id}>
               <tr>
                 <th scope="row">{index + 1}</th>
+                <td>{camion.matricula}</td>
+                <td>{camion.modelo}</td>
+                <td>{camion.anio}</td>
+                <td>{camion.estado}</td>
                 <td>
-                  {editandoCamion === camion.id ? (
-                    <Form.Control
-                      type="text"
-                      name="matricula"
-                      value={formValues.matricula}
-                      onChange={handleInputChange}
-                    />
-                  ) : (
-                    camion.matricula
-                  )}
-                </td>
-                <td>
-                  {editandoCamion === camion.id ? (
-                    <Form.Control
-                      type="text"
-                      name="modelo"
-                      value={formValues.modelo}
-                      onChange={handleInputChange}
-                    />
-                  ) : (
-                    camion.modelo
-                  )}
-                </td>
-                <td>
-                  {editandoCamion === camion.id ? (
-                    <Form.Control
-                      type="text"
-                      name="anio"
-                      value={formValues.anio}
-                      onChange={handleInputChange}
-                    />
-                  ) : (
-                    camion.anio
-                  )}
-                </td>
-                <td>
-                  {editandoCamion === camion.id ? (
-                    <Form.Control
-                      type="text"
-                      name="estado"
-                      value={formValues.estado}
-                      onChange={handleInputChange}
-                    />
-                  ) : (
-                    camion.estado
-                  )}
-                </td>
-                <td>
-                  {editandoCamion === camion.id ? (
-                    <>
-                      <Button variant="success" onClick={aceptarCambio}>Aceptar</Button>
-                      <Button variant="secondary" onClick={cancelarCambio}>Cancelar</Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button variant="danger" onClick={() => eliminar(camion.id)}>Eliminar</Button>
-                      <Button variant="primary" onClick={() => cambiar(camion)}>Modificar</Button>
-                      <Button variant="info" onClick={() => showServicios(camion.id)}>Servicios</Button>
-                      <Button variant="warning" onClick={() => showCamiones(camion.id)}>Chofer</Button>
-                    </>
-                  )}
+                  <Button variant="danger" onClick={() => handleEliminar(camion.id)}>Eliminar</Button>
+                  <Button variant="primary" onClick={() => handleModificar(camion)}>Modificar</Button>
+                  <Button variant="info" onClick={() => handleMostrarServicios(camion.id)}>Servicios</Button>
+                  <Button variant="warning" onClick={() => handleMostrarAsignarChofer(camion.id)}>Chofer</Button>
                 </td>
               </tr>
-
+              {mostrarModificarCamion === camion && (
+                <tr>
+                  <td colSpan="6">
+                    <ModificarCamion
+                      camion={camion}
+                      onUpdate={handleActualizarCamion}
+                      onHide={handleCancelarModificar}
+                    />
+                  </td>
+                </tr>
+              )}
               {mostrarServiciosCamion === camion.id && (
                 <tr>
                   <td colSpan="6">
@@ -232,7 +168,7 @@ const Camiones = () => {
               {mostrarAsignarChofer === camion.id && (
                 <tr>
                   <td colSpan="6">
-                    <AsignarChofer camionId={camion.id} />
+                    <AsignarChofer camionId={camion.id} onHide={() => handleMostrarAsignarChofer(null)} />
                   </td>
                 </tr>
               )}
@@ -240,9 +176,8 @@ const Camiones = () => {
           ))}
         </tbody>
       </table>
-    </div>
+    </Container>
   );
 };
 
 export default Camiones;
-

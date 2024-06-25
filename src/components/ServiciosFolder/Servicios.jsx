@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { getServicioPorCamion } from "../../api";
-import { Container, Table, Alert } from "react-bootstrap";
+import { Container, Table, Alert, Button } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import CrearServicio from "./CrearServicios";
 
 const ServiciosCamion = ({ camionId }) => {
   const [servicios, setServicios] = useState([]);
   const [error, setError] = useState('');
+  const [mostrarModal, setMostrarModal] = useState(false);
 
   const getToken = useAuth();
 
@@ -26,6 +27,18 @@ const ServiciosCamion = ({ camionId }) => {
   useEffect(() => {
     fetchServicios();
   }, [camionId, getToken]);
+
+  const handleMostrarModal = () => {
+    setMostrarModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setMostrarModal(false);
+  };
+
+  const handleSuccess = () => {
+    fetchServicios();
+  };
 
   return (
     <Container>
@@ -52,7 +65,18 @@ const ServiciosCamion = ({ camionId }) => {
             ))}
           </tbody>
         </Table>
-        <CrearServicio idCamion={camionId} onSuccess={fetchServicios} />
+
+        <Button variant="primary" onClick={handleMostrarModal}>
+          Agregar Servicio
+        </Button>
+
+        <CrearServicio
+          idCamion={camionId}
+          onSuccess={handleSuccess}
+          show={mostrarModal}
+          onHide={handleCloseModal}
+        />
+
         {error && <Alert variant="danger">{error}</Alert>}
       </>
     </Container>
