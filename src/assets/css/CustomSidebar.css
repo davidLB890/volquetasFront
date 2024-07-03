@@ -1,0 +1,46 @@
+.sidenav {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .nav-submenu {
+    padding-left: 1rem;
+  }
+  
+  .sidenav-footer {
+    margin-top: auto;
+    
+  }
+  
+  .nav-item-title {
+    color: #333; /* Títulos más oscuros */
+    font-weight: bold;
+  }
+  
+  .nav-item-title:hover {
+    background-color: #f8f9fa; /* Efecto de color al pasar el mouse */
+  }
+  
+  .nav-submenu .nav-link {
+    color: #555;
+  }
+  
+  .nav-submenu .nav-link:hover {
+    background-color: #e9ecef; /* Efecto de color al pasar el mouse sobre los elementos del submenú */
+  }
+
+  .breadcrumbs-container {
+    margin-right: auto; /* Esto empuja los breadcrumbs hacia la derecha */
+    padding-left: 180px; /* Añade espacio adicional si es necesario */
+  }
+  
+  .navbar-nav .d-flex.align-items-center {
+    flex-wrap: nowrap; /* Asegura que los elementos no se envuelvan */
+  }
+  
+  .navbar-nav .d-flex.align-items-center h5 {
+    margin-bottom: 0; /* Asegura que el título no tenga margen inferior */
+    margin-right: 15px; /* Añade espacio entre el título y el botón */
+  }
+  

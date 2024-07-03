@@ -1,0 +1,23 @@
+/* App.css */
+
+/* .app-container {
+    display: flex;
+    height: 100vh;
+  } */
+  
+  .sidenav {
+    flex: 0 0 250px; 
+    height: 100vh;
+    overflow-y: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  
+  .content {
+    flex: 1;
+    margin-left: 280px; /* Debe coincidir con el ancho del sidebar */
+    overflow-y: auto; /* Permite que el contenido principal sea desplazable */
+    padding: 20px; /* Ajusta el espacio interior según tus necesidades */
+  }
+  
