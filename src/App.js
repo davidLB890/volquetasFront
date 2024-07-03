@@ -13,7 +13,7 @@ import Empleados from './components/EmpleadosFolder/Empleados';
 import Jornales from './components/JornalesFolder/Jornales';
 import Camiones from './components/CamionesFolder/Camiones';
 import ListaJornalesDatos from './components/JornalesFolder/ListaJornalesDatos';
-import AgregarTelefono from './components/AgregarTelefono';
+import AgregarTelefono from './components/TelefonosFolder/AgregarTelefono';
 import 'bootstrap/dist/css/bootstrap.min.css';
 //import "./styles/global.css";
 import HistorialCamiones from './components/CamionesFolder/HistorialCamiones';

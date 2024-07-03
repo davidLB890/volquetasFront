@@ -5,7 +5,7 @@ import useAuth from "../../hooks/useAuth";
 import AlertMessage from "../AlertMessage";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
 import { Form, Button, Card, Alert } from "react-bootstrap";
-import AgregarTelefono from "../AgregarTelefono"; // Asegúrate de importar AgregarTelefono
+import AgregarTelefono from "../TelefonosFolder/AgregarTelefono"; // Asegúrate de importar AgregarTelefono
 
 const CrearEmpleados = () => {
   const nombreRef = useRef("");
@@ -152,6 +152,7 @@ const CrearEmpleados = () => {
             </Form.Group>
 
             <Form.Group controlId="formFechaIngreso" className="mb-2">
+              <Form.Label>Fecha de ingreso</Form.Label>
               <Form.Control
                 ref={fechaDeIngresoRef}
                 type="date"

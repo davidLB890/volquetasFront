@@ -20,18 +20,22 @@ const Breadcrumbs = () => {
 
   return (
     <Breadcrumb>
-      {pathnames.map((value, index) => {
-        const isLast = index === pathnames.length - 1;
-        const to = `${pathnames.slice(0, index + 1).join('/')}`;
+      {pathnames.length === 0 ? (
+        <Breadcrumb.Item active>Inicio</Breadcrumb.Item>
+      ) : (
+        pathnames.map((value, index) => {
+          const isLast = index === pathnames.length - 1;
+          const to = `${pathnames.slice(0, index + 1).join('/')}`;
 
-        return isLast ? (
-          <Breadcrumb.Item active key={to}>{breadcrumbNameMap[value]}</Breadcrumb.Item>
-        ) : (
-          <Breadcrumb.Item as={Link} to={to} key={to}>
-            {breadcrumbNameMap[value]}
-          </Breadcrumb.Item>
-        );
-      })}
+          return isLast ? (
+            <Breadcrumb.Item active key={to}>{breadcrumbNameMap[value]}</Breadcrumb.Item>
+          ) : (
+            <Breadcrumb.Item as={Link} to={to} key={to}>
+              {breadcrumbNameMap[value]}
+            </Breadcrumb.Item>
+          );
+        })
+      )}
     </Breadcrumb>
   );
 };

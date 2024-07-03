@@ -326,6 +326,15 @@ export const postTelefono = (telefonoData, usuarioToken) => {
   });
 };
 
+export const putTelefono = (telefonoId, telefonoData, usuarioToken) => {
+  return axios.put(`${API_URL}/telefonos/${telefonoId}`, telefonoData, {
+    headers: {
+      'Authorization': usuarioToken,
+      'Content-Type': 'application/json',
+    }
+  });
+}
+
 
 
 

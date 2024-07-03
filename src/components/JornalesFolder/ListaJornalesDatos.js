@@ -125,7 +125,7 @@ const ListaJornalesDatos = ({
               <td>{datos.diasLicencia}</td>
               <td>{datos.diasEnfermedad}</td>
               <td>{datos.diasFalta}</td>
-              <td>{parseFloat(datos.horasTrabajadas)}</td> {/* para no mostrar los 0 innecesarios */}
+              <td>{parseFloat(datos.horasTrabajadas).toFixed(2)}</td>{/* para mostrar solo 2 lugares después de la coma */}
               <td>{datos.horasExtra}</td>
             </tr>
           </tbody>

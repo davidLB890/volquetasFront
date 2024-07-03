@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import AlertMessage from "./AlertMessage";
-import { postTelefono } from "../api";
-import useAuth from "../hooks/useAuth";
+import AlertMessage from "../AlertMessage";
+import { postTelefono } from "../../api";
+import useAuth from "../../hooks/useAuth";
 
 const AgregarTelefono = ({
   show,
@@ -43,7 +43,7 @@ const AgregarTelefono = ({
       setExtension("");
       setTimeout(() => setSuccess(""), 7000);
 
-      onTelefonoAgregado(); // Notifica que se ha agregado un teléfono
+      onTelefonoAgregado(response.data); // Pasa el nuevo teléfono correctamente
     } catch (error) {
       setError(error.response?.data?.error || "Error al agregar el teléfono");
       setTimeout(() => setError(""), 7000);
@@ -56,7 +56,7 @@ const AgregarTelefono = ({
         <Modal.Title>Agregando teléfono a {nombre}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form onSubmit={handleAgregarTelefono}>
           {error && <AlertMessage type="error" message={error} />}
           {success && <AlertMessage type="success" message={success} />}
           <Form.Group controlId="nuevoTelefono">
@@ -85,7 +85,7 @@ const AgregarTelefono = ({
           <Button
             className="mt-3"
             variant="primary"
-            onClick={handleAgregarTelefono}
+            type="submit"
           >
             Agregar Teléfono
           </Button>
@@ -96,6 +96,7 @@ const AgregarTelefono = ({
 };
 
 export default AgregarTelefono;
+
 
 /* import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';

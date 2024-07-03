@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { deleteCamion, getCamiones } from "../../api";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Container } from "react-bootstrap";
+import { Button, Form, Container, Modal } from "react-bootstrap";
 import ModificarCamion from "./ModificarCamiones";
 import ServiciosCamion from "../ServiciosFolder/Servicios";
 import AsignarChofer from "./AsignarChofer";
@@ -17,6 +17,8 @@ const Camiones = () => {
     useState(null);
   const [mostrarServiciosCamion, setMostrarServiciosCamion] = useState(null);
   const [mostrarAsignarChofer, setMostrarAsignarChofer] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [camionSeleccionado, setCamionSeleccionado] = useState(null);
 
   const rolUsuario = localStorage.getItem("userRol");
 
@@ -62,6 +64,16 @@ const Camiones = () => {
         error.response?.data?.error || error.message
       );
     }
+  };
+
+  const confirmarEliminar = (camion) => {
+    setCamionSeleccionado(camion);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmEliminar = () => {
+    handleEliminar(camionSeleccionado.id);
+    setShowConfirmModal(false);
   };
 
   const handleModificar = (camion) => {
@@ -166,25 +178,41 @@ const Camiones = () => {
                 {rolUsuario === "admin" && (
                   <Button
                     variant="danger"
-                    onClick={() => handleEliminar(camion.id)}
+                    style={{
+                      padding: "0.5rem 1rem",
+                      marginRight: "0.5rem",
+                    }}
+                    onClick={() => confirmarEliminar(camion)}
                   >
                     Eliminar
                   </Button>
                 )}
                   <Button
                     variant="primary"
+                    style={{
+                      padding: "0.5rem 1rem",
+                      marginRight: "0.5rem",
+                    }}
                     onClick={() => handleModificar(camion)}
                   >
                     Modificar
                   </Button>
                   <Button
                     variant="info"
+                    style={{
+                      padding: "0.5rem 1rem",
+                      marginRight: "0.5rem",
+                    }}
                     onClick={() => handleMostrarServicios(camion.id)}
                   >
                     Servicios
                   </Button>
                   <Button
                     variant="warning"
+                    style={{
+                      padding: "0.5rem 1rem",
+                      marginRight: "0.5rem",
+                    }}
                     onClick={() => handleMostrarAsignarChofer(camion.id)}
                   >
                     Chofer
@@ -223,6 +251,22 @@ const Camiones = () => {
           ))}
         </tbody>
       </table>
+      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Eliminación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Estás seguro de que deseas eliminar el camión con matrícula {camionSeleccionado?.matricula}?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleConfirmEliminar}>
+            Eliminar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
