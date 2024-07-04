@@ -5,7 +5,7 @@ import { crearCamion } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
 
-const CrearCamiones = () => {
+const AgregarCamion = () => {
   const matricula = useRef(null);
   const modelo = useRef(null);
   const anio = useRef(null);
@@ -127,4 +127,4 @@ const CrearCamiones = () => {
   );
 };
 
-export default CrearCamiones;
+export default AgregarCamion;

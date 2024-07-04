@@ -6,8 +6,9 @@ import Singin from './components/UsuariosFolder/Singin';
 import Dashboard from './components/Dashboard';
 import CustomSidebar from './components/SideNav';
 import CustomNavbar from './components/NavBarr';
-import CrearEmpleados from './components/EmpleadosFolder/CrearEmpleados';
-import CrearCamiones from './components/CamionesFolder/CrearCamiones';
+import AgregarEmpleado from './components/EmpleadosFolder/AgregarEmpleado';
+import AgregarCamion from './components/CamionesFolder/AgregarCamion';
+import AgregarObra from './components/ObrasFolder/AgregarObra';
 import ConfirmarUsuario from './components/UsuariosFolder/ConfirmarUsuario';
 import Empleados from './components/EmpleadosFolder/Empleados';
 import Jornales from './components/JornalesFolder/Jornales';
@@ -19,6 +20,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import HistorialCamiones from './components/CamionesFolder/HistorialCamiones';
 import CrearClientes from './components/ClientesFolder/AgregarCliente';
 import Clientes from './components/ClientesFolder/Clientes';
+import Obras from './components/ObrasFolder/Obras';
 import './assets/css/app.css';
 import 'moment/locale/es';
 
@@ -49,7 +51,7 @@ function App() {
           <Route path="/singin" element={<Singin />} />
           {/* USUARIOS */}
           <Route path="/usuarios/confirmar" element={<ConfirmarUsuario />} />
-          <Route path="/empleados/crear" element={<CrearEmpleados />} />
+          <Route path="/empleados/crear" element={<AgregarEmpleado />} />
           <Route path="/empleados/telefonos" element={<AgregarTelefono />} />
           {/* EMPLEADOS */}
           <Route path="/empleados" element={<Empleados />} />
@@ -57,12 +59,14 @@ function App() {
           <Route path="/lj" element={<ListaJornalesDatos />} />
           {/* CAMIONES */}
           <Route path="/camiones" element={<Camiones />} />
-          <Route path="/camiones/crear" element={<CrearCamiones />} />
+          <Route path="/camiones/crear" element={<AgregarCamion />} />
           <Route path="/camiones/historial" element={<HistorialCamiones />} />
           {/* CLIENTES */}
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/clientes/crear" element={<CrearClientes />} />
-          {/* <Route path="/hc" element={<AsignarChofer />} /> */}
+          {/* OBRAS */}
+          <Route path="/obras" element={<Obras />} />
+          <Route path="/obras/crear" element={<AgregarObra />} />
         </Routes>
       </div>
     </div>

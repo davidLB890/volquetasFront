@@ -12,7 +12,7 @@ import useAuth from "../hooks/useAuth";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import  CustomNavbar from "./SideNav";
 import Singin from "./UsuariosFolder/Singin";
-import CrearEmpleados from "./EmpleadosFolder/CrearEmpleados";
+import AgregarEmpleado from "./EmpleadosFolder/AgregarEmpleado";
 import Empleados from "./EmpleadosFolder/Empleados"
 
 

@@ -7,7 +7,7 @@ import useHabilitarBoton from "../../hooks/useHabilitarBoton";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import AgregarTelefono from "../TelefonosFolder/AgregarTelefono"; // Asegúrate de importar AgregarTelefono
 
-const CrearEmpleados = () => {
+const AgregarEmpleado = () => {
   const nombreRef = useRef("");
   const cedulaRef = useRef("");
   const rolRef = useRef("");
@@ -201,4 +201,4 @@ const CrearEmpleados = () => {
   );
 };
 
-export default CrearEmpleados;
+export default AgregarEmpleado;

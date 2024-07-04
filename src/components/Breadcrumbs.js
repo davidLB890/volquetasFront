@@ -14,6 +14,8 @@ const Breadcrumbs = () => {
     'clientes': 'Clientes',
     'usuarios': 'Usuarios',
     'confirmar': 'Confirmar',
+    'obras': 'Obras',
+    'crear': 'Crear',
 
     // Agrega más rutas según sea necesario
   };

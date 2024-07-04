@@ -174,6 +174,29 @@ const CustomSidebar = ({ userRole }) => {
               </div>
             </Nav.Item>
           </div>
+
+          <div
+            onMouseEnter={() => handleMouseEnter("obras")}
+            onMouseLeave={handleMouseLeave}
+            className="nav-item-container"
+          >
+            <Nav.Item className="nav-item">
+              <div
+                onClick={() => toggleExpand("obras")}
+                className="nav-link cursor-pointer nav-item-title"
+              >
+                <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                  <i className="ni ni-single-02 text-primary text-sm opacity-10"></i>
+                </div>
+                <span className="nav-link-text ms-1">Obras</span>
+              </div>
+              <div className={`nav-submenu ms-5 collapse ${expanded === "obras" ? "show" : ""}`}>
+                <Nav.Link as={Link} to="/obras" onClick={handleMouseLeave}>
+                  Obras
+                </Nav.Link>
+              </div>
+            </Nav.Item>
+          </div>
         </Nav>
       </div>
     </aside>

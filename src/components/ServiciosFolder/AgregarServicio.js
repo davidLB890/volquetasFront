@@ -4,7 +4,7 @@ import useAuth from "../../hooks/useAuth";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
 import { Modal, Form, Button } from "react-bootstrap";
 
-const CrearServicio = ({ idCamion, onSuccess, show, onHide }) => {
+const AgregarServicio = ({ idCamion, onSuccess, show, onHide }) => {
   const tipoRef = useRef(null);
   const fechaRef = useRef(null);
   const monedaRef = useRef(null);
@@ -101,6 +101,6 @@ const CrearServicio = ({ idCamion, onSuccess, show, onHide }) => {
   );
 };
 
-export default CrearServicio;
+export default AgregarServicio;
 
 

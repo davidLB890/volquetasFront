@@ -386,3 +386,98 @@ export const getContactoEmpresa = (usuarioToken) => {
     }
   });
 }
+
+
+
+//OBRAS
+export const getObras = (usuarioToken) => {
+  return axios.get(`${API_URL}/obras`, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
+    }
+  });
+}
+export const postObra = (obra, usuarioToken) => {
+  return axios.post(`${API_URL}/obras`, obra, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
+    }
+  });
+}
+export const putObra = (obraId, obra, usuarioToken) => {
+  return axios.put(`${API_URL}/obras/${obraId}`, obra, {
+    headers: {
+      'Authorization': usuarioToken, 
+    }
+  });
+}
+export const putObraDetalle = (obraId, obra, usuarioToken) => {
+  return axios.put(`${API_URL}/obras-detalle/${obraId}`, obra, {
+    headers: {
+      'Authorization': usuarioToken, 
+    }
+  });
+}
+export const deleteObra = (obraId, usuarioToken) => {
+  return axios.delete(`${API_URL}/obras/${obraId}`, {
+    headers: {
+      'Authorization': usuarioToken,
+      'Content-Type': 'application/json',
+    },
+  });
+}
+
+
+
+
+//PEDIDOS
+export const getPedidos = (usuarioToken) => {
+  return axios.get(`${API_URL}/pedidos`, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
+    }
+  });
+}
+export const getPedidoId = (pedidoId, usuarioToken) => {
+  return axios.get(`${API_URL}/pedidos/${pedidoId}`, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
+    }
+  });
+}
+export const postPedidoNuevo = (pedido, usuarioToken) => {
+  return axios.post(`${API_URL}/pedidos/nuevo`, pedido, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
+    }
+  });
+}
+export const postPedidoMultiple = (pedido, usuarioToken) => {
+  return axios.post(`${API_URL}/pedidos/multiple`, pedido, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
+    }
+  });
+}
+export const postPedidoEntregaLevante = (pedido, usuarioToken) => {
+  return axios.post(`${API_URL}/pedidos/entrega-levante`, pedido, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
+    }
+  });
+}
+export const postPedidoRecambio = (pedido, usuarioToken) => {
+  return axios.post(`${API_URL}/pedidos/recambio`, pedido, {
+    headers: {
+      'Authorization': usuarioToken, 
+      'Content-Type': 'application/json', 
+    }
+  });
+}

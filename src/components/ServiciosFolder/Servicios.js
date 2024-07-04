@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getServicioPorCamion } from '../../api';
 import { Container, Table, Alert, Button } from 'react-bootstrap';
 import useAuth from '../../hooks/useAuth';
-import CrearServicio from './CrearServicios';
+import AgregarServicio from './AgregarServicio';
 import moment from 'moment';
 
 const ServiciosCamion = ({ camionId }) => {
@@ -74,7 +74,7 @@ const ServiciosCamion = ({ camionId }) => {
           Agregar Servicio
         </Button>
 
-        <CrearServicio idCamion={camionId} onSuccess={handleSuccess} show={mostrarModal} onHide={handleCloseModal} />
+        <AgregarServicio idCamion={camionId} onSuccess={handleSuccess} show={mostrarModal} onHide={handleCloseModal} />
 
         {error && <Alert variant="danger">{error}</Alert>}
       </>
