@@ -21,8 +21,10 @@ import HistorialCamiones from './components/CamionesFolder/HistorialCamiones';
 import CrearClientes from './components/ClientesFolder/AgregarCliente';
 import Clientes from './components/ClientesFolder/Clientes';
 import Obras from './components/ObrasFolder/Obras';
+import DatosEmpresa from './components/EmpresasFolder/DatosEmpresa';
 import './assets/css/app.css';
 import 'moment/locale/es';
+import Empresas from './components/EmpresasFolder/Empresas';
 
 function App() {
   const location = useLocation();
@@ -67,6 +69,9 @@ function App() {
           {/* OBRAS */}
           <Route path="/obras" element={<Obras />} />
           <Route path="/obras/crear" element={<AgregarObra />} />
+          {/* EMPLEADOS */}
+          <Route path="/empresas" element={<Empresas />} />
+          <Route path="/empresas/datos" element={<DatosEmpresa />} />
         </Routes>
       </div>
     </div>

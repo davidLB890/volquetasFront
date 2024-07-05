@@ -3,6 +3,7 @@ import { deleteObra, getObras } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Container, Modal } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
+import DatosObra from "./DatosObra"; // Ajusta la ruta según sea necesario
 
 const ListaObras = () => {
   const [obras, setObras] = useState([]);
@@ -11,6 +12,7 @@ const ListaObras = () => {
   const [filtroEsquina, setFiltroEsquina] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [obraSeleccionada, setObraSeleccionada] = useState(null);
+  const [mostrarDatosObra, setMostrarDatosObra] = useState(false);
 
   const rolUsuario = localStorage.getItem("userRol");
 
@@ -85,80 +87,113 @@ const ListaObras = () => {
     );
   });
 
+  const handleMostrarDatosObra = (obra) => {
+    setObraSeleccionada(obra);
+    setMostrarDatosObra(true);
+  };
+
+  const handleVolver = () => {
+    setMostrarDatosObra(false);
+    setObraSeleccionada(null);
+  };
+
   return (
-    <div className="card">
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th scope="col"></th>
-            <th scope="col">Calle</th>
-            <th scope="col">Esquina</th>
-            <th scope="col">Acciones</th>
-          </tr>
-          <tr>
-            <th></th>
-            <th>
-              <Form.Control
-                type="text"
-                placeholder="Filtrar por Calle"
-                value={filtroCalle}
-                onChange={handleFiltrarCalle}
-              />
-            </th>
-            <th>
-              <Form.Control
-                type="text"
-                placeholder="Filtrar por Esquina"
-                value={filtroEsquina}
-                onChange={handleFiltrarEsquina}
-              />
-            </th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {obrasFiltradas.map((obra, index) => (
-            <React.Fragment key={obra.id}>
+    <Container className="card">
+      {mostrarDatosObra && obraSeleccionada ? (
+        <div>
+          <Button variant="secondary" onClick={handleVolver}>
+            Volver
+          </Button>
+          <DatosObra obraId={obraSeleccionada.id} />
+        </div>
+      ) : (
+        <div>
+          <table className="table table-striped">
+            <thead>
               <tr>
-                <th scope="row">{index + 1}</th>
-                <td>{obra.calle}</td>
-                <td>{obra.esquina}</td>
-                <td>
-                  {rolUsuario === "admin" && (
-                    <Button
-                      variant="danger"
-                      style={{
-                        padding: "0.5rem 1rem",
-                        marginRight: "0.5rem",
-                      }}
-                      onClick={() => confirmarEliminar(obra)}
-                    >
-                      Eliminar
-                    </Button>
-                  )}
-                </td>
+                <th scope="col"></th>
+                <th scope="col">Calle</th>
+                <th scope="col">Esquina</th>
+                <th scope="col">Acciones</th>
               </tr>
-            </React.Fragment>
-          ))}
-        </tbody>
-      </table>
-      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirmar Eliminación</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          ¿Estás seguro de que deseas eliminar la obra ubicada en {obraSeleccionada?.calle}?
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
-            Cancelar
-          </Button>
-          <Button variant="danger" onClick={handleConfirmEliminar}>
-            Eliminar
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+              <tr>
+                <th></th>
+                <th>
+                  <Form.Control
+                    type="text"
+                    placeholder="Filtrar por Calle"
+                    value={filtroCalle}
+                    onChange={handleFiltrarCalle}
+                  />
+                </th>
+                <th>
+                  <Form.Control
+                    type="text"
+                    placeholder="Filtrar por Esquina"
+                    value={filtroEsquina}
+                    onChange={handleFiltrarEsquina}
+                  />
+                </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {obrasFiltradas.map((obra, index) => (
+                <React.Fragment key={obra.id}>
+                  <tr>
+                    <th scope="row">{index + 1}</th>
+                    <td>{obra.calle}</td>
+                    <td>{obra.esquina}</td>
+                    <td>
+                      {rolUsuario === "admin" && (
+                        <>
+                          <Button
+                            variant="danger"
+                            style={{
+                              padding: "0.5rem 1rem",
+                              marginRight: "0.5rem",
+                            }}
+                            onClick={() => confirmarEliminar(obra)}
+                          >
+                            Eliminar
+                          </Button>
+                          <Button
+                            variant="info"
+                            style={{
+                              padding: "0.5rem 1rem",
+                              marginRight: "0.5rem",
+                            }}
+                            onClick={() => handleMostrarDatosObra(obra)}
+                          >
+                            Datos
+                          </Button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                </React.Fragment>
+              ))}
+            </tbody>
+          </table>
+          <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirmar Eliminación</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              ¿Estás seguro de que deseas eliminar la obra ubicada en {obraSeleccionada?.calle}?
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+                Cancelar
+              </Button>
+              <Button variant="danger" onClick={handleConfirmEliminar}>
+                Eliminar
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+      )}
+    </Container>
   );
 };
 

@@ -13,15 +13,11 @@ const HabilitarDeshabilitarEmpleado = ({ empleado, onUpdate }) => {
   const handleHabilitarDeshabilitar = async () => {
     const usuarioToken = getToken();
     try {
-      const body = empleado.habilitado
-        ? {}
-        : { fechaSalida };
-
-      const response = await cambiarEstadoEmpleado(empleado.id, usuarioToken, body);
+      const response = await cambiarEstadoEmpleado(fechaSalida, empleado.id, usuarioToken);
       const datos = response.data;
       console.log("Empleado actualizado:", datos);
       onUpdate(datos); // Llama a la función para actualizar el estado de empleados en el componente padre
-      setSuccess(`Empleado ${empleado.habilitado ? "habilitado" : "deshabilitado"} correctamente`);
+      setSuccess(`Empleado ${empleado.habilitado ? "deshabilitado" : "habilitado"} correctamente`);
       setTimeout(() => {
         setSuccess("");
         setShowModal(false); // Cierra el modal después de actualizar

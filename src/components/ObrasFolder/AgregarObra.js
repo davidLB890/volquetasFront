@@ -4,7 +4,8 @@ import { postObra } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import AlertMessage from "../AlertMessage";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
-import { Form, Button, Card, Alert } from "react-bootstrap";
+import { Form, Button, Card, Alert, Modal } from "react-bootstrap";
+import AgregarContactoEmpresa from "../EmpresasFolder/AgregarContactoEmpresa"; // Ajusta la ruta según sea necesario
 
 const AgregarObra = () => {
   const calleRef = useRef("");
@@ -25,6 +26,8 @@ const AgregarObra = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [mostrar, setMostrar] = useState(false);
+  const [showContactoModal, setShowContactoModal] = useState(false);
+  const [nuevaObra, setNuevaObra] = useState(null);
 
   const refs = [calleRef, esquinaRef, barrioRef, coordenadasRef, numeroPuertaRef, descripcionRef, empresaIdRef];
   const boton = useHabilitarBoton(refs);
@@ -68,6 +71,7 @@ const AgregarObra = () => {
         setSuccess("");
       } else {
         console.log("Obra creada correctamente", datos);
+        setNuevaObra(datos);
         setMostrar(true);
         setSuccess("Obra creada correctamente");
         setError("");
@@ -83,7 +87,8 @@ const AgregarObra = () => {
 
         setTimeout(() => {
           setSuccess("");
-        }, 10000);
+          setShowContactoModal(true);
+        }, 1000);
       }
     } catch (error) {
       console.error(
@@ -117,6 +122,11 @@ const AgregarObra = () => {
         navigate("/login");
       }
     }
+  };
+
+  const handleHideContactoModal = () => {
+    setShowContactoModal(false);
+    setNuevaObra(null);
   };
 
   return (
@@ -273,6 +283,23 @@ const AgregarObra = () => {
           </Form>
         </Card.Body>
       </Card>
+      <Modal show={showContactoModal} onHide={handleHideContactoModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Asignar Contacto a la Empresa</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>¿Deseas asignar un contacto para la empresa de la obra recién creada?</p>
+          {nuevaObra && (
+            <AgregarContactoEmpresa
+              empresaId={nuevaObra.empresaId}
+              onContactoAgregado={() => {
+                setShowContactoModal(false);
+                setNuevaObra(null);
+              }}
+            />
+          )}
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
