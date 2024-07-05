@@ -17,28 +17,26 @@ const DatosEmpresa = () => {
   const location = useLocation();
   const { empresaId } = location.state;
 
-  useEffect(() => {
-    const fetchEmpresa = async () => {
-      const usuarioToken = getToken();
-      try {
-        const response = await getEmpresaId(empresaId, usuarioToken);
-        setEmpresa(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error al obtener la empresa:", error.response?.data?.error || error.message);
-        setError("Error al obtener la empresa");
-        setLoading(false);
-      }
-    };
+  const fetchEmpresa = async () => {
+    const usuarioToken = getToken();
+    try {
+      const response = await getEmpresaId(empresaId, usuarioToken);
+      setEmpresa(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error al obtener la empresa:", error.response?.data?.error || error.message);
+      setError("Error al obtener la empresa");
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchEmpresa();
   }, [empresaId, getToken]);
 
-  const handleContactoAgregado = (nuevoContacto) => {
-    setEmpresa((prevEmpresa) => ({
-      ...prevEmpresa,
-      contactos: [...prevEmpresa.contactos, nuevoContacto],
-    }));
+  const handleContactoAgregado = () => {
+    setShowAgregarContacto(false);
+    fetchEmpresa(); // Refrescar los datos de la empresa
   };
 
   if (loading) {

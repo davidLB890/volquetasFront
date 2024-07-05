@@ -10,6 +10,7 @@ const ListaObras = () => {
   const [cambios, setCambios] = useState(true);
   const [filtroCalle, setFiltroCalle] = useState("");
   const [filtroEsquina, setFiltroEsquina] = useState("");
+  const [filtroEmpresa, setFiltroEmpresa] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [obraSeleccionada, setObraSeleccionada] = useState(null);
   const [mostrarDatosObra, setMostrarDatosObra] = useState(false);
@@ -70,22 +71,28 @@ const ListaObras = () => {
     setShowConfirmModal(false);
   };
 
-  const handleFiltrarCalle = (e) => {
-    setFiltroCalle(e.target.value);
-  };
-
-  const handleFiltrarEsquina = (e) => {
-    setFiltroEsquina(e.target.value);
-  };
-
   const obrasFiltradas = obras.filter((obra) => {
-    const calleMatches = obra.calle?.toLowerCase().startsWith(filtroCalle.toLowerCase());
-    const esquinaMatches = obra.esquina?.toLowerCase().startsWith(filtroEsquina.toLowerCase());
+    const calleMatches = obra.calle
+      ?.toLowerCase()
+      .startsWith(filtroCalle.toLowerCase());
+    const esquinaMatches = obra.esquina
+      ?.toLowerCase()
+      .startsWith(filtroEsquina.toLowerCase());
+  
+    let empresaMatches = true;
+    if (filtroEmpresa === "1") {
+      empresaMatches = obra.empresaId !== null;
+    } else if (filtroEmpresa === "2") {
+      empresaMatches = obra.empresaId === null;
+    }
+  
     return (
       (filtroCalle === "" || calleMatches) &&
-      (filtroEsquina === "" || esquinaMatches)
+      (filtroEsquina === "" || esquinaMatches) &&
+      (filtroEmpresa === "" || empresaMatches)
     );
   });
+  
 
   const handleMostrarDatosObra = (obra) => {
     setObraSeleccionada(obra);
@@ -123,7 +130,7 @@ const ListaObras = () => {
                     type="text"
                     placeholder="Filtrar por Calle"
                     value={filtroCalle}
-                    onChange={handleFiltrarCalle}
+                    onChange={(e) => setFiltroCalle(e.target.value)}
                   />
                 </th>
                 <th>
@@ -131,10 +138,20 @@ const ListaObras = () => {
                     type="text"
                     placeholder="Filtrar por Esquina"
                     value={filtroEsquina}
-                    onChange={handleFiltrarEsquina}
+                    onChange={(e) => setFiltroEsquina(e.target.value)}
                   />
                 </th>
-                <th></th>
+                <th>
+                <Form.Control
+                as="select"
+                value={filtroEmpresa}
+                onChange={(e) => setFiltroEmpresa(e.target.value)}
+              >
+                <option value="">Todos</option>
+                <option value="1">Obras de empresas</option>
+                <option value="2">Obras particulares</option>
+              </Form.Control>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -175,15 +192,22 @@ const ListaObras = () => {
               ))}
             </tbody>
           </table>
-          <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
+          <Modal
+            show={showConfirmModal}
+            onHide={() => setShowConfirmModal(false)}
+          >
             <Modal.Header closeButton>
               <Modal.Title>Confirmar Eliminación</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              ¿Estás seguro de que deseas eliminar la obra ubicada en {obraSeleccionada?.calle}?
+              ¿Estás seguro de que deseas eliminar la obra ubicada en{" "}
+              {obraSeleccionada?.calle}?
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+              <Button
+                variant="secondary"
+                onClick={() => setShowConfirmModal(false)}
+              >
                 Cancelar
               </Button>
               <Button variant="danger" onClick={handleConfirmEliminar}>
