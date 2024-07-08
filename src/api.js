@@ -347,6 +347,30 @@ export const postParticular = (particular, usuarioToken) => {
     },
   });
 };
+export const getParticularId = (particularId, usuarioToken) => {
+  return axios.get(`${API_URL}/particulares/${particularId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const getParticularLetra = (letra, usuarioToken) => {
+  return axios.get(`${API_URL}/particulares/buscar?letraInicial=${letra}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const getParticularNombre = (nombre, usuarioToken) => {
+  return axios.get(`${API_URL}/particulares/buscar?nombre=${nombre}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
 //Empresas
 export const getEmpresas = (usuarioToken) => {
   return axios.get(`${API_URL}/empresas`, {
@@ -356,6 +380,22 @@ export const getEmpresas = (usuarioToken) => {
     },
   });
 };
+export const getEmpresasLetra = (letra, usuarioToken) => {
+  return axios.get(`${API_URL}/empresas/buscar?letraInicial=${letra}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const getEmpresasNombre = (nombre, usuarioToken) => {
+  return axios.get(`${API_URL}/empresas/buscar?nombre=${nombre}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
 export const getEmpresaId = (empresaId, usuarioToken) => {
   return axios.get(`${API_URL}/empresas/${empresaId}`, {
     headers: {
@@ -372,6 +412,13 @@ export const postEmpresa = (empresa, usuarioToken) => {
     },
   });
 };
+export const putEmpresa = (empresaId, empresa, usuarioToken) => {
+  return axios.put(`${API_URL}/empresas/${empresaId}`, empresa, {
+    headers: {
+      Authorization: usuarioToken,
+    },
+  });
+}
 //Contacto-Empresa
 export const getContactoEmpresa = (usuarioToken) => {
   return axios.get(`${API_URL}/contacto-empresas`, {

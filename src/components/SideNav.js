@@ -142,7 +142,7 @@ const CustomSidebar = ({ userRole }) => {
                 <Nav.Link as={Link} to="/empresas" onClick={handleMouseLeave}>
                   Empresas
                 </Nav.Link>
-                <Nav.Link as={Link} to="/" onClick={handleMouseLeave}>
+                <Nav.Link as={Link} to="/particulares" onClick={handleMouseLeave}>
                   Particulares
                 </Nav.Link>
               </div>

@@ -17,26 +17,28 @@ const DatosEmpresa = () => {
   const location = useLocation();
   const { empresaId } = location.state;
 
-  const fetchEmpresa = async () => {
-    const usuarioToken = getToken();
-    try {
-      const response = await getEmpresaId(empresaId, usuarioToken);
-      setEmpresa(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error al obtener la empresa:", error.response?.data?.error || error.message);
-      setError("Error al obtener la empresa");
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchEmpresa = async () => {
+      const usuarioToken = getToken();
+      try {
+        const response = await getEmpresaId(empresaId, usuarioToken);
+        setEmpresa(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error al obtener la empresa:", error.response?.data?.error || error.message);
+        setError("Error al obtener la empresa");
+        setLoading(false);
+      }
+    };
+
     fetchEmpresa();
   }, [empresaId, getToken]);
 
-  const handleContactoAgregado = () => {
-    setShowAgregarContacto(false);
-    fetchEmpresa(); // Refrescar los datos de la empresa
+  const handleContactoAgregado = (nuevoContacto) => {
+    setEmpresa((prevEmpresa) => ({
+      ...prevEmpresa,
+      contactos: [...prevEmpresa.contactos, nuevoContacto],
+    }));
   };
 
   if (loading) {
@@ -72,7 +74,10 @@ const DatosEmpresa = () => {
           </Button>
           <Collapse in={showContactos}>
             <div id="contactos-collapse">
-              <ContactosEmpresa contactos={empresa.contactos} />
+              <ContactosEmpresa
+                contactos={empresa.contactos || []}
+                onTelefonoAgregado={handleContactoAgregado}
+              />
             </div>
           </Collapse>
         </Card.Body>

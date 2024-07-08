@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Form, Button, Modal, Alert } from "react-bootstrap";
 import { postContactoEmpresa } from "../../api";
 import useAuth from "../../hooks/useAuth";
+import AgregarTelefono from "../TelefonosFolder/AgregarTelefono";
 
 const AgregarContactoEmpresa = ({ empresaId, show, onHide, onContactoAgregado }) => {
   const [nombre, setNombre] = useState("");
@@ -10,6 +11,8 @@ const AgregarContactoEmpresa = ({ empresaId, show, onHide, onContactoAgregado })
   const [empresaIdInput, setEmpresaIdInput] = useState("");
   const [error, setError] = useState("");
   const [submitEnabled, setSubmitEnabled] = useState(false);
+  const [contactoSeleccionado, setContactoSeleccionado] = useState(null);
+  const [showAgregarTelefono, setShowAgregarTelefono] = useState(false);
 
   const getToken = useAuth();
 
@@ -35,11 +38,23 @@ const AgregarContactoEmpresa = ({ empresaId, show, onHide, onContactoAgregado })
     try {
       const response = await postContactoEmpresa(nuevoContacto, usuarioToken);
       onContactoAgregado(response.data);
-      onHide();
+      setContactoSeleccionado(response.data);
+      const agregarTelefono = window.confirm("¿Desea agregar un teléfono a este contacto?");
+      if (agregarTelefono) {
+        setShowAgregarTelefono(true);
+      } else {
+        onHide();
+      }
     } catch (error) {
       console.error("Error al agregar el contacto:", error.response?.data?.error || error.message);
       setError("Error al agregar el contacto");
     }
+  };
+
+  const handleTelefonoAgregado = (nuevoTelefono) => {
+    onHide();
+    setShowAgregarTelefono(false);
+    setContactoSeleccionado(null);
   };
 
   return (
@@ -93,6 +108,15 @@ const AgregarContactoEmpresa = ({ empresaId, show, onHide, onContactoAgregado })
           </Button>
         </Form>
       </Modal.Body>
+      {contactoSeleccionado && (
+        <AgregarTelefono
+          show={showAgregarTelefono}
+          onHide={() => setShowAgregarTelefono(false)}
+          contactoEmpresaId={contactoSeleccionado.id}
+          nombre={contactoSeleccionado.nombre}
+          onTelefonoAgregado={handleTelefonoAgregado}
+        />
+      )}
     </Modal>
   );
 };

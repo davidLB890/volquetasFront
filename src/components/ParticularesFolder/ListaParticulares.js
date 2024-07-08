@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { getEmpresasLetra, getEmpresasNombre } from "../../api";
+import { getParticularLetra, getParticularNombre } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { Container, Table, Button, Spinner, Alert, Nav, Form, Row, Col } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 
-const ListaEmpresas = () => {
-  const [empresas, setEmpresas] = useState([]);
+const ListaParticulares = () => {
+  const [particulares, setParticulares] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedLetter, setSelectedLetter] = useState('A');
@@ -17,39 +17,39 @@ const ListaEmpresas = () => {
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
   useEffect(() => {
-    const fetchEmpresas = async (letra) => {
+    const fetchParticulares = async (letra) => {
       const usuarioToken = getToken();
       setLoading(true);
       try {
-        const response = await getEmpresasLetra(letra, usuarioToken);
-        setEmpresas(response.data);
+        const response = await getParticularLetra(letra, usuarioToken);
+        setParticulares(response.data);
         setLoading(false);
       } catch (error) {
-        console.error("Error al obtener las empresas:", error.response?.data?.error || error.message);
-        setError("Error al obtener las empresas");
+        console.error("Error al obtener los particulares:", error.response?.data?.error || error.message);
+        setError("Error al obtener los particulares");
         setLoading(false);
       }
     };
 
-    fetchEmpresas(selectedLetter);
+    fetchParticulares(selectedLetter);
   }, [selectedLetter, getToken]);
 
   const handleSearch = async () => {
     const usuarioToken = getToken();
     setLoading(true);
     try {
-      const response = await getEmpresasNombre(searchTerm, usuarioToken);
-      setEmpresas(response.data);
+      const response = await getParticularNombre(searchTerm, usuarioToken);
+      setParticulares(response.data);
       setLoading(false);
     } catch (error) {
-      console.error("Error al buscar las empresas:", error.response?.data?.error || error.message);
-      setError("Error al buscar las empresas");
+      console.error("Error al buscar los particulares:", error.response?.data?.error || error.message);
+      setError("Error al buscar los particulares");
       setLoading(false);
     }
   };
 
-  const handleNavigateToEmpresa = (empresaId) => {
-    navigate("/empresas/datos", { state: { empresaId } });
+  const handleNavigateToParticular = (particularId) => {
+    navigate("/particulares/datos", { state: { particularId } });
   };
 
   const handleLetterClick = (letra) => {
@@ -71,7 +71,7 @@ const ListaEmpresas = () => {
         <Col>
           <Form.Control
             type="text"
-            placeholder="Busca el nombre de la empresa"
+            placeholder="Busca el nombre del particular"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -114,22 +114,24 @@ const ListaEmpresas = () => {
         <thead>
           <tr>
             <th>Nombre</th>
+            <th>Descripción</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {empresas.length === 0 ? (
+          {particulares.length === 0 ? (
             <tr>
-              <td colSpan="2">No hay empresas que comiencen con la letra "{selectedLetter}" o que coincidan con "{searchTerm}".</td>
+              <td colSpan="3">No hay particulares que comiencen con la letra "{selectedLetter}" o que coincidan con "{searchTerm}".</td>
             </tr>
           ) : (
-            empresas.map((empresa) => (
-              <tr key={empresa.id}>
-                <td>{empresa.nombre}</td>
+            particulares.map((particular) => (
+              <tr key={particular.id}>
+                <td>{particular.nombre}</td>
+                <td>{particular.descripcion}</td>
                 <td>
                   <Button
                     variant="primary"
-                    onClick={() => handleNavigateToEmpresa(empresa.id)}
+                    onClick={() => handleNavigateToParticular(particular.id)}
                   >
                     Ver Datos
                   </Button>
@@ -143,4 +145,5 @@ const ListaEmpresas = () => {
   );
 };
 
-export default ListaEmpresas;
+export default ListaParticulares;
+

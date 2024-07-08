@@ -46,6 +46,32 @@ const ListaObras = () => {
       fetchObras();
     }
   }, [cambios, getToken, navigate]);
+  useEffect(() => {
+    const fetchObras = async () => {
+      const usuarioToken = getToken();
+      if (!usuarioToken) {
+        navigate("/login");
+      } else {
+        try {
+          const response = await getObras(usuarioToken);
+          setObras(response.data);
+          setCambios(false);
+        } catch (error) {
+          console.error(
+            "Error al obtener obras:",
+            error.response?.data?.error || error.message
+          );
+          if (error.response?.status === 401) {
+            navigate("/login");
+          }
+        }
+      }
+    };
+
+    if (cambios) {
+      fetchObras();
+    }
+  }, [cambios, getToken, navigate]);
 
   const handleEliminar = async (obraId) => {
     const usuarioToken = getToken();

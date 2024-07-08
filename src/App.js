@@ -25,6 +25,8 @@ import DatosEmpresa from './components/EmpresasFolder/DatosEmpresa';
 import './assets/css/app.css';
 import 'moment/locale/es';
 import Empresas from './components/EmpresasFolder/Empresas';
+import Particulares from './components/ParticularesFolder/Particulares';
+import DatosParticulares from './components/ParticularesFolder/DatosParticulares';
 
 function App() {
   const location = useLocation();
@@ -69,9 +71,12 @@ function App() {
           {/* OBRAS */}
           <Route path="/obras" element={<Obras />} />
           <Route path="/obras/crear" element={<AgregarObra />} />
-          {/* EMPLEADOS */}
+          {/* EMPRESAS */}
           <Route path="/empresas" element={<Empresas />} />
           <Route path="/empresas/datos" element={<DatosEmpresa />} />
+          {/* PARTICULARES */}
+          <Route path="/particulares" element={<Particulares />} />
+          <Route path="/particulares/datos" element={<DatosParticulares />} />
         </Routes>
       </div>
     </div>
