@@ -87,9 +87,6 @@ const DatosObra = ({ obraId }) => {
           <Card.Text><strong>Activa:</strong> {obra.activa ? "Sí" : "No"}</Card.Text>
           {obra.empresa && (
             <>
-              <Button variant="link" onClick={handleNavigateToEmpresa}>
-                {obra.empresa.nombre}
-              </Button>
               <Button
                 variant="primary"
                 className="ml-2"
@@ -138,6 +135,7 @@ const DatosObra = ({ obraId }) => {
 };
 
 export default DatosObra;
+
 
 
 //ya tengo la empresa acá mismo, si lo quiero mandar a los datos de la empresa en vez de que lo busque ahí, ya debería pasarle la empresa

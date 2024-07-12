@@ -46,30 +46,34 @@ const CustomSidebar = ({ userRole }) => {
         style={{ overflowY: "auto", height: "calc(100vh - 150px)" }}
       >
         <Nav className="navbar-nav">
-          {userRole === "admin" && (
-            <div
-              onMouseEnter={() => handleMouseEnter("usuarios")}
-              onMouseLeave={handleMouseLeave}
-              className="nav-item-container"
-            >
-              <Nav.Item className="nav-item">
-                <div
-                  onClick={() => toggleExpand("usuarios")}
-                  className="nav-link cursor-pointer nav-item-title"
-                >
-                  <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                    <i className="ni ni-credit-card text-success text-sm opacity-10"></i>
-                  </div>
-                  <span className="nav-link-text ms-1">Usuarios</span>
+
+          <div
+            onMouseEnter={() => handleMouseEnter("clientes")}
+            onMouseLeave={handleMouseLeave}
+            className="nav-item-container"
+          >
+            <Nav.Item className="nav-item">
+              <div
+                onClick={() => toggleExpand("clientes")}
+                className="nav-link cursor-pointer nav-item-title"
+              >
+                <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                  <i className="ni ni-single-02 text-primary text-sm opacity-10"></i>
                 </div>
-                <div className={`nav-submenu ms-5 collapse ${expanded === "usuarios" ? "show" : ""}`}>
-                  <Nav.Link as={Link} to="/usuarios/confirmar" onClick={handleMouseLeave}>
-                    Confirmar usuarios
-                  </Nav.Link>
-                </div>
-              </Nav.Item>
-            </div>
-          )}
+                <span className="nav-link-text ms-1">Clientes</span>
+              </div>
+              <div className={`nav-submenu ms-5 collapse ${expanded === "clientes" ? "show" : ""}`}>
+                <Nav.Link as={Link} to="/empresas" onClick={handleMouseLeave}>
+                  Empresas
+                </Nav.Link>
+                <Nav.Link as={Link} to="/particulares" onClick={handleMouseLeave}>
+                  Particulares
+                </Nav.Link>
+              </div>
+            </Nav.Item>
+          </div>
+
+          
 
           <div
             onMouseEnter={() => handleMouseEnter("empleados")}
@@ -123,33 +127,32 @@ const CustomSidebar = ({ userRole }) => {
             </Nav.Item>
           </div>
 
-          <div
-            onMouseEnter={() => handleMouseEnter("clientes")}
-            onMouseLeave={handleMouseLeave}
-            className="nav-item-container"
-          >
-            <Nav.Item className="nav-item">
-              <div
-                onClick={() => toggleExpand("clientes")}
-                className="nav-link cursor-pointer nav-item-title"
-              >
-                <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                  <i className="ni ni-single-02 text-primary text-sm opacity-10"></i>
+          {userRole === "admin" && (
+            <div
+              onMouseEnter={() => handleMouseEnter("usuarios")}
+              onMouseLeave={handleMouseLeave}
+              className="nav-item-container"
+            >
+              <Nav.Item className="nav-item">
+                <div
+                  onClick={() => toggleExpand("usuarios")}
+                  className="nav-link cursor-pointer nav-item-title"
+                >
+                  <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <i className="ni ni-credit-card text-success text-sm opacity-10"></i>
+                  </div>
+                  <span className="nav-link-text ms-1">Usuarios</span>
                 </div>
-                <span className="nav-link-text ms-1">Clientes</span>
-              </div>
-              <div className={`nav-submenu ms-5 collapse ${expanded === "clientes" ? "show" : ""}`}>
-                <Nav.Link as={Link} to="/empresas" onClick={handleMouseLeave}>
-                  Empresas
-                </Nav.Link>
-                <Nav.Link as={Link} to="/particulares" onClick={handleMouseLeave}>
-                  Particulares
-                </Nav.Link>
-              </div>
-            </Nav.Item>
-          </div>
+                <div className={`nav-submenu ms-5 collapse ${expanded === "usuarios" ? "show" : ""}`}>
+                  <Nav.Link as={Link} to="/usuarios/confirmar" onClick={handleMouseLeave}>
+                    Confirmar usuarios
+                  </Nav.Link>
+                </div>
+              </Nav.Item>
+            </div>
+          )}
 
-          <div
+          {/*<div
             onMouseEnter={() => handleMouseEnter("obras")}
             onMouseLeave={handleMouseLeave}
             className="nav-item-container"
@@ -170,9 +173,9 @@ const CustomSidebar = ({ userRole }) => {
                 </Nav.Link>
               </div>
             </Nav.Item>
-          </div>
+          </div> */}
 
-          <div
+          {/* <div
             onMouseEnter={() => handleMouseEnter("volquetas")}
             onMouseLeave={handleMouseLeave}
             className="nav-item-container"
@@ -196,7 +199,7 @@ const CustomSidebar = ({ userRole }) => {
                 </Nav.Link>
               </div>
             </Nav.Item>
-          </div>
+          </div> */}
 
         </Nav>
       </div>

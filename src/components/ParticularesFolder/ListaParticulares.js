@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { getParticularLetra, getParticularNombre } from "../../api";
+import { getParticularLetra } from "../../api";
 import { useNavigate } from "react-router-dom";
-import { Container, Table, Button, Spinner, Alert, Nav, Form, Row, Col } from "react-bootstrap";
+import { Container, Table, Button, Spinner, Alert, Nav } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
+import BuscarParticularPorNombre from "./BuscarParticularPorNombre"; // Ajusta la ruta según sea necesario
 
 const ListaParticulares = () => {
   const [particulares, setParticulares] = useState([]);
@@ -34,18 +35,8 @@ const ListaParticulares = () => {
     fetchParticulares(selectedLetter);
   }, [selectedLetter, getToken]);
 
-  const handleSearch = async () => {
-    const usuarioToken = getToken();
-    setLoading(true);
-    try {
-      const response = await getParticularNombre(searchTerm, usuarioToken);
-      setParticulares(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error al buscar los particulares:", error.response?.data?.error || error.message);
-      setError("Error al buscar los particulares");
-      setLoading(false);
-    }
+  const handleSearchComplete = (particularesEncontrados) => {
+    setParticulares(particularesEncontrados);
   };
 
   const handleNavigateToParticular = (particularId) => {
@@ -67,19 +58,7 @@ const ListaParticulares = () => {
 
   return (
     <Container className="mt-4">
-      <Row className="mb-3">
-        <Col>
-          <Form.Control
-            type="text"
-            placeholder="Busca el nombre del particular"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </Col>
-        <Col>
-          <Button onClick={handleSearch} variant="primary">Buscar</Button>
-        </Col>
-      </Row>
+      <BuscarParticularPorNombre onSearchComplete={handleSearchComplete} getToken={getToken} />
       <Nav className="pagination justify-content-center">
         <Nav.Item>
           <Nav.Link

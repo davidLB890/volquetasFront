@@ -27,6 +27,10 @@ import 'moment/locale/es';
 import Empresas from './components/EmpresasFolder/Empresas';
 import Particulares from './components/ParticularesFolder/Particulares';
 import DatosParticulares from './components/ParticularesFolder/DatosParticulares';
+import AgregarEmpresa from './components/EmpresasFolder/AgegarEmpresa';
+import AgregarParticular from './components/ParticularesFolder/AgregarParticular';
+import AgregarPedido from './components/PedidosFolder/AgregarPedido';
+
 
 function App() {
   const location = useLocation();
@@ -74,9 +78,13 @@ function App() {
           {/* EMPRESAS */}
           <Route path="/empresas" element={<Empresas />} />
           <Route path="/empresas/datos" element={<DatosEmpresa />} />
+          <Route path="/empresas/crear" element={<AgregarEmpresa />} />
           {/* PARTICULARES */}
           <Route path="/particulares" element={<Particulares />} />
           <Route path="/particulares/datos" element={<DatosParticulares />} />
+          <Route path="/particulares/crear" element={<AgregarParticular />} />
+          {/* PEDIDOS */}
+          <Route path="/pedidos/crear" element={<AgregarPedido />} />
         </Routes>
       </div>
     </div>

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { getEmpresasLetra, getEmpresasNombre } from "../../api";
+import { getEmpresasLetra } from "../../api";
 import { useNavigate } from "react-router-dom";
-import { Container, Table, Button, Spinner, Alert, Nav, Form, Row, Col } from "react-bootstrap";
+import { Container, Table, Button, Spinner, Alert, Nav } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
+import BuscarEmpresaPorNombre from "./BuscarEmpresaPorNombre"; // Ajusta la ruta según sea necesario
 
 const ListaEmpresas = () => {
   const [empresas, setEmpresas] = useState([]);
@@ -34,18 +35,8 @@ const ListaEmpresas = () => {
     fetchEmpresas(selectedLetter);
   }, [selectedLetter, getToken]);
 
-  const handleSearch = async () => {
-    const usuarioToken = getToken();
-    setLoading(true);
-    try {
-      const response = await getEmpresasNombre(searchTerm, usuarioToken);
-      setEmpresas(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error al buscar las empresas:", error.response?.data?.error || error.message);
-      setError("Error al buscar las empresas");
-      setLoading(false);
-    }
+  const handleSearchComplete = (empresasEncontradas) => {
+    setEmpresas(empresasEncontradas);
   };
 
   const handleNavigateToEmpresa = (empresaId) => {
@@ -67,19 +58,7 @@ const ListaEmpresas = () => {
 
   return (
     <Container className="mt-4">
-      <Row className="mb-3">
-        <Col>
-          <Form.Control
-            type="text"
-            placeholder="Busca el nombre de la empresa"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </Col>
-        <Col>
-          <Button onClick={handleSearch} variant="primary">Buscar</Button>
-        </Col>
-      </Row>
+      <BuscarEmpresaPorNombre onSearchComplete={handleSearchComplete} getToken={getToken} />
       <Nav className="pagination justify-content-center">
         <Nav.Item>
           <Nav.Link

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { getEmpresaId } from "../../api";
 import { useLocation } from "react-router-dom";
-import { Card, Spinner, Alert, Button, Collapse } from "react-bootstrap";
+import { Card, Spinner, Alert, Button, Collapse, Modal } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import ContactosEmpresa from "./ContactosEmpresa"; // Ajusta la ruta según sea necesario
 import AgregarContactoEmpresa from "./AgregarContactoEmpresa"; // Ajusta la ruta según sea necesario
+import ModificarEmpresa from "./ModificarEmpresa"; // Ajusta la ruta según sea necesario
+import ListaObras from "../ObrasFolder/ListaObras";
+import AgregarObra from "../ObrasFolder/AgregarObra"; // Ajusta la ruta según sea necesario
 
 const DatosEmpresa = () => {
   const [empresa, setEmpresa] = useState(null);
@@ -12,6 +15,8 @@ const DatosEmpresa = () => {
   const [error, setError] = useState("");
   const [showContactos, setShowContactos] = useState(false);
   const [showAgregarContacto, setShowAgregarContacto] = useState(false);
+  const [showModificarEmpresa, setShowModificarEmpresa] = useState(false);
+  const [showAgregarObra, setShowAgregarObra] = useState(false);
 
   const getToken = useAuth();
   const location = useLocation();
@@ -34,11 +39,23 @@ const DatosEmpresa = () => {
     fetchEmpresa();
   }, [empresaId, getToken]);
 
+  const handleEmpresaModificada = (empresaModificada) => {
+    setEmpresa(empresaModificada);
+  };
+
   const handleContactoAgregado = (nuevoContacto) => {
     setEmpresa((prevEmpresa) => ({
       ...prevEmpresa,
       contactos: [...prevEmpresa.contactos, nuevoContacto],
     }));
+  };
+
+  const handleObraAgregada = (nuevaObra) => {
+    setEmpresa((prevEmpresa) => ({
+      ...prevEmpresa,
+      obras: [...prevEmpresa.obras, nuevaObra],
+    }));
+    setShowAgregarObra(false);
   };
 
   if (loading) {
@@ -72,12 +89,23 @@ const DatosEmpresa = () => {
           >
             Agregar Contacto
           </Button>
+          <Button
+            onClick={() => setShowModificarEmpresa(true)}
+            className="ml-2"
+            variant="warning"
+          >
+            Modificar Empresa
+          </Button>
+          <Button
+            onClick={() => setShowAgregarObra(true)}
+            className="ml-2"
+            variant="success"
+          >
+            Agregar Obra
+          </Button>
           <Collapse in={showContactos}>
             <div id="contactos-collapse">
-              <ContactosEmpresa
-                contactos={empresa.contactos || []}
-                onTelefonoAgregado={handleContactoAgregado}
-              />
+              <ContactosEmpresa contactos={empresa.contactos} />
             </div>
           </Collapse>
         </Card.Body>
@@ -88,8 +116,24 @@ const DatosEmpresa = () => {
         empresaId={empresaId}
         onContactoAgregado={handleContactoAgregado}
       />
+      <ModificarEmpresa
+        show={showModificarEmpresa}
+        onHide={() => setShowModificarEmpresa(false)}
+        empresa={empresa}
+        onEmpresaModificada={handleEmpresaModificada}
+      />
+      <ListaObras obras={empresa.obras} />
+      <Modal show={showAgregarObra} onHide={() => setShowAgregarObra(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Agregar Obra</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <AgregarObra empresaId={empresaId} onObraAgregada={handleObraAgregada} />
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
 
 export default DatosEmpresa;
+

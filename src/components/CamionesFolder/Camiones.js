@@ -6,6 +6,7 @@ import ModificarCamion from "./ModificarCamiones";
 import ServiciosCamion from "../ServiciosFolder/Servicios";
 import AsignarChofer from "./AsignarChofer";
 import useAuth from "../../hooks/useAuth";
+import moment from "moment";
 
 const Camiones = () => {
   const [camiones, setCamiones] = useState([]);
@@ -19,6 +20,8 @@ const Camiones = () => {
   const [mostrarAsignarChofer, setMostrarAsignarChofer] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [camionSeleccionado, setCamionSeleccionado] = useState(null);
+  const [mesSeleccionado, setMesSeleccionado] = useState(moment().month() + 1); // Mes actual
+  const [anioSeleccionado, setAnioSeleccionado] = useState(moment().year()); // Año actual
 
   const rolUsuario = localStorage.getItem("userRol");
 
@@ -110,6 +113,14 @@ const Camiones = () => {
     setMostrarAsignarChofer((prev) => (prev === camionId ? null : camionId));
   };
 
+  const handleMesChange = (e) => {
+    setMesSeleccionado(e.target.value);
+  };
+
+  const handleAnioChange = (e) => {
+    setAnioSeleccionado(e.target.value);
+  };
+
   const camionesFiltrados = camiones.filter((camion) => {
     const matriculaMatches = camion.matricula
       .toLowerCase()
@@ -131,6 +142,33 @@ const Camiones = () => {
         <Button variant="primary" onClick={() => navigate("/camiones/crear")}>
           Nuevo Camión
         </Button>
+      </div>
+      <div className="filters">
+        <Form.Control
+          as="select"
+          value={mesSeleccionado}
+          onChange={handleMesChange}
+        >
+          {Array.from({ length: 12 }, (_, i) => (
+            <option key={i + 1} value={i + 1}>
+              {moment()
+                .month(i)
+                .format("MMMM")}
+            </option>
+          ))}
+        </Form.Control>
+        <Form.Control
+          as="select"
+          value={anioSeleccionado}
+          onChange={handleAnioChange}
+          size={10}
+        >
+          {Array.from({ length: 20 }, (_, i) => (
+            <option key={i} value={moment().year() - i}>
+              {moment().year() - i}
+            </option>
+          ))}
+        </Form.Control>
       </div>
       <table className="table table-striped">
         <thead>
@@ -175,18 +213,18 @@ const Camiones = () => {
                 <td>{camion.anio}</td>
                 <td>{camion.estado}</td>
                 <td>
-                {rolUsuario === "admin" && (
-                  <Button
-                    variant="danger"
-                    style={{
-                      padding: "0.5rem 1rem",
-                      marginRight: "0.5rem",
-                    }}
-                    onClick={() => confirmarEliminar(camion)}
-                  >
-                    Eliminar
-                  </Button>
-                )}
+                  {rolUsuario === "admin" && (
+                    <Button
+                      variant="danger"
+                      style={{
+                        padding: "0.5rem 1rem",
+                        marginRight: "0.5rem",
+                      }}
+                      onClick={() => confirmarEliminar(camion)}
+                    >
+                      Eliminar
+                    </Button>
+                  )}
                   <Button
                     variant="primary"
                     style={{
@@ -233,7 +271,7 @@ const Camiones = () => {
               {mostrarServiciosCamion === camion.id && (
                 <tr>
                   <td colSpan="6">
-                    <ServiciosCamion camionId={camion.id} />
+                    <ServiciosCamion camionId={camion.id} mes={mesSeleccionado} anio={anioSeleccionado} />
                   </td>
                 </tr>
               )}

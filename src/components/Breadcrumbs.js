@@ -19,7 +19,6 @@ const Breadcrumbs = () => {
     'empresas': 'Empresas',
     'particulares': 'Particulares',
     'datos': 'Datos',
-
     // Agrega más rutas según sea necesario
   };
 
@@ -30,12 +29,12 @@ const Breadcrumbs = () => {
       ) : (
         pathnames.map((value, index) => {
           const isLast = index === pathnames.length - 1;
-          const to = `${pathnames.slice(0, index + 1).join('/')}`;
+          const to = `/${pathnames.slice(0, index + 1).join('/')}`;
 
           return isLast ? (
             <Breadcrumb.Item active key={to}>{breadcrumbNameMap[value]}</Breadcrumb.Item>
           ) : (
-            <Breadcrumb.Item as={Link} to={to} key={to}>
+            <Breadcrumb.Item linkAs={Link} linkProps={{ to }} key={to}>
               {breadcrumbNameMap[value]}
             </Breadcrumb.Item>
           );

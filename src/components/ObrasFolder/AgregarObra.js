@@ -4,17 +4,15 @@ import { postObra } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import AlertMessage from "../AlertMessage";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
-import { Form, Button, Card, Alert, Modal } from "react-bootstrap";
-import AgregarContactoEmpresa from "../EmpresasFolder/AgregarContactoEmpresa"; // Ajusta la ruta según sea necesario
+import { Form, Button, Card, Alert } from "react-bootstrap";
 
-const AgregarObra = () => {
+const AgregarObra = ({ empresaId, particularId, onObraAgregada }) => {
   const calleRef = useRef("");
   const esquinaRef = useRef("");
   const barrioRef = useRef("");
   const coordenadasRef = useRef("");
   const numeroPuertaRef = useRef("");
   const descripcionRef = useRef("");
-  const empresaIdRef = useRef("");
 
   const [detalleResiduos, setDetalleResiduos] = useState("");
   const [residuosMezclados, setResiduosMezclados] = useState(false);
@@ -26,10 +24,8 @@ const AgregarObra = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [mostrar, setMostrar] = useState(false);
-  const [showContactoModal, setShowContactoModal] = useState(false);
-  const [nuevaObra, setNuevaObra] = useState(null);
 
-  const refs = [calleRef, esquinaRef, barrioRef, coordenadasRef, numeroPuertaRef, descripcionRef, empresaIdRef];
+  const refs = [calleRef, esquinaRef, barrioRef, coordenadasRef, numeroPuertaRef, descripcionRef];
   const boton = useHabilitarBoton(refs);
 
   const navigate = useNavigate();
@@ -52,7 +48,8 @@ const AgregarObra = () => {
       coordenadas: coordenadasRef.current.value,
       numeroPuerta: numeroPuertaRef.current.value,
       descripcion: descripcionRef.current.value,
-      empresaId: empresaIdRef.current.value,
+      empresaId: empresaId,
+      particularId: particularId,
       detalleResiduos,
       residuosMezclados,
       residuosReciclados,
@@ -71,8 +68,6 @@ const AgregarObra = () => {
         setSuccess("");
       } else {
         console.log("Obra creada correctamente", datos);
-        setNuevaObra(datos);
-        setMostrar(true);
         setSuccess("Obra creada correctamente");
         setError("");
 
@@ -85,10 +80,9 @@ const AgregarObra = () => {
         setDestinoFinal("");
         setDias("");
 
-        setTimeout(() => {
-          setSuccess("");
-          setShowContactoModal(true);
-        }, 1000);
+        if (onObraAgregada) {
+          onObraAgregada(datos);
+        }
       }
     } catch (error) {
       console.error(
@@ -122,11 +116,6 @@ const AgregarObra = () => {
         navigate("/login");
       }
     }
-  };
-
-  const handleHideContactoModal = () => {
-    setShowContactoModal(false);
-    setNuevaObra(null);
   };
 
   return (
@@ -193,16 +182,6 @@ const AgregarObra = () => {
                 ref={descripcionRef}
                 type="text"
                 placeholder="Descripción"
-                required
-              />
-            </Form.Group>
-
-            <Form.Group controlId="formEmpresaId" className="mb-2">
-              <Form.Label><span className="text-danger">*</span> ID de la Empresa</Form.Label>
-              <Form.Control
-                ref={empresaIdRef}
-                type="text"
-                placeholder="ID de la Empresa"
                 required
               />
             </Form.Group>
@@ -283,23 +262,6 @@ const AgregarObra = () => {
           </Form>
         </Card.Body>
       </Card>
-      <Modal show={showContactoModal} onHide={handleHideContactoModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Asignar Contacto a la Empresa</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>¿Deseas asignar un contacto para la empresa de la obra recién creada?</p>
-          {nuevaObra && (
-            <AgregarContactoEmpresa
-              empresaId={nuevaObra.empresaId}
-              onContactoAgregado={() => {
-                setShowContactoModal(false);
-                setNuevaObra(null);
-              }}
-            />
-          )}
-        </Modal.Body>
-      </Modal>
     </div>
   );
 };

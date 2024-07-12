@@ -1,77 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { deleteObra, getObras } from "../../api";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { deleteObra } from "../../api";
 import { Button, Form, Container, Modal } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import DatosObra from "./DatosObra"; // Ajusta la ruta según sea necesario
 
-const ListaObras = () => {
-  const [obras, setObras] = useState([]);
+const ListaObras = ({ obras = [] }) => {
   const [cambios, setCambios] = useState(true);
-  const [filtroCalle, setFiltroCalle] = useState("");
-  const [filtroEsquina, setFiltroEsquina] = useState("");
-  const [filtroEmpresa, setFiltroEmpresa] = useState("");
+  const [filtroTipo, setFiltroTipo] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [obraSeleccionada, setObraSeleccionada] = useState(null);
   const [mostrarDatosObra, setMostrarDatosObra] = useState(false);
 
   const rolUsuario = localStorage.getItem("userRol");
 
-  const navigate = useNavigate();
   const getToken = useAuth();
-
-  useEffect(() => {
-    const fetchObras = async () => {
-      const usuarioToken = getToken();
-      if (!usuarioToken) {
-        navigate("/login");
-      } else {
-        try {
-          const response = await getObras(usuarioToken);
-          setObras(response.data);
-          setCambios(false);
-        } catch (error) {
-          console.error(
-            "Error al obtener obras:",
-            error.response?.data?.error || error.message
-          );
-          if (error.response?.status === 401) {
-            navigate("/login");
-          }
-        }
-      }
-    };
-
-    if (cambios) {
-      fetchObras();
-    }
-  }, [cambios, getToken, navigate]);
-  useEffect(() => {
-    const fetchObras = async () => {
-      const usuarioToken = getToken();
-      if (!usuarioToken) {
-        navigate("/login");
-      } else {
-        try {
-          const response = await getObras(usuarioToken);
-          setObras(response.data);
-          setCambios(false);
-        } catch (error) {
-          console.error(
-            "Error al obtener obras:",
-            error.response?.data?.error || error.message
-          );
-          if (error.response?.status === 401) {
-            navigate("/login");
-          }
-        }
-      }
-    };
-
-    if (cambios) {
-      fetchObras();
-    }
-  }, [cambios, getToken, navigate]);
 
   const handleEliminar = async (obraId) => {
     const usuarioToken = getToken();
@@ -97,29 +39,6 @@ const ListaObras = () => {
     setShowConfirmModal(false);
   };
 
-  const obrasFiltradas = obras.filter((obra) => {
-    const calleMatches = obra.calle
-      ?.toLowerCase()
-      .startsWith(filtroCalle.toLowerCase());
-    const esquinaMatches = obra.esquina
-      ?.toLowerCase()
-      .startsWith(filtroEsquina.toLowerCase());
-  
-    let empresaMatches = true;
-    if (filtroEmpresa === "1") {
-      empresaMatches = obra.empresaId !== null;
-    } else if (filtroEmpresa === "2") {
-      empresaMatches = obra.empresaId === null;
-    }
-  
-    return (
-      (filtroCalle === "" || calleMatches) &&
-      (filtroEsquina === "" || esquinaMatches) &&
-      (filtroEmpresa === "" || empresaMatches)
-    );
-  });
-  
-
   const handleMostrarDatosObra = (obra) => {
     setObraSeleccionada(obra);
     setMostrarDatosObra(true);
@@ -129,6 +48,10 @@ const ListaObras = () => {
     setMostrarDatosObra(false);
     setObraSeleccionada(null);
   };
+
+  const obrasFiltradas = obras.filter(
+    (obra) => filtroTipo === "" || obra.activa === (filtroTipo === "1")
+  );
 
   return (
     <Container className="card">
@@ -144,40 +67,21 @@ const ListaObras = () => {
           <table className="table table-striped">
             <thead>
               <tr>
-                <th scope="col"></th>
+                <th scope="col" style={{ width: "150px", padding: "0.5rem" }}>
+                  <Form.Control
+                    as="select"
+                    value={filtroTipo}
+                    onChange={(e) => setFiltroTipo(e.target.value)}
+                    style={{ width: "100%" }}
+                  >
+                    <option value="">Todos</option>
+                    <option value="1">Activas</option>
+                    <option value="0">No activas</option>
+                  </Form.Control>
+                </th>
                 <th scope="col">Calle</th>
                 <th scope="col">Esquina</th>
                 <th scope="col">Acciones</th>
-              </tr>
-              <tr>
-                <th></th>
-                <th>
-                  <Form.Control
-                    type="text"
-                    placeholder="Filtrar por Calle"
-                    value={filtroCalle}
-                    onChange={(e) => setFiltroCalle(e.target.value)}
-                  />
-                </th>
-                <th>
-                  <Form.Control
-                    type="text"
-                    placeholder="Filtrar por Esquina"
-                    value={filtroEsquina}
-                    onChange={(e) => setFiltroEsquina(e.target.value)}
-                  />
-                </th>
-                <th>
-                <Form.Control
-                as="select"
-                value={filtroEmpresa}
-                onChange={(e) => setFiltroEmpresa(e.target.value)}
-              >
-                <option value="">Todos</option>
-                <option value="1">Obras de empresas</option>
-                <option value="2">Obras particulares</option>
-              </Form.Control>
-                </th>
               </tr>
             </thead>
             <tbody>

@@ -236,7 +236,19 @@ export const getServicioPorCamion = (camionId, usuarioToken) => {
     },
   });
 };
-
+export const getServicioPorCamionFecha = (camionId, mes, anio, usuarioToken) => {
+  return axios.get(`${API_URL}/servicios/mensuales`, {
+    params: {
+      month: mes,
+      year: anio,
+      camionId: camionId
+    },
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
 
 
 
@@ -368,6 +380,13 @@ export const getParticularNombre = (nombre, usuarioToken) => {
     headers: {
       Authorization: usuarioToken,
       "Content-Type": "application/json",
+    },
+  });
+}
+export const putParticular = (particularId, particular, usuarioToken) => {
+  return axios.put(`${API_URL}/particulares/${particularId}`, particular, {
+    headers: {
+      Authorization: usuarioToken,
     },
   });
 }

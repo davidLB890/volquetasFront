@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { getServicioPorCamion } from '../../api';
+import { getServicioPorCamionFecha } from '../../api';
 import { Container, Table, Alert, Button } from 'react-bootstrap';
 import useAuth from '../../hooks/useAuth';
 import AgregarServicio from './AgregarServicio';
 import moment from 'moment';
 
-const ServiciosCamion = ({ camionId }) => {
+const ServiciosCamion = ({ camionId, mes, anio }) => {
   const [servicios, setServicios] = useState([]);
   const [error, setError] = useState('');
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -16,7 +16,7 @@ const ServiciosCamion = ({ camionId }) => {
     const usuarioToken = getToken();
 
     try {
-      const response = await getServicioPorCamion(camionId, usuarioToken);
+      const response = await getServicioPorCamionFecha(camionId, mes, anio, usuarioToken);
       const datos = response.data;
       console.log(datos);
       const ordenados = datos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
@@ -29,7 +29,7 @@ const ServiciosCamion = ({ camionId }) => {
 
   useEffect(() => {
     fetchServicios();
-  }, [camionId, getToken]);
+  }, [camionId, mes, anio, getToken]);
 
   const handleMostrarModal = () => {
     setMostrarModal(true);
