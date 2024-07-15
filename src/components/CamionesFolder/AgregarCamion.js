@@ -1,9 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { crearCamion } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
+import { fetchCamiones } from "../../features/camionesSlice"; // Importa el thunk para actualizar el store
 
 const AgregarCamion = () => {
   const matricula = useRef(null);
@@ -13,12 +15,13 @@ const AgregarCamion = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  //controla el estado del botón crear
+  // Controla el estado del botón crear
   const refs = [matricula, modelo, anio, estado];
   const boton = useHabilitarBoton(refs);
 
   const getToken = useAuth();
   const navigate = useNavigate(); // Hook de navegación
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const usuarioToken = getToken();
@@ -53,6 +56,9 @@ const AgregarCamion = () => {
       } else {
         setSuccess("Camión creado correctamente");
         setError("");
+
+        // Actualizar la lista de camiones en el store
+        dispatch(fetchCamiones(usuarioToken));
 
         // Establecer un temporizador para limpiar el mensaje de éxito después de 3 segundos
         setTimeout(() => {

@@ -510,6 +510,29 @@ export const deleteObra = (obraId, usuarioToken) => {
 
 
 
+//PERMISOS
+export const getPermisos = (usuarioToken) => {
+  return axios.get(`${API_URL}/permisos`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const getPermisoIdEmpresa = (empresaId, activo, usuarioToken) => {
+  return axios.get(`${API_URL}/permisos/empresa/${empresaId}`, {
+    params: {
+      activo: activo
+    },
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+
 //PEDIDOS
 export const getPedidos = (usuarioToken) => {
   return axios.get(`${API_URL}/pedidos`, {

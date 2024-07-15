@@ -1,68 +1,34 @@
-import { Link, Navigate } from "react-router-dom"
-import { useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react"
-/* import { guardarUsuarios } from "../features/usuariosSlice"; */
-import { useDispatch, useSelector } from "react-redux" 
-import * as bootstrap from 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import ConfirmarUsuario from "./UsuariosFolder/ConfirmarUsuario";
-import axios from "axios"; // Importa axios
-import { obtenerUsuarios } from "../api"; // Importa la función obtenerUsuarios desde api.js
-import useAuth from "../hooks/useAuth";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import  CustomNavbar from "./SideNav";
-import Singin from "./UsuariosFolder/Singin";
-import AgregarEmpleado from "./EmpleadosFolder/AgregarEmpleado";
-import Empleados from "./EmpleadosFolder/Empleados"
-
+// src/components/Dashboard.js
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Button, Container } from 'react-bootstrap';
+import { fetchEmpleados } from '../features/empleadosSlice';
+import useAuth from '../hooks/useAuth';
 
 const Dashboard = () => {
-  /* let usuarioId = localStorage.getItem('id'); */
-  //let usuarioToken = localStorage.getItem('apiToken');
- 
-  let navigate = useNavigate();
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const getToken = useAuth();
-  
+
   useEffect(() => {
     const usuarioToken = getToken();
-    if (usuarioToken === null) {
-      console.log("No hay token");
-      navigate("/login");
-    } /* else {
-      // Realiza la solicitud para obtener los usuarios usando axios
-      obtenerUsuarios(usuarioToken)
-        .then((response) => {
-          const datos = response.data;
-          if (datos.error) {
-            console.error(datos.error);
-            navigate("/");
-          } else {
-            dispatch(guardarUsuarios(datos));
-          }
-        })
-        .catch((error) => {
-          console.error("Error al obtener usuarios:", error.response.data.error);
-          navigate("/");
-        });
-    } */
-  }, [dispatch, navigate, getToken]);
+    if (!usuarioToken) {
+      navigate('/login');
+    } 
+  }, [navigate, getToken]);
+
+  const handleAgregarPedido = () => {
+    navigate('/pedidos/crear');
+  };
 
   return (
+    <Container>
+      <h1>Pedidos</h1>
+      <Button variant="primary" onClick={handleAgregarPedido}>
+        Agregar Nuevo Pedido
+      </Button>
+    </Container>
+  );
+};
 
-      <main className="container-fluid">
-        
-
-        <header className="row text-center">
-          <h1></h1>
-        </header>
-
-
-
-      </main>
-      
-
-  )
-}
-
-      export default Dashboard
+export default Dashboard;

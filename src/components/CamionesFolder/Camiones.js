@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { deleteCamion, getCamiones } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Container, Modal } from "react-bootstrap";
 import ModificarCamion from "./ModificarCamiones";
@@ -7,10 +6,12 @@ import ServiciosCamion from "../ServiciosFolder/Servicios";
 import AsignarChofer from "./AsignarChofer";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCamiones, removeCamion } from "../../features/camionesSlice";
 
 const Camiones = () => {
-  const [camiones, setCamiones] = useState([]);
-  const [cambios, setCambios] = useState(true);
+  const camiones = useSelector((state) => state.camiones.camiones);
+  const dispatch = useDispatch();
   const [filtroMatricula, setFiltroMatricula] = useState("");
   const [filtroModelo, setFiltroModelo] = useState("");
   const [mostrarModificarCamion, setMostrarModificarCamion] = useState(null);
@@ -29,44 +30,15 @@ const Camiones = () => {
   const getToken = useAuth();
 
   useEffect(() => {
-    const fetchCamiones = async () => {
-      const usuarioToken = getToken();
-      if (!usuarioToken) {
-        navigate("/login");
-      } else {
-        try {
-          const response = await getCamiones(usuarioToken);
-          setCamiones(response.data);
-          setCambios(false);
-        } catch (error) {
-          console.error(
-            "Error al obtener camiones:",
-            error.response?.data?.error || error.message
-          );
-          if (error.response?.status === 401) {
-            navigate("/login");
-          }
-        }
-      }
-    };
-
-    if (cambios) {
-      fetchCamiones();
-    }
-  }, [cambios, getToken, navigate]);
+    const usuarioToken = getToken();
+    if (usuarioToken === null) {
+      navigate("/login");
+    } 
+  }, [getToken, navigate]);
 
   const handleEliminar = async (camionId) => {
     const usuarioToken = getToken();
-
-    try {
-      await deleteCamion(camionId, usuarioToken);
-      setCambios(true);
-    } catch (error) {
-      console.error(
-        "Error al conectar con el servidor:",
-        error.response?.data?.error || error.message
-      );
-    }
+    dispatch(removeCamion({ camionId, usuarioToken }));
   };
 
   const confirmarEliminar = (camion) => {
@@ -87,7 +59,10 @@ const Camiones = () => {
     const camionesActualizados = camiones.map((c) =>
       c.id === camionActualizado.id ? camionActualizado : c
     );
-    setCamiones(camionesActualizados);
+    dispatch({
+      type: "camiones/updateCamion",
+      payload: camionesActualizados,
+    });
   };
 
   const handleCancelarModificar = () => {
@@ -144,32 +119,36 @@ const Camiones = () => {
         </Button>
       </div>
       <div className="filters">
-        <Form.Control
-          as="select"
-          value={mesSeleccionado}
-          onChange={handleMesChange}
-        >
-          {Array.from({ length: 12 }, (_, i) => (
-            <option key={i + 1} value={i + 1}>
-              {moment()
-                .month(i)
-                .format("MMMM")}
-            </option>
-          ))}
-        </Form.Control>
-        <Form.Control
-          as="select"
-          value={anioSeleccionado}
-          onChange={handleAnioChange}
-          size={10}
-        >
-          {Array.from({ length: 20 }, (_, i) => (
-            <option key={i} value={moment().year() - i}>
-              {moment().year() - i}
-            </option>
-          ))}
-        </Form.Control>
+        <Form.Group>
+          <Form.Label>Fecha de servicio:</Form.Label>
+          <div className="d-flex">
+            <Form.Control
+              as="select"
+              value={mesSeleccionado}
+              onChange={handleMesChange}
+              className="mr-2"
+            >
+              {Array.from({ length: 12 }, (_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {moment().month(i).format("MMMM")}
+                </option>
+              ))}
+            </Form.Control>
+            <Form.Control
+              as="select"
+              value={anioSeleccionado}
+              onChange={handleAnioChange}
+            >
+              {Array.from({ length: 20 }, (_, i) => (
+                <option key={i} value={moment().year() - i}>
+                  {moment().year() - i}
+                </option>
+              ))}
+            </Form.Control>
+          </div>
+        </Form.Group>
       </div>
+
       <table className="table table-striped">
         <thead>
           <tr>
@@ -271,7 +250,11 @@ const Camiones = () => {
               {mostrarServiciosCamion === camion.id && (
                 <tr>
                   <td colSpan="6">
-                    <ServiciosCamion camionId={camion.id} mes={mesSeleccionado} anio={anioSeleccionado} />
+                    <ServiciosCamion
+                      camionId={camion.id}
+                      mes={mesSeleccionado}
+                      anio={anioSeleccionado}
+                    />
                   </td>
                 </tr>
               )}
@@ -294,10 +277,14 @@ const Camiones = () => {
           <Modal.Title>Confirmar Eliminación</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          ¿Estás seguro de que deseas eliminar el camión con matrícula {camionSeleccionado?.matricula}?
+          ¿Estás seguro de que deseas eliminar el camión con matrícula{" "}
+          {camionSeleccionado?.matricula}?
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+          <Button
+            variant="secondary"
+            onClick={() => setShowConfirmModal(false)}
+          >
             Cancelar
           </Button>
           <Button variant="danger" onClick={handleConfirmEliminar}>

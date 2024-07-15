@@ -1,21 +1,18 @@
-import React, { useEffect, useState } from "react";
-import {
-  obtenerEmpleados,
-  eliminarEmpleado,
-  putEmpleado,
-} from "../../api";
+import React, { useState, useEffect } from "react";
+import { eliminarEmpleado } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Alert, Modal } from "react-bootstrap";
+import { useSelector, useDispatch } from "react-redux";
 import useAuth from "../../hooks/useAuth";
-import AlertMessage from "../AlertMessage";
 import DatosEmpleado from "./DatosEmpleado";
 import ModificarEmpleado from "./ModificarEmpleado";
 import HabilitarDeshabilitarEmpleado from "./HabilitarDeshabilitarEmpleado";
 import "../../assets/css/tituloBoton.css";
+import { fetchEmpleados } from "../../features/empleadosSlice";
 
 const Empleados = () => {
-  const [empleados, setEmpleados] = useState([]);
-  const [cambios, setCambios] = useState(true);
+  const empleados = useSelector((state) => state.empleados.empleados);
+  const dispatch = useDispatch();
   const [filtroNombre, setFiltroNombre] = useState("");
   const [filtroRol, setFiltroRol] = useState("");
   const [editando, setEditando] = useState(null);
@@ -33,36 +30,10 @@ const Empleados = () => {
 
   useEffect(() => {
     const usuarioToken = getToken();
-    if (usuarioToken === null) {
+    if (!usuarioToken) {
       navigate("/login");
-    } else {
-      if (cambios) {
-        try {
-          obtenerEmpleados(usuarioToken)
-            .then((response) => {
-              const empleados = response.data;
-              setEmpleados(empleados);
-              setCambios(false);
-            })
-            .catch((error) => {
-              console.error(
-                "Error al obtener usuarios:",
-                error.response.data.error
-              );
-              navigate("/login");
-            });
-        } catch (error) {
-          console.error(
-            "Error al obtener usuarios:",
-            error.response.data.error
-          );
-          if (error.status === 401) {
-            navigate("/login");
-          }
-        }
-      }
     }
-  }, [cambios, getToken, navigate]);
+  }, [getToken, navigate]);
 
   const eliminar = async (empleadoId) => {
     const usuarioToken = getToken();
@@ -78,7 +49,7 @@ const Empleados = () => {
           console.log(datos);
           setSuccess(datos.detalle);
           setError("");
-          setCambios(true);
+          dispatch(fetchEmpleados(usuarioToken)); // Refrescar la lista de empleados después de eliminar
           setTimeout(() => setSuccess(""), 5000);
         }
       })
@@ -110,11 +81,10 @@ const Empleados = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEmpleados((prevEmpleados) =>
-      prevEmpleados.map((emp) =>
-        emp.id === editando ? { ...emp, [name]: value } : emp
-      )
-    );
+    dispatch({
+      type: 'empleados/updateEmpleado',
+      payload: { id: editando, name, value }
+    });
   };
 
   const toggleDatosEmpleado = (empleado) => {
@@ -236,14 +206,7 @@ const Empleados = () => {
                     {rolUsuario === "admin" && (
                       <HabilitarDeshabilitarEmpleado
                         empleado={empleado}
-                        onUpdate={(updatedEmpleado) => {
-                          setEmpleados((prevEmpleados) =>
-                            prevEmpleados.map((emp) =>
-                              emp.id === updatedEmpleado.id ? updatedEmpleado : emp
-                            )
-                          );
-                          setCambios(true); // Para refrescar la lista de empleados
-                        }}
+                        onUpdate={() => dispatch(fetchEmpleados(getToken()))}
                       />
                     )}
                   </>
@@ -265,15 +228,7 @@ const Empleados = () => {
         <ModificarEmpleado
           empleado={empleadoSeleccionado}
           onHide={() => setShowModificarEmpleado(false)}
-          onUpdate={(updatedEmpleado) => {
-            setEmpleados((prevEmpleados) =>
-              prevEmpleados.map((emp) =>
-                emp.id === updatedEmpleado.id ? updatedEmpleado : emp
-              )
-            );
-            setShowModificarEmpleado(false);
-            setEmpleadoSeleccionado(null);
-          }}
+          onUpdate={() => dispatch(fetchEmpleados(getToken()))}
         />
       )}
       <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
@@ -297,4 +252,3 @@ const Empleados = () => {
 };
 
 export default Empleados;
-

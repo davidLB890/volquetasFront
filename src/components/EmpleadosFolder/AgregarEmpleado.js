@@ -1,11 +1,13 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { crearEmpleado } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import AlertMessage from "../AlertMessage";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
 import { Form, Button, Card, Alert } from "react-bootstrap";
-import AgregarTelefono from "../TelefonosFolder/AgregarTelefono"; // Asegúrate de importar AgregarTelefono
+import AgregarTelefono from "../TelefonosFolder/AgregarTelefono";
+import { fetchEmpleados } from "../../features/empleadosSlice";
 
 const AgregarEmpleado = () => {
   const nombreRef = useRef("");
@@ -23,11 +25,12 @@ const AgregarEmpleado = () => {
 
   const navigate = useNavigate();
   const getToken = useAuth();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const usuarioToken = getToken();
     if (!usuarioToken) {
-      navigate("/");
+      navigate("/login");
     }
   }, [getToken, navigate]);
 
@@ -68,6 +71,9 @@ const AgregarEmpleado = () => {
         cedulaRef.current.value = "";
         rolRef.current.value = "";
         fechaDeIngresoRef.current.value = "";
+
+        // Actualizar la lista de empleados en el store
+        dispatch(fetchEmpleados(usuarioToken));
 
         setTimeout(() => {
           setSuccess("");

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Route, Routes, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import Login from './components/UsuariosFolder/Login';
 import Singin from './components/UsuariosFolder/Singin';
 import Dashboard from './components/Dashboard';
@@ -30,21 +31,31 @@ import DatosParticulares from './components/ParticularesFolder/DatosParticulares
 import AgregarEmpresa from './components/EmpresasFolder/AgegarEmpresa';
 import AgregarParticular from './components/ParticularesFolder/AgregarParticular';
 import AgregarPedido from './components/PedidosFolder/AgregarPedido';
-
+import useAuth from './hooks/useAuth';
+import { fetchEmpleados } from './features/empleadosSlice';
+import { fetchCamiones } from './features/camionesSlice';
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [userRole, setUserRole] = useState(null); // Aquí almacenarás el userRole después de la autenticación
+  const [userRole, setUserRole] = useState(null);
+
+  const dispatch = useDispatch();
+  const getToken = useAuth();
 
   useEffect(() => {
-    // Lógica para obtener el userRole después de la autenticación
-    // moment.locale('es');
+    const usuarioToken = getToken();
+    if (usuarioToken) {
+      dispatch(fetchEmpleados(usuarioToken));
+      dispatch(fetchCamiones(usuarioToken));
+    }
+  }, [dispatch, getToken]);
+
+  useEffect(() => {
     const storedUserRole = localStorage.getItem('userRol');
     setUserRole(storedUserRole);
   }, [navigate]);
 
-  // Verifica si la ruta actual es la de login
   const isLoginPage = location.pathname === '/login';
   const isSinginPage = location.pathname === '/singin';
 

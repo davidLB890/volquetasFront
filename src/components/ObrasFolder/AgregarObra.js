@@ -6,13 +6,14 @@ import AlertMessage from "../AlertMessage";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 
-const AgregarObra = ({ empresaId, particularId, onObraAgregada }) => {
+const AgregarObra = ({ onObraAgregada, empresaId }) => {
   const calleRef = useRef("");
   const esquinaRef = useRef("");
   const barrioRef = useRef("");
   const coordenadasRef = useRef("");
   const numeroPuertaRef = useRef("");
   const descripcionRef = useRef("");
+  const empresaIdRef = useRef("");
 
   const [detalleResiduos, setDetalleResiduos] = useState("");
   const [residuosMezclados, setResiduosMezclados] = useState(false);
@@ -26,6 +27,9 @@ const AgregarObra = ({ empresaId, particularId, onObraAgregada }) => {
   const [mostrar, setMostrar] = useState(false);
 
   const refs = [calleRef, esquinaRef, barrioRef, coordenadasRef, numeroPuertaRef, descripcionRef];
+  if (!empresaId) {
+    refs.push(empresaIdRef);
+  }
   const boton = useHabilitarBoton(refs);
 
   const navigate = useNavigate();
@@ -48,8 +52,7 @@ const AgregarObra = ({ empresaId, particularId, onObraAgregada }) => {
       coordenadas: coordenadasRef.current.value,
       numeroPuerta: numeroPuertaRef.current.value,
       descripcion: descripcionRef.current.value,
-      empresaId: empresaId,
-      particularId: particularId,
+      empresaId: empresaId || empresaIdRef.current.value,
       detalleResiduos,
       residuosMezclados,
       residuosReciclados,
@@ -68,8 +71,10 @@ const AgregarObra = ({ empresaId, particularId, onObraAgregada }) => {
         setSuccess("");
       } else {
         console.log("Obra creada correctamente", datos);
+        setMostrar(true);
         setSuccess("Obra creada correctamente");
         setError("");
+        onObraAgregada(datos);
 
         // Limpiar los campos del formulario
         refs.forEach(ref => ref.current.value = "");
@@ -80,9 +85,9 @@ const AgregarObra = ({ empresaId, particularId, onObraAgregada }) => {
         setDestinoFinal("");
         setDias("");
 
-        if (onObraAgregada) {
-          onObraAgregada(datos);
-        }
+        setTimeout(() => {
+          setSuccess("");
+        }, 10000);
       }
     } catch (error) {
       console.error(
@@ -185,6 +190,18 @@ const AgregarObra = ({ empresaId, particularId, onObraAgregada }) => {
                 required
               />
             </Form.Group>
+
+            {!empresaId && (
+              <Form.Group controlId="formEmpresaId" className="mb-2">
+                <Form.Label><span className="text-danger">*</span> ID de la Empresa</Form.Label>
+                <Form.Control
+                  ref={empresaIdRef}
+                  type="text"
+                  placeholder="ID de la Empresa"
+                  required
+                />
+              </Form.Group>
+            )}
 
             <h5 className="mt-4">Campos Opcionales</h5>
 
