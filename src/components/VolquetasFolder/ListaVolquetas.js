@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Spinner, Alert, Form, Row, Col, Button, Modal } from "react-bootstrap";
-import { getVolquetas, deleteVolqueta } from "../../api";
+import { getVolquetas, deleteVolqueta, getPedidoId } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import ModificarVolqueta from "./ModificarVolqueta";
 import "../../assets/css/tituloBoton.css"; // Asegúrate de ajustar la ruta según sea necesario
@@ -22,7 +22,17 @@ const ListaVolquetas = () => {
       const usuarioToken = getToken();
       try {
         const response = await getVolquetas(usuarioToken);
-        setVolquetas(response.data);
+        const volquetasConUbicacion = await Promise.all(
+          response.data.map(async (volqueta) => {
+            const movimientoEntrega = volqueta.Movimientos.find(mov => mov.tipo === 'entrega');
+            if (movimientoEntrega) {
+              const ubicacion = await buscarUbicacion(movimientoEntrega.pedidoId);
+              return { ...volqueta, ubicacion };
+            }
+            return { ...volqueta, ubicacion: "No disponemos de la ubicación" };
+          })
+        );
+        setVolquetas(volquetasConUbicacion);
         setLoading(false);
       } catch (error) {
         console.error("Error al obtener las volquetas:", error.response?.data?.error || error.message);
@@ -66,6 +76,19 @@ const ListaVolquetas = () => {
 
   const handleConfirmEliminar = () => {
     handleEliminar(volquetaSeleccionada.numeroVolqueta);
+  };
+
+  const buscarUbicacion = async (pedidoId) => {
+    const usuarioToken = getToken();
+    try {
+      const response = await getPedidoId(pedidoId, usuarioToken);
+      return response.data.Obra.calle;
+    } catch (error) {
+      console.error("Error al obtener la ubicación del pedido:", error.response?.data?.error || error.message);
+      setError("Error al obtener la ubicación del pedido");
+      setTimeout(() => setError(""), 5000);
+      return "Error al obtener ubicación";
+    }
   };
 
   const volquetasFiltradas = volquetas.filter((volqueta) => {
@@ -137,7 +160,7 @@ const ListaVolquetas = () => {
               <td>{volqueta.estado}</td>
               <td>{volqueta.tipo}</td>
               <td>{volqueta.ocupada ? "Sí" : "No"}</td>
-              <td></td>
+              <td>{volqueta.ubicacion}</td>
               <td>
                 <Button
                   variant="danger"
