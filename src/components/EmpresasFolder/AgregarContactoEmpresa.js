@@ -3,8 +3,9 @@ import { Form, Button, Modal, Alert } from "react-bootstrap";
 import { postContactoEmpresa } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import AgregarTelefono from "../TelefonosFolder/AgregarTelefono";
+import SelectObra from "../ObrasFolder/SelectObra"; // Asegúrate de importar correctamente el componente SelectObra
 
-const AgregarContactoEmpresa = ({ empresaId, show, onHide, onContactoAgregado }) => {
+const AgregarContactoEmpresa = ({ empresaId, obras, show, onHide, onContactoAgregado }) => {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [email, setEmail] = useState("");
@@ -13,17 +14,19 @@ const AgregarContactoEmpresa = ({ empresaId, show, onHide, onContactoAgregado })
   const [submitEnabled, setSubmitEnabled] = useState(false);
   const [contactoSeleccionado, setContactoSeleccionado] = useState(null);
   const [showAgregarTelefono, setShowAgregarTelefono] = useState(false);
+  const [listaObras, setListaObras] = useState(obras);
+  const [obraSeleccionada, setObraSeleccionada] = useState(null);
 
   const getToken = useAuth();
 
   useEffect(() => {
     const checkSubmitEnabled = () => {
       const isEmpresaIdValid = empresaId || empresaIdInput;
-      setSubmitEnabled(nombre && descripcion && email && isEmpresaIdValid);
+      setSubmitEnabled(nombre && descripcion && email && isEmpresaIdValid && obraSeleccionada);
     };
 
     checkSubmitEnabled();
-  }, [nombre, descripcion, email, empresaIdInput, empresaId]);
+  }, [nombre, descripcion, email, empresaIdInput, empresaId, obraSeleccionada]);
 
   const handleAgregarContacto = async () => {
     const usuarioToken = getToken();
@@ -32,7 +35,7 @@ const AgregarContactoEmpresa = ({ empresaId, show, onHide, onContactoAgregado })
       descripcion,
       email,
       empresaId: empresaId || empresaIdInput,
-      obraId: null,
+      obraId: obraSeleccionada,
     };
 
     try {
@@ -99,6 +102,10 @@ const AgregarContactoEmpresa = ({ empresaId, show, onHide, onContactoAgregado })
               />
             </Form.Group>
           )}
+          <SelectObra
+            obras={listaObras}
+            onSelect={(id) => setObraSeleccionada(id)}
+          />
           <Button
             variant="primary"
             onClick={handleAgregarContacto}

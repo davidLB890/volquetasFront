@@ -20,7 +20,7 @@ const Breadcrumbs = () => {
     'particulares': 'Particulares',
     'datos': 'Datos',
     'pedidos': 'Pedidos',
-    // Agrega más rutas según sea necesario
+    'volquetas': 'Volquetas',
   };
 
   return (

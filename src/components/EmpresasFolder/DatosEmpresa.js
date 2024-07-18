@@ -3,11 +3,12 @@ import { getEmpresaId } from "../../api";
 import { useLocation } from "react-router-dom";
 import { Card, Spinner, Alert, Button, Collapse, Modal } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
-import ContactosEmpresa from "./ContactosEmpresa"; // Ajusta la ruta según sea necesario
-import AgregarContactoEmpresa from "./AgregarContactoEmpresa"; // Ajusta la ruta según sea necesario
-import ModificarEmpresa from "./ModificarEmpresa"; // Ajusta la ruta según sea necesario
+import ContactosEmpresa from "./ContactosEmpresa";
+import AgregarContactoEmpresa from "./AgregarContactoEmpresa";
+import ModificarEmpresa from "./ModificarEmpresa";
 import ListaObras from "../ObrasFolder/ListaObras";
-import AgregarObra from "../ObrasFolder/AgregarObra"; // Ajusta la ruta según sea necesario
+import ListaPermisos from "../PermisosFolder/ListaPermisos";
+import AgregarObra from "../ObrasFolder/AgregarObra";
 
 const DatosEmpresa = () => {
   const [empresa, setEmpresa] = useState(null);
@@ -30,7 +31,10 @@ const DatosEmpresa = () => {
         setEmpresa(response.data);
         setLoading(false);
       } catch (error) {
-        console.error("Error al obtener la empresa:", error.response?.data?.error || error.message);
+        console.error(
+          "Error al obtener la empresa:",
+          error.response?.data?.error || error.message
+        );
         setError("Error al obtener la empresa");
         setLoading(false);
       }
@@ -69,15 +73,27 @@ const DatosEmpresa = () => {
   return (
     <div>
       <Card className="mt-3">
-        <Card.Header><h2>{empresa.nombre}</h2></Card.Header>
+        <Card.Header>
+          <h2>{empresa.nombre}</h2>
+        </Card.Header>
         <Card.Body>
-          <Card.Text><strong>Razón Social:</strong> {empresa.razonSocial}</Card.Text>
-          <Card.Text><strong>RUT:</strong> {empresa.rut}</Card.Text>
-          <Card.Text><strong>Descripción:</strong> {empresa.descripcion}</Card.Text>
+          <Card.Text>
+            <strong>Razón Social:</strong> {empresa.razonSocial}
+          </Card.Text>
+          <Card.Text>
+            <strong>RUT:</strong> {empresa.rut}
+          </Card.Text>
+          <Card.Text>
+            <strong>Descripción:</strong> {empresa.descripcion}
+          </Card.Text>
           <Button
             onClick={() => setShowContactos(!showContactos)}
             aria-controls="contactos-collapse"
             aria-expanded={showContactos}
+            style={{
+              padding: "0.5rem 1rem",
+              marginRight: "0.5rem",
+            }}
             variant="info"
           >
             {showContactos ? "Ocultar Contactos" : "Mostrar Contactos"}
@@ -86,6 +102,10 @@ const DatosEmpresa = () => {
             onClick={() => setShowAgregarContacto(true)}
             className="ml-2"
             variant="primary"
+            style={{
+              padding: "0.5rem 1rem",
+              marginRight: "0.5rem",
+            }}
           >
             Agregar Contacto
           </Button>
@@ -93,6 +113,10 @@ const DatosEmpresa = () => {
             onClick={() => setShowModificarEmpresa(true)}
             className="ml-2"
             variant="warning"
+            style={{
+              padding: "0.5rem 1rem",
+              marginRight: "0.5rem",
+            }}
           >
             Modificar Empresa
           </Button>
@@ -100,6 +124,10 @@ const DatosEmpresa = () => {
             onClick={() => setShowAgregarObra(true)}
             className="ml-2"
             variant="success"
+            style={{
+              padding: "0.5rem 1rem",
+              marginRight: "0.5rem",
+            }}
           >
             Agregar Obra
           </Button>
@@ -114,6 +142,7 @@ const DatosEmpresa = () => {
         show={showAgregarContacto}
         onHide={() => setShowAgregarContacto(false)}
         empresaId={empresaId}
+        obras={empresa.obras}
         onContactoAgregado={handleContactoAgregado}
       />
       <ModificarEmpresa
@@ -123,12 +152,16 @@ const DatosEmpresa = () => {
         onEmpresaModificada={handleEmpresaModificada}
       />
       <ListaObras obras={empresa.obras} />
+      <ListaPermisos empresaId={empresaId} />
       <Modal show={showAgregarObra} onHide={() => setShowAgregarObra(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Agregar Obra</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AgregarObra empresaId={empresaId} onObraAgregada={handleObraAgregada} />
+          <AgregarObra
+            empresaId={empresaId}
+            onObraAgregada={handleObraAgregada}
+          />
         </Modal.Body>
       </Modal>
     </div>
@@ -136,4 +169,3 @@ const DatosEmpresa = () => {
 };
 
 export default DatosEmpresa;
-

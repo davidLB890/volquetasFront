@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Form, Button, Modal, Alert } from "react-bootstrap";
-import AgregarContactoEmpresa from "./AgregarContactoEmpresa"; // Ajusta la ruta según sea necesario
+import { asignarContactoEmpresa } from "../../api";
+import useAuth from "../../hooks/useAuth";
 
-const SeleccionarOAgregarContacto = ({ empresa, onContactoSeleccionado }) => {
-  const [showAgregarContacto, setShowAgregarContacto] = useState(false);
+const SeleccionarOAgregarContacto = ({ empresa, obraId, onContactoSeleccionado }) => {
   const [contactoSeleccionado, setContactoSeleccionado] = useState(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const getToken = useAuth();
 
   const handleContactoChange = (e) => {
     const contactoId = e.target.value;
@@ -13,28 +15,30 @@ const SeleccionarOAgregarContacto = ({ empresa, onContactoSeleccionado }) => {
     setContactoSeleccionado(contacto);
   };
 
-  const handleAgregarContacto = (nuevoContacto) => {
-    empresa.contactos.push(nuevoContacto);
-    setContactoSeleccionado(nuevoContacto);
-    setShowAgregarContacto(false);
-    onContactoSeleccionado(nuevoContacto);
-  };
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!contactoSeleccionado) {
       setError("Por favor seleccione o agregue un contacto.");
-    } else {
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    const usuarioToken = getToken();
+
+    try {
+      await asignarContactoEmpresa(contactoSeleccionado.id, obraId, usuarioToken);
       onContactoSeleccionado(contactoSeleccionado);
+    } catch (error) {
+      console.error("Error al asignar el contacto:", error.response?.data?.error || error.message);
+      setError(error.response?.data?.error || "Error al asignar el contacto.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div>
-      <Button variant="primary" onClick={() => setShowAgregarContacto(true)}>
-        Agregar Nuevo Contacto
-      </Button>
       <Form.Group controlId="formContacto" className="mt-3">
-        <Form.Label>Seleccionar Contacto</Form.Label>
         <Form.Control as="select" onChange={handleContactoChange}>
           <option value="">Seleccione un contacto</option>
           {empresa.contactos.map((contacto) => (
@@ -45,15 +49,9 @@ const SeleccionarOAgregarContacto = ({ empresa, onContactoSeleccionado }) => {
         </Form.Control>
       </Form.Group>
       {error && <Alert variant="danger">{error}</Alert>}
-      <Button variant="success" className="mt-3" onClick={handleSubmit}>
-        Confirmar Contacto
+      <Button variant="success" className="mt-3" onClick={handleSubmit} disabled={loading}>
+        {loading ? "Asignando..." : "Confirmar Contacto"}
       </Button>
-      <AgregarContactoEmpresa
-        show={showAgregarContacto}
-        onHide={() => setShowAgregarContacto(false)}
-        empresaId={empresa.id}
-        onContactoAgregado={handleAgregarContacto}
-      />
     </div>
   );
 };

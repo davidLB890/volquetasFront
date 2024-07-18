@@ -14,3 +14,10 @@
     width: auto;
   }
   
+  .deshabilitado {
+    background-color: #f5abb2; /* Color de fondo para deshabilitados */
+  }
+
+  .volqueta-perdida {
+    background-color: #ffcccc; /* Rojo claro */
+  }

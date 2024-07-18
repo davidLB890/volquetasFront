@@ -1,14 +1,18 @@
 import React, { useRef, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { loginUsuario, obtenerUsuarios, obtenerEmpleado } from '../../api'; 
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
 import AlertMessage from "../AlertMessage";
+import { fetchEmpleados } from "../../features/empleadosSlice";
+import { fetchCamiones } from "../../features/camionesSlice";
 
 const Login = () => {
     const email = useRef(null);
     const password = useRef(null);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     //controla el estado del botón crear
     const refs = [email, password];
@@ -29,6 +33,8 @@ const Login = () => {
             } else {
                 saveToken(datos.token);
                 await saveUser(em, datos.token);
+                dispatch(fetchEmpleados(datos.token)); // Fetch empleados after login
+                dispatch(fetchCamiones(datos.token)); // Fetch camiones after login
                 navigate("/");
             }
         } catch (error) {
@@ -39,7 +45,7 @@ const Login = () => {
             }
         }
     };
-    
+
     const saveToken = (token) => {
         const timestamp = new Date().getTime(); // Tiempo actual en milisegundos
         localStorage.setItem('apiToken', token);
@@ -52,7 +58,7 @@ const Login = () => {
             const datos = response.data;
             const usuario = datos.find(usuario => usuario.email === email);
             if (usuario) {
-                const responseEmpleado = await obtenerEmpleado(usuario.empleadoId,token);
+                const responseEmpleado = await obtenerEmpleado(usuario.empleadoId, token);
                 localStorage.setItem('userNombre', responseEmpleado.data.nombre);
                 localStorage.setItem('userRol', usuario.rol);
                 localStorage.setItem('userId', usuario.id);

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Form, Button, Row, Col, Spinner, Alert } from "react-bootstrap";
 import { getParticularNombre, getParticularId } from "../../api";
-import { useNavigate } from "react-router-dom";
-import ListaResultadosNombre from "../ListaResultadosNombre"; // Ajusta la ruta según sea necesario
+import ListaResultadosNombre from "./ListaBusquedaEmpresaOParticular"; // Ajusta la ruta según sea necesario
 
 const BuscarParticularPorNombre = ({ onSeleccionar, getToken }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -10,8 +9,6 @@ const BuscarParticularPorNombre = ({ onSeleccionar, getToken }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showResults, setShowResults] = useState(false);
-
-  const navigate = useNavigate();
 
   const handleSearch = async () => {
     const usuarioToken = getToken();
@@ -30,8 +27,16 @@ const BuscarParticularPorNombre = ({ onSeleccionar, getToken }) => {
     }
   };
 
-  const handleNavigateToParticular = (particularId) => {
-    navigate("/particulares/datos", { state: { particularId } });
+  const handleSeleccionar = async (particular) => {
+    const usuarioToken = getToken();
+    try {
+      const response = await getParticularId(particular.id, usuarioToken);
+      onSeleccionar(response.data);
+    } catch (error) {
+      console.error("Error al obtener el particular:", error.response?.data?.error || error.message);
+      setError("Error al obtener el particular");
+    }
+    setShowResults(false);
   };
 
   return (
@@ -51,7 +56,7 @@ const BuscarParticularPorNombre = ({ onSeleccionar, getToken }) => {
       </Row>
       {loading && <Spinner animation="border" />}
       {error && <Alert variant="danger">{error}</Alert>}
-      {showResults && <ListaResultadosNombre resultados={resultados} onSeleccionar={handleNavigateToParticular} />}
+      {showResults && <ListaResultadosNombre resultados={resultados} onSeleccionar={handleSeleccionar} />}
     </>
   );
 };

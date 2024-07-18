@@ -3,58 +3,13 @@ import { Form, Button, Container, Row, Col, Spinner, Alert } from "react-bootstr
 import { useSelector } from 'react-redux';
 import AgregarEmpresa from "../EmpresasFolder/AgegarEmpresa";
 import AgregarParticular from "../ParticularesFolder/AgregarParticular";
-import BuscarEmpresaPorNombre from "../EmpresasFolder/BuscarEmpresaPorNombre";
-import BuscarParticularPorNombre from "../ParticularesFolder/BuscarParticularPorNombre";
-import SelectObra from "./SelectObra";
+import BuscarEmpresa from "../PedidosFolder/BuscarEmpresa";
+import BuscarParticular from "../PedidosFolder/BuscarParticular";
+import SelectObra from "../ObrasFolder/SelectObra";
 import AgregarObra from "../ObrasFolder/AgregarObra";
 import useAuth from "../../hooks/useAuth";
 import { getPermisoIdEmpresa, postPedidoNuevo, postPedidoMultiple, postPedidoEntregaLevante } from '../../api';
-
-const SelectPermiso = ({ empresaId, onSelect }) => {
-  const [permisos, setPermisos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const getToken = useAuth();
-
-  useEffect(() => {
-    const fetchPermisos = async () => {
-      const usuarioToken = getToken();
-      try {
-        const response = await getPermisoIdEmpresa(empresaId, 'si', usuarioToken);
-        setPermisos(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error al obtener los permisos:", error.response?.data?.error || error.message);
-        setError("Error al obtener los permisos");
-        setLoading(false);
-      }
-    };
-
-    fetchPermisos();
-  }, [empresaId, getToken]);
-
-  if (loading) {
-    return <Spinner animation="border" />;
-  }
-
-  if (error) {
-    return <Alert variant="danger">{error}</Alert>;
-  }
-
-  return (
-    <Form.Group controlId="selectPermiso">
-      <Form.Label>Seleccionar Permiso</Form.Label>
-      <Form.Control as="select" onChange={(e) => onSelect(e.target.value)}>
-        <option value="">Seleccione un permiso (opcional)</option>
-        {permisos.map((permiso) => (
-          <option key={permiso.id} value={permiso.id}>
-            ID: {permiso.id} - Vence: {new Date(permiso.fechaVencimiento).toLocaleDateString()}
-          </option>
-        ))}
-      </Form.Control>
-    </Form.Group>
-  );
-};
+import SelectPermiso from "../PermisosFolder/selectPermiso"; // Importa desde la carpeta PermisosFolder
 
 const AgregarPedido = () => {
   const [clienteTipo, setClienteTipo] = useState("");
@@ -132,12 +87,13 @@ const AgregarPedido = () => {
       //clienteId: clienteSeleccionado?.id,
       obraId: obraSeleccionada,
       descripcion,
-      permisoId: permisoSeleccionado,
+      permisoId: permisoSeleccionado === "" ? null : permisoSeleccionado,
       precio,
       pagado,
       tipoPago,
       horarioSugerido,
       choferSugeridoId: choferSeleccionado,
+      cantidadMultiple: cantidad,
     };
 
     try {
@@ -150,6 +106,7 @@ const AgregarPedido = () => {
         response = await postPedidoEntregaLevante(pedido, usuarioToken);
       }
 
+      console.log(response.data);
       setSuccess("Pedido enviado correctamente");
       setError("");
 
@@ -249,7 +206,7 @@ const AgregarPedido = () => {
         {clienteEstado === "registrado" &&
           clienteTipo === "empresa" &&
           !clienteSeleccionado && (
-            <BuscarEmpresaPorNombre
+            <BuscarEmpresa
               onSeleccionar={handleAgregarCliente}
               getToken={getToken}
             />
@@ -258,7 +215,7 @@ const AgregarPedido = () => {
         {clienteEstado === "registrado" &&
           clienteTipo === "particular" &&
           !clienteSeleccionado && (
-            <BuscarParticularPorNombre
+            <BuscarParticular
               onSeleccionar={handleAgregarCliente}
               getToken={getToken}
             />
@@ -361,7 +318,7 @@ const AgregarPedido = () => {
           </Col>
           <Col>
             <Form.Group controlId="descripcion">
-              <Form.Label>Descripción</Form.Label>
+              <Form.Label>Descripción (opcional)</Form.Label>
               <Form.Control
                 type="text"
                 value={descripcion}

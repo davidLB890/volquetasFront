@@ -19,8 +19,6 @@ import AgregarTelefono from './components/TelefonosFolder/AgregarTelefono';
 import 'bootstrap/dist/css/bootstrap.min.css';
 //import "./styles/global.css";
 import HistorialCamiones from './components/CamionesFolder/HistorialCamiones';
-import CrearClientes from './components/ClientesFolder/AgregarCliente';
-import Clientes from './components/ClientesFolder/Clientes';
 import Obras from './components/ObrasFolder/Obras';
 import DatosEmpresa from './components/EmpresasFolder/DatosEmpresa';
 import './assets/css/app.css';
@@ -34,6 +32,8 @@ import AgregarPedido from './components/PedidosFolder/AgregarPedido';
 import useAuth from './hooks/useAuth';
 import { fetchEmpleados } from './features/empleadosSlice';
 import { fetchCamiones } from './features/camionesSlice';
+import Volquetas from './components/VolquetasFolder/Volquetas';
+import AgregarVolqueta from './components/VolquetasFolder/AgregarVolqueta';
 
 function App() {
   const location = useLocation();
@@ -44,17 +44,17 @@ function App() {
   const getToken = useAuth();
 
   useEffect(() => {
+    const storedUserRole = localStorage.getItem('userRol');
+    setUserRole(storedUserRole);
+  }, [navigate]);
+
+  useEffect(() => {
     const usuarioToken = getToken();
     if (usuarioToken) {
       dispatch(fetchEmpleados(usuarioToken));
       dispatch(fetchCamiones(usuarioToken));
     }
-  }, [dispatch, getToken]);
-
-  useEffect(() => {
-    const storedUserRole = localStorage.getItem('userRol');
-    setUserRole(storedUserRole);
-  }, [navigate]);
+  }, [dispatch, getToken, location.pathname]);
 
   const isLoginPage = location.pathname === '/login';
   const isSinginPage = location.pathname === '/singin';
@@ -80,9 +80,6 @@ function App() {
           <Route path="/camiones" element={<Camiones />} />
           <Route path="/camiones/crear" element={<AgregarCamion />} />
           <Route path="/camiones/historial" element={<HistorialCamiones />} />
-          {/* CLIENTES */}
-          <Route path="/clientes" element={<Clientes />} />
-          <Route path="/clientes/crear" element={<CrearClientes />} />
           {/* OBRAS */}
           <Route path="/obras" element={<Obras />} />
           <Route path="/obras/crear" element={<AgregarObra />} />
@@ -96,6 +93,9 @@ function App() {
           <Route path="/particulares/crear" element={<AgregarParticular />} />
           {/* PEDIDOS */}
           <Route path="/pedidos/crear" element={<AgregarPedido />} />
+          {/* VOLQUETAS */}
+          <Route path="/volquetas" element={<Volquetas />} />
+          <Route path="/volquetas/crear" element={<AgregarVolqueta />} />
         </Routes>
       </div>
     </div>

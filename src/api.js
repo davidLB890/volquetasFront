@@ -455,6 +455,13 @@ export const postContactoEmpresa = (contactoEmpresa, usuarioToken) => {
     },
   });
 };
+export const asignarContactoEmpresa = (contactoId, obraId, usuarioToken) => {
+  return axios.put(`${API_URL}/contacto-empresas/asignar/${contactoId}`, { obraId }, {
+    headers: {
+      Authorization: usuarioToken,
+    },
+  });
+};
 
 
 
@@ -519,29 +526,70 @@ export const getPermisos = (usuarioToken) => {
     },
   });
 };
-
-export const getPermisoIdEmpresa = (empresaId, activo, usuarioToken) => {
+export const getPermisoIdEmpresa = (empresaId, usuarioToken) => {
   return axios.get(`${API_URL}/permisos/empresa/${empresaId}`, {
-    params: {
-      activo: activo
-    },
     headers: {
       Authorization: usuarioToken,
       "Content-Type": "application/json",
     },
   });
 };
-
+export const getPermisoIdParticular = (particularId, usuarioToken) => {
+  return axios.get(`${API_URL}/permisos/particular/${particularId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const postPermiso = (permiso, usuarioToken) => {
+  return axios.post(`${API_URL}/permisos`, permiso, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
+export const putPermiso = (permisoId, permiso, usuarioToken) => {
+  return axios.put(`${API_URL}/permisos/${permisoId}`, permiso, {
+    headers: {
+      Authorization: usuarioToken,
+    },
+  });
+}
 
 //PEDIDOS
 export const getPedidos = (usuarioToken) => {
-  return axios.get(`${API_URL}/pedidos`, {
+  return axios.get(`${API_URL}/pedidos-filtro`, {
     headers: {
       Authorization: usuarioToken,
       "Content-Type": "application/json",
     },
   });
 };
+export const getPedidosFiltro = (usuarioToken, { estado, fechaInicio, fechaFin, tipoHorario, empresaId }) => {
+  return axios.get(`${API_URL}/pedidos-filtro`, {
+    params: {
+      estado,
+      fechaInicio,
+      fechaFin,
+      tipoHorario,
+      empresaId,
+    },
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const getPedidosPorEmpresa = (empresaId, usuarioToken) => {
+  return axios.get(`${API_URL}/pedidos/empresa/${empresaId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
 export const getPedidoId = (pedidoId, usuarioToken) => {
   return axios.get(`${API_URL}/pedidos/${pedidoId}`, {
     headers: {
@@ -576,6 +624,43 @@ export const postPedidoEntregaLevante = (pedido, usuarioToken) => {
 };
 export const postPedidoRecambio = (pedido, usuarioToken) => {
   return axios.post(`${API_URL}/pedidos/recambio`, pedido, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+
+
+
+
+//VOLQUETAS
+export const getVolquetas = (usuarioToken) => {
+  return axios.get(`${API_URL}/volquetas`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const postVolqueta = (volqueta, usuarioToken) => {
+  return axios.post(`${API_URL}/volquetas`, volqueta, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const putVolqueta = (volquetaId, volqueta, usuarioToken) => {
+  return axios.put(`${API_URL}/volquetas/${volquetaId}`, volqueta, {
+    headers: {
+      Authorization: usuarioToken,
+    },
+  });
+};
+export const deleteVolqueta = (volquetaId, usuarioToken) => {
+  return axios.delete(`${API_URL}/volquetas/${volquetaId}`, {
     headers: {
       Authorization: usuarioToken,
       "Content-Type": "application/json",

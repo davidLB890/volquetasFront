@@ -152,7 +152,6 @@ const Camiones = () => {
       <table className="table table-striped">
         <thead>
           <tr>
-            <th scope="col"></th>
             <th scope="col">Matricula</th>
             <th scope="col">Modelo</th>
             <th scope="col">Año</th>
@@ -186,7 +185,6 @@ const Camiones = () => {
           {camionesFiltrados.map((camion, index) => (
             <React.Fragment key={camion.id}>
               <tr>
-                <th scope="row">{index + 1}</th>
                 <td>{camion.matricula}</td>
                 <td>{camion.modelo}</td>
                 <td>{camion.anio}</td>

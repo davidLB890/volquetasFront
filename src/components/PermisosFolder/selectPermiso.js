@@ -13,7 +13,7 @@ const SelectPermiso = ({ empresaId, onSelect }) => {
     const fetchPermisos = async () => {
       const usuarioToken = getToken();
       try {
-        const response = await getPermisoIdEmpresa(empresaId, 'si', usuarioToken);
+        const response = await getPermisoIdEmpresa(empresaId, usuarioToken);
         setPermisos(response.data);
         setLoading(false);
       } catch (error) {
@@ -36,9 +36,9 @@ const SelectPermiso = ({ empresaId, onSelect }) => {
 
   return (
     <Form.Group controlId="selectPermiso">
-      <Form.Label>Seleccionar Permiso</Form.Label>
+      <Form.Label>Seleccionar Permiso (opcional)</Form.Label>
       <Form.Control as="select" onChange={(e) => onSelect(e.target.value)}>
-        <option value="">Seleccione un permiso</option>
+        <option value="">Seleccione un permiso (opcional)</option>
         {permisos.map((permiso) => (
           <option key={permiso.id} value={permiso.id}>
             ID: {permiso.id} - Vence: {new Date(permiso.fechaVencimiento).toLocaleDateString()}

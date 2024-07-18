@@ -1,9 +1,13 @@
+// src/components/ObrasFolder/DatosObra.js
 import React, { useEffect, useState } from "react";
-import { getObraId, getEmpresaId } from "../../api"; // Asegúrate de ajustar la ruta según sea necesario
-import { Container, Card, Spinner, Alert, Button, Modal } from "react-bootstrap";
+import { getObraId, getEmpresaId } from "../../api";
+import { Container, Spinner, Alert, Modal, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import SeleccionarOAgregarContacto from "../EmpresasFolder/SeleccionarOAgregarContacto"; // Ajusta la ruta según sea necesario
+import SeleccionarOAgregarContacto from "../EmpresasFolder/SeleccionarOAgregarContacto";
+import ModificarObra from "./ModificarObra";
+import DetallesObra from "./DetallesObra";
+import ContactosObra from "./ContactosObra";
 
 const DatosObra = ({ obraId }) => {
   const [obra, setObra] = useState(null);
@@ -12,6 +16,7 @@ const DatosObra = ({ obraId }) => {
   const [loadingEmpresa, setLoadingEmpresa] = useState(false);
   const [error, setError] = useState("");
   const [showSeleccionarContacto, setShowSeleccionarContacto] = useState(false);
+  const [showModificarObra, setShowModificarObra] = useState(false);
 
   const getToken = useAuth();
   const navigate = useNavigate();
@@ -24,7 +29,10 @@ const DatosObra = ({ obraId }) => {
         setObra(response.data);
         setLoading(false);
       } catch (error) {
-        console.error("Error al obtener la obra:", error.response?.data?.error || error.message);
+        console.error(
+          "Error al obtener la obra:",
+          error.response?.data?.error || error.message
+        );
         setError("Error al obtener la obra");
         setLoading(false);
       }
@@ -40,7 +48,10 @@ const DatosObra = ({ obraId }) => {
       const response = await getEmpresaId(empresaId, usuarioToken);
       setEmpresa(response.data);
     } catch (error) {
-      console.error("Error al obtener la empresa:", error.response?.data?.error || error.message);
+      console.error(
+        "Error al obtener la empresa:",
+        error.response?.data?.error || error.message
+      );
       setError("Error al obtener la empresa");
     } finally {
       setLoadingEmpresa(false);
@@ -61,8 +72,16 @@ const DatosObra = ({ obraId }) => {
   };
 
   const handleContactoSeleccionado = (contacto) => {
-    console.log("Contacto seleccionado/agregado:", contacto);
+    setObra((prevObra) => ({
+      ...prevObra,
+      contactosDesignados: [...prevObra.contactosDesignados, contacto],
+    }));
     setShowSeleccionarContacto(false);
+  };
+
+  const handleModificarObra = (obraModificada) => {
+    setObra(obraModificada);
+    setShowModificarObra(false);
   };
 
   if (loading) {
@@ -75,47 +94,23 @@ const DatosObra = ({ obraId }) => {
 
   return (
     <Container>
-      <Card className="mt-3">
-        <Card.Header>Datos de la Obra</Card.Header>
-        <Card.Body>
-          <Card.Text><strong>Calle:</strong> {obra.calle}</Card.Text>
-          <Card.Text><strong>Esquina:</strong> {obra.esquina}</Card.Text>
-          <Card.Text><strong>Barrio:</strong> {obra.barrio}</Card.Text>
-          <Card.Text><strong>Coordenadas:</strong> {obra.coordenadas}</Card.Text>
-          <Card.Text><strong>Número de Puerta:</strong> {obra.numeroPuerta}</Card.Text>
-          <Card.Text><strong>Descripción:</strong> {obra.descripcion}</Card.Text>
-          <Card.Text><strong>Activa:</strong> {obra.activa ? "Sí" : "No"}</Card.Text>
+      <Row>
+        <Col md={6}>
+          <DetallesObra obra={obra} setShowModificarObra={setShowModificarObra} />
+        </Col>
+        <Col md={6}>
           {obra.empresa && (
-            <>
-              <Button
-                variant="primary"
-                className="ml-2"
-                onClick={handleSeleccionarContacto}
-              >
-                Seleccionar o Agregar Contacto
-              </Button>
-            </>
+            <ContactosObra obra={obra} handleSeleccionarContacto={handleSeleccionarContacto} />
           )}
-          {obra.ObraDetalle && (
-            <>
-              <Card.Text><strong>Detalle de Residuos:</strong> {obra.ObraDetalle.detalleResiduos}</Card.Text>
-              <Card.Text><strong>Residuos Mezclados:</strong> {obra.ObraDetalle.residuosMezclados ? "Sí" : "No"}</Card.Text>
-              <Card.Text><strong>Residuos Reciclados:</strong> {obra.ObraDetalle.residuosReciclados ? "Sí" : "No"}</Card.Text>
-              <Card.Text><strong>Frecuencia Semanal:</strong> {obra.ObraDetalle.frecuenciaSemanal.map((dia, index) => (
-                <span key={index}>
-                  {dia.value}{dia.inclusive ? "(Inclusive)" : ""}{index < obra.ObraDetalle.frecuenciaSemanal.length - 1 ? ", " : ""}
-                </span>
-              ))}</Card.Text>
-              <Card.Text><strong>Destino Final:</strong> {obra.ObraDetalle.destinoFinal}</Card.Text>
-              <Card.Text><strong>Días:</strong> {obra.ObraDetalle.dias}</Card.Text>
-            </>
-          )}
-        </Card.Body>
-      </Card>
+        </Col>
+      </Row>
 
-      <Modal show={showSeleccionarContacto} onHide={() => setShowSeleccionarContacto(false)}>
+      <Modal
+        show={showSeleccionarContacto}
+        onHide={() => setShowSeleccionarContacto(false)}
+      >
         <Modal.Header closeButton>
-          <Modal.Title>Seleccionar o Agregar Contacto</Modal.Title>
+          <Modal.Title>Seleccionar Contacto de la empresa </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {loadingEmpresa ? (
@@ -124,18 +119,27 @@ const DatosObra = ({ obraId }) => {
             empresa && (
               <SeleccionarOAgregarContacto
                 empresa={empresa}
+                obraId={obraId}
                 onContactoSeleccionado={handleContactoSeleccionado}
               />
             )
           )}
         </Modal.Body>
       </Modal>
+
+      {showModificarObra && (
+        <ModificarObra
+          show={showModificarObra}
+          onHide={() => setShowModificarObra(false)}
+          obra={obra}
+          onUpdate={handleModificarObra}
+        />
+      )}
     </Container>
   );
 };
 
 export default DatosObra;
-
 
 
 //ya tengo la empresa acá mismo, si lo quiero mandar a los datos de la empresa en vez de que lo busque ahí, ya debería pasarle la empresa

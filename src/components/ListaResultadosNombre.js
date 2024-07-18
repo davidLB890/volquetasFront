@@ -7,7 +7,6 @@ const ListaResultadosNombre = ({ resultados, onSeleccionar }) => {
       <thead>
         <tr>
           <th>Nombre</th>
-          <th>Descripción</th>
           <th></th>
         </tr>
       </thead>
@@ -20,11 +19,10 @@ const ListaResultadosNombre = ({ resultados, onSeleccionar }) => {
           resultados.map((item) => (
             <tr key={item.id}>
               <td>{item.nombre}</td>
-              <td>{item.descripcion}</td>
               <td>
                 <Button
                   variant="primary"
-                  onClick={() => onSeleccionar(item)}
+                  onClick={() => onSeleccionar(item.id)}
                 >
                   Seleccionar
                 </Button>

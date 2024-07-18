@@ -127,6 +127,29 @@ const CustomSidebar = ({ userRole }) => {
             </Nav.Item>
           </div>
 
+          <div
+            onMouseEnter={() => handleMouseEnter("volquetas")}
+            onMouseLeave={handleMouseLeave}
+            className="nav-item-container"
+          >
+            <Nav.Item className="nav-item">
+              <div
+                onClick={() => toggleExpand("volquetas")}
+                className="nav-link cursor-pointer nav-item-title"
+              >
+                <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                  <i className="ni ni-delivery-fast text-info text-sm opacity-10"></i>
+                </div>
+                <span className="nav-link-text ms-1">Volquetas</span>
+              </div>
+              <div className={`nav-submenu ms-5 collapse ${expanded === "volquetas" ? "show" : ""}`}>
+                <Nav.Link as={Link} to="/volquetas" onClick={handleMouseLeave}>
+                  Lista de volquetas
+                </Nav.Link>
+              </div>
+            </Nav.Item>
+          </div>
+
           {userRole === "admin" && (
             <div
               onMouseEnter={() => handleMouseEnter("usuarios")}

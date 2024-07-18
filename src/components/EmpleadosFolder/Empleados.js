@@ -33,7 +33,8 @@ const Empleados = () => {
     if (!usuarioToken) {
       navigate("/login");
     }
-  }, [getToken, navigate]);
+    dispatch(fetchEmpleados(usuarioToken)); // Fetch empleados al montar el componente
+  }, [getToken, navigate, dispatch]);
 
   const eliminar = async (empleadoId) => {
     const usuarioToken = getToken();
@@ -115,7 +116,7 @@ const Empleados = () => {
       <table className="table table-striped mt-4">
         <thead>
           <tr>
-            <th scope="col"></th>
+            {/* <th scope="col"></th> */}
             <th scope="col">Nombre</th>
             <th scope="col">Rol</th>
             <th scope="col">Acciones</th>
@@ -148,8 +149,8 @@ const Empleados = () => {
         <tbody >
           {empleadosFiltrados.sort((a, b) => a.id - b.id).map((empleado, index) => ( //ordena por el id
             <React.Fragment key={empleado.id}>
-              <tr>
-                <th scope="row">{index + 1}</th>
+              <tr className={!empleado.habilitado ? "deshabilitado" : ""}>
+                {/* <th scope="row">{index + 1}</th> */}
                 <td>
                   {editando === empleado.id ? (
                     <Form.Control

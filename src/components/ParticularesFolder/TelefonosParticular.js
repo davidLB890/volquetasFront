@@ -1,27 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Card, ListGroup, Button, Collapse, Row, Col } from "react-bootstrap";
-import AgregarTelefono from "../TelefonosFolder/AgregarTelefono";
+import React, { useEffect, useState } from "react";
+import { Button } from "react-bootstrap";
 
-const TelefonosParticular = ({ telefonos = [], particularId, nombre }) => {
-  const [showAgregarTelefono, setShowAgregarTelefono] = useState(false);
+const TelefonosParticular = ({ telefonos = [] }) => {
   const [telefonosList, setTelefonosList] = useState(telefonos);
 
   useEffect(() => {
     setTelefonosList(telefonos);
   }, [telefonos]);
-
-  const handleShowAgregarTelefono = () => {
-    setShowAgregarTelefono(true);
-  };
-
-  const handleHideAgregarTelefono = () => {
-    setShowAgregarTelefono(false);
-  };
-
-  const handleTelefonoAgregado = (nuevoTelefono) => {
-    setTelefonosList((prevTelefonosList) => [...prevTelefonosList, nuevoTelefono.nuevoTelefono]);
-    handleHideAgregarTelefono();
-  };
 
   return (
     <div>
@@ -44,16 +29,6 @@ const TelefonosParticular = ({ telefonos = [], particularId, nombre }) => {
           <li>No tiene teléfonos registrados</li>
         )}
       </ul>
-      <Button variant="primary" onClick={handleShowAgregarTelefono}>
-        Agregar Teléfono
-      </Button>
-      <AgregarTelefono
-        show={showAgregarTelefono}
-        onHide={handleHideAgregarTelefono}
-        particularId={particularId}
-        nombre={nombre}
-        onTelefonoAgregado={handleTelefonoAgregado}
-      />
     </div>
   );
 };

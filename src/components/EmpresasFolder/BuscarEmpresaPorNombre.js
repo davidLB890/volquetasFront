@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Form, Button, Row, Col, Spinner, Alert } from "react-bootstrap";
 import { getEmpresasNombre, getEmpresaId } from "../../api";
-import ListaResultadosNombre from "../PedidosFolder/ListaResultadosNombre"; // Ajusta la ruta según sea necesario
+import { useNavigate } from "react-router-dom";
+import ListaResultadosNombre from "../ListaResultadosNombre"; // Ajusta la ruta según sea necesario
 
 const BuscarEmpresaPorNombre = ({ onSeleccionar, getToken }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -9,6 +10,8 @@ const BuscarEmpresaPorNombre = ({ onSeleccionar, getToken }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showResults, setShowResults] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSearch = async () => {
     const usuarioToken = getToken();
@@ -27,16 +30,8 @@ const BuscarEmpresaPorNombre = ({ onSeleccionar, getToken }) => {
     }
   };
 
-  const handleSeleccionar = async (empresa) => {
-    const usuarioToken = getToken();
-    try {
-      const response = await getEmpresaId(empresa.id, usuarioToken);
-      onSeleccionar(response.data);
-    } catch (error) {
-      console.error("Error al obtener la empresa:", error.response?.data?.error || error.message);
-      setError("Error al obtener la empresa");
-    }
-    setShowResults(false);
+  const handleNavigateToEmpresa = (empresaId) => {
+    navigate("/empresas/datos", { state: { empresaId } });
   };
 
   return (
@@ -56,7 +51,7 @@ const BuscarEmpresaPorNombre = ({ onSeleccionar, getToken }) => {
       </Row>
       {loading && <Spinner animation="border" />}
       {error && <Alert variant="danger">{error}</Alert>}
-      {showResults && <ListaResultadosNombre resultados={resultados} onSeleccionar={handleSeleccionar} />}
+      {showResults && <ListaResultadosNombre resultados={resultados} onSeleccionar={handleNavigateToEmpresa} />}
     </>
   );
 };
