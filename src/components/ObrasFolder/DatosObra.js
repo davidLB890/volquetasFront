@@ -94,6 +94,7 @@ const DatosObra = ({ obraId }) => {
 
   return (
     <Container>
+      <h3>Datos de la Obra</h3>
       <Row>
         <Col md={6}>
           <DetallesObra obra={obra} setShowModificarObra={setShowModificarObra} />
@@ -113,6 +114,7 @@ const DatosObra = ({ obraId }) => {
           <Modal.Title>Seleccionar Contacto de la empresa </Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <p>Si desea crear un nuevo contacto, diríjase a "Agregar contacto"</p>
           {loadingEmpresa ? (
             <Spinner animation="border" />
           ) : (

@@ -9,7 +9,7 @@ import {
   Card,
 } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
-import DatosObra from "./DatosObra"; 
+import DatosObra from "./DatosObra";
 
 const ListaObras = ({ obras = [] }) => {
   const [cambios, setCambios] = useState(true);
@@ -113,6 +113,16 @@ const ListaObras = ({ obras = [] }) => {
                         <td>{obra.calle}</td>
                         <td>{obra.esquina}</td>
                         <td>
+                                <Button
+                                  variant="info"
+                                  style={{
+                                    padding: "0.5rem 1rem",
+                                    marginRight: "0.5rem",
+                                  }}
+                                  onClick={() => handleMostrarDatosObra(obra)}
+                                >
+                                  Datos
+                                </Button>
                           {rolUsuario === "admin" && (
                             <>
                               <Button
@@ -124,16 +134,6 @@ const ListaObras = ({ obras = [] }) => {
                                 onClick={() => confirmarEliminar(obra)}
                               >
                                 Eliminar
-                              </Button>
-                              <Button
-                                variant="info"
-                                style={{
-                                  padding: "0.5rem 1rem",
-                                  marginRight: "0.5rem",
-                                }}
-                                onClick={() => handleMostrarDatosObra(obra)}
-                              >
-                                Datos
                               </Button>
                             </>
                           )}

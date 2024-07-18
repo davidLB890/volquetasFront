@@ -47,7 +47,7 @@ const ContactosObra = ({ obra, handleSeleccionarContacto }) => {
             marginRight: "0.5rem",
           }}
         >
-          Agregar Contacto
+          Asignar contacto existente
         </Button>
       </Card.Body>
     </Card>

@@ -542,6 +542,18 @@ export const getPermisoIdParticular = (particularId, usuarioToken) => {
     },
   });
 };
+export const getPermisoIdFiltro = (permisoId, usuarioToken, {fechaInicio, fechaFin}) => {
+  return axios.get(`${API_URL}/permisos/${permisoId}`, {
+    params: {
+      fechaInicio,
+      fechaFin,
+    },
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
 export const postPermiso = (permiso, usuarioToken) => {
   return axios.post(`${API_URL}/permisos`, permiso, {
     headers: {
@@ -557,6 +569,16 @@ export const putPermiso = (permisoId, permiso, usuarioToken) => {
     },
   });
 }
+export const deletePermiso = (permisoId, usuarioToken) => {
+  return axios.delete(`${API_URL}/permisos/${permisoId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+
 
 //PEDIDOS
 export const getPedidos = (usuarioToken) => {

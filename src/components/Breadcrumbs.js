@@ -1,9 +1,10 @@
 import React from 'react';
 import { Breadcrumb } from 'react-bootstrap';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Breadcrumbs = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const pathnames = location.pathname.split('/').filter((x) => x);
 
   const breadcrumbNameMap = {
@@ -23,6 +24,14 @@ const Breadcrumbs = () => {
     'volquetas': 'Volquetas',
   };
 
+  const handleClick = (to) => {
+    if (to === '/pedidos') {
+      navigate('/');
+    } else {
+      navigate(to);
+    }
+  };
+
   return (
     <Breadcrumb>
       {pathnames.length === 0 ? (
@@ -35,7 +44,15 @@ const Breadcrumbs = () => {
           return isLast ? (
             <Breadcrumb.Item active key={to}>{breadcrumbNameMap[value]}</Breadcrumb.Item>
           ) : (
-            <Breadcrumb.Item linkAs={Link} linkProps={{ to }} key={to}>
+            <Breadcrumb.Item
+              key={to}
+              linkAs={Link}
+              linkProps={{ to }}
+              onClick={(e) => {
+                e.preventDefault();
+                handleClick(to);
+              }}
+            >
               {breadcrumbNameMap[value]}
             </Breadcrumb.Item>
           );

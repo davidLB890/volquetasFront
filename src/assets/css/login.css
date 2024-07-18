@@ -1,0 +1,23 @@
+/* app.css */
+
+.app-container {
+    display: flex;
+  }
+  
+  .content {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .with-sidebar .content {
+    margin-left: 250px; /* Ajusta esto según el ancho de tu sidebar */
+  }
+  
+  .no-sidebar .content {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  

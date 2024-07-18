@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Spinner, Alert, Form, Button, Row, Col, Collapse, Container } from "react-bootstrap";
 import { getPedidosFiltro } from "../../api"; // Asegúrate de tener esta función en api.js
+import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
 
@@ -11,10 +12,11 @@ const ListaPedido = () => {
   const [fechaInicio, setFechaInicio] = useState(moment().startOf('week').format('YYYY-MM-DD'));
   const [fechaFin, setFechaFin] = useState(moment().endOf('week').format('YYYY-MM-DD'));
   const [estado, setEstado] = useState(null);
-  const [tipoHorario, setTipoHorario] = useState(null);
+  const [tipoHorario, setTipoHorario] = useState('creacion');
   const [empresaId, setEmpresaId] = useState(null);
   const [openFilters, setOpenFilters] = useState(false); // Estado para manejar el despliegue de filtros
   const getToken = useAuth();
+  const navigate = useNavigate();
 
   const fetchPedidos = async (params) => {
     const usuarioToken = getToken();
@@ -51,6 +53,10 @@ const ListaPedido = () => {
     };
     setLoading(true);
     fetchPedidos(params);
+  };
+
+  const handleRowClick = (pedido) => {
+    navigate('/pedidos/datos', { state: { pedido } });
   };
 
   if (loading) {
@@ -105,8 +111,11 @@ const ListaPedido = () => {
                     value={estado}
                     onChange={(e) => setEstado(e.target.value)}
                   >
+                    <option value="">Todos</option>
                     <option value="entregado">Entregado</option>
-                    <option value="pendiente">Pendiente</option>
+                    <option value="iniciado">Iniciado</option>
+                    <option value="cancelado">Cancelado</option>
+                    <option value="levantado">Levantado</option>
                     {/* Añade más estados si es necesario */}
                   </Form.Control>
                 </Form.Group>
@@ -120,7 +129,10 @@ const ListaPedido = () => {
                     onChange={(e) => setTipoHorario(e.target.value)}
                   >
                     <option value="creacion">Creación</option>
-                    <option value="entrega">Entrega</option>
+                    <option value="sugerenciaLevante">Sugerencia Entrega</option>
+                    <option value="sugerenciaEntrega">Sugerencia Levante</option>
+                    <option value="movimientoLevante">Movimiento Levante</option>
+                    <option value="movimientoEntrega">Movimiento Entrega</option>
                     {/* Añade más tipos de horario si es necesario */}
                   </Form.Control>
                 </Form.Group>
@@ -136,7 +148,7 @@ const ListaPedido = () => {
                 </Form.Group>
               </Col>
             </Row>
-            <Button type="submit" className="mt-3">Filtrar</Button>
+            <Button type="submit" className="mt-3">Aplicar filtros</Button>
           </Form>
         </div>
       </Collapse>
@@ -144,27 +156,34 @@ const ListaPedido = () => {
       <Table striped bordered hover className="mt-3">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Horario Sugerido</th>
+            <th>Cliente</th>
+            <th>Dirección</th>
             <th>Precio</th>
             <th>Pagado</th>
             <th>Tipo Sugerido</th>
-            <th>Horario Sugerido</th>
-            <th>Obra ID</th>
-            <th>Empresa ID</th>
           </tr>
         </thead>
         <tbody>
-          {pedidos.map((pedido) => (
-            <tr key={pedido.id}>
-              <td>{pedido.id}</td>
-              <td>{pedido.pagoPedido.precio}</td>
-              <td>{pedido.pagoPedido.pagado ? "Sí" : "No"}</td>
-              <td>{pedido.Sugerencias[0]?.tipoSugerido || "N/A"}</td>
-              <td>{pedido.Sugerencias[0]?.horarioSugerido ? new Date(pedido.Sugerencias[0].horarioSugerido).toLocaleString() : "N/A"}</td>
-              <td>{pedido.Obra.id}</td>
-              <td>{pedido.Obra.empresa?.id || "N/A"}</td>
-            </tr>
-          ))}
+          {pedidos.map((pedido) => {
+            const esEmpresa = !!pedido.Obra.empresa;
+            const colorFondo = esEmpresa ? "lightblue" : "lavender";
+
+            return (
+              <tr
+                key={pedido.id}
+                style={{ backgroundColor: colorFondo, cursor: 'pointer' }}
+                onClick={() => handleRowClick(pedido)}
+              >
+                <td>{pedido.Sugerencias[0]?.horarioSugerido ? new Date(pedido.Sugerencias[0].horarioSugerido).toLocaleString() : "N/A"}</td>
+                <td>{esEmpresa ? pedido.Obra.empresa?.nombre : pedido.Obra.particular?.nombre}</td>
+                <td>{pedido.Obra.calle}</td>
+                <td>{pedido.pagoPedido.precio}</td>
+                <td>{pedido.pagoPedido.pagado ? "Sí" : "No"}</td>
+                <td>{pedido.Sugerencias[0]?.tipoSugerido || "N/A"}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </Table>
     </Container>

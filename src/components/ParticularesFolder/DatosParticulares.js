@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getParticularId } from "../../api";
-import { useLocation } from "react-router-dom";
-import { Card, Spinner, Alert, Button, Modal } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Card, Spinner, Alert, Button, Modal, Container } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import ModificarParticular from "./ModificarParticular"; // Ajusta la ruta según sea necesario
 import TelefonosParticular from "./TelefonosParticular"; // Ajusta la ruta según sea necesario
@@ -9,6 +9,7 @@ import ListaObras from "../ObrasFolder/ListaObras"; // Ajusta la ruta según sea
 import AgregarObra from "../ObrasFolder/AgregarObra"; // Ajusta la ruta según sea necesario
 import AgregarTelefono from "../TelefonosFolder/AgregarTelefono"; // Ajusta la ruta según sea necesario
 import ListaPermisos from "../PermisosFolder/ListaPermisos";
+import ListaPedidosEmpresa from "../PedidosFolder/ListaPedidosEmpresa"; // Asegúrate de ajustar la ruta según sea necesario
 
 const DatosParticular = () => {
   const [particular, setParticular] = useState(null);
@@ -21,7 +22,8 @@ const DatosParticular = () => {
 
   const getToken = useAuth();
   const location = useLocation();
-  const { particularId } = location.state;
+  const navigate = useNavigate();
+  const { particularId, fromPedido } = location.state;
 
   useEffect(() => {
     const fetchParticular = async () => {
@@ -78,7 +80,12 @@ const DatosParticular = () => {
   }
 
   return (
-    <div>
+    <Container>
+      {fromPedido && (
+        <Button variant="secondary" onClick={() => navigate(-1)}>
+          &larr; Volver al Pedido
+        </Button>
+      )}
       <Card className="mt-3">
         <Card.Header>
           <h2>{particular.nombre}</h2>
@@ -144,6 +151,7 @@ const DatosParticular = () => {
       />
       <ListaObras obras={particular.obras} />
       <ListaPermisos particularId={particular.id} />
+      <ListaPedidosEmpresa empresaId={particular.id} />
       <Modal show={showAgregarObra} onHide={() => setShowAgregarObra(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Agregar Obra</Modal.Title>
@@ -161,7 +169,7 @@ const DatosParticular = () => {
         particularId={particularId}
         onTelefonoAgregado={handleTelefonoAgregado}
       />
-    </div>
+    </Container>
   );
 };
 

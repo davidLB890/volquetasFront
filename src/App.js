@@ -17,7 +17,6 @@ import Camiones from './components/CamionesFolder/Camiones';
 import ListaJornalesDatos from './components/JornalesFolder/ListaJornalesDatos';
 import AgregarTelefono from './components/TelefonosFolder/AgregarTelefono';
 import 'bootstrap/dist/css/bootstrap.min.css';
-//import "./styles/global.css";
 import HistorialCamiones from './components/CamionesFolder/HistorialCamiones';
 import Obras from './components/ObrasFolder/Obras';
 import DatosEmpresa from './components/EmpresasFolder/DatosEmpresa';
@@ -34,6 +33,8 @@ import { fetchEmpleados } from './features/empleadosSlice';
 import { fetchCamiones } from './features/camionesSlice';
 import Volquetas from './components/VolquetasFolder/Volquetas';
 import AgregarVolqueta from './components/VolquetasFolder/AgregarVolqueta';
+import DatosPedido from './components/PedidosFolder/DatosPedido';
+import DatosPermiso from './components/PermisosFolder/DatosPermiso';
 
 function App() {
   const location = useLocation();
@@ -60,43 +61,48 @@ function App() {
   const isSinginPage = location.pathname === '/singin';
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${isLoginPage || isSinginPage ? 'login-page' : 'with-sidebar'}`}>
       {!isLoginPage && !isSinginPage && <CustomNavbar userRole={userRole} />}
-      {!isLoginPage && !isSinginPage && <CustomSidebar userRole={userRole} />}
-      <div className="content">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/singin" element={<Singin />} />
-          {/* USUARIOS */}
-          <Route path="/usuarios/confirmar" element={<ConfirmarUsuario />} />
-          <Route path="/empleados/crear" element={<AgregarEmpleado />} />
-          <Route path="/empleados/telefonos" element={<AgregarTelefono />} />
-          {/* EMPLEADOS */}
-          <Route path="/empleados" element={<Empleados />} />
-          <Route path="/empleados/jornales" element={<Jornales />} />
-          <Route path="/lj" element={<ListaJornalesDatos />} />
-          {/* CAMIONES */}
-          <Route path="/camiones" element={<Camiones />} />
-          <Route path="/camiones/crear" element={<AgregarCamion />} />
-          <Route path="/camiones/historial" element={<HistorialCamiones />} />
-          {/* OBRAS */}
-          <Route path="/obras" element={<Obras />} />
-          <Route path="/obras/crear" element={<AgregarObra />} />
-          {/* EMPRESAS */}
-          <Route path="/empresas" element={<Empresas />} />
-          <Route path="/empresas/datos" element={<DatosEmpresa />} />
-          <Route path="/empresas/crear" element={<AgregarEmpresa />} />
-          {/* PARTICULARES */}
-          <Route path="/particulares" element={<Particulares />} />
-          <Route path="/particulares/datos" element={<DatosParticulares />} />
-          <Route path="/particulares/crear" element={<AgregarParticular />} />
-          {/* PEDIDOS */}
-          <Route path="/pedidos/crear" element={<AgregarPedido />} />
-          {/* VOLQUETAS */}
-          <Route path="/volquetas" element={<Volquetas />} />
-          <Route path="/volquetas/crear" element={<AgregarVolqueta />} />
-        </Routes>
+      <div className="main-content">
+        {!isLoginPage && !isSinginPage && <CustomSidebar userRole={userRole} />}
+        <div className="content">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/singin" element={<Singin />} />
+            {/* USUARIOS */}
+            <Route path="/usuarios/confirmar" element={<ConfirmarUsuario />} />
+            <Route path="/empleados/crear" element={<AgregarEmpleado />} />
+            <Route path="/empleados/telefonos" element={<AgregarTelefono />} />
+            {/* EMPLEADOS */}
+            <Route path="/empleados" element={<Empleados />} />
+            <Route path="/empleados/jornales" element={<Jornales />} />
+            <Route path="/lj" element={<ListaJornalesDatos />} />
+            {/* CAMIONES */}
+            <Route path="/camiones" element={<Camiones />} />
+            <Route path="/camiones/crear" element={<AgregarCamion />} />
+            <Route path="/camiones/historial" element={<HistorialCamiones />} />
+            {/* OBRAS */}
+            <Route path="/obras" element={<Obras />} />
+            <Route path="/obras/crear" element={<AgregarObra />} />
+            {/* EMPRESAS */}
+            <Route path="/empresas" element={<Empresas />} />
+            <Route path="/empresas/datos" element={<DatosEmpresa />} />
+            <Route path="/empresas/crear" element={<AgregarEmpresa />} />
+            {/* PARTICULARES */}
+            <Route path="/particulares" element={<Particulares />} />
+            <Route path="/particulares/datos" element={<DatosParticulares />} />
+            <Route path="/particulares/crear" element={<AgregarParticular />} />
+            {/* PEDIDOS */}
+            <Route path="/pedidos/crear" element={<AgregarPedido />} />
+            <Route path="/pedidos/datos" element={<DatosPedido />} />
+            {/* VOLQUETAS */}
+            <Route path="/volquetas" element={<Volquetas />} />
+            <Route path="/volquetas/crear" element={<AgregarVolqueta />} />
+            {/* PERMISOS */}
+            {/* <Route path="/permiso/datos/:permisoId" element={<DatosPermiso />} /> */}
+          </Routes>
+        </div>
       </div>
     </div>
   );

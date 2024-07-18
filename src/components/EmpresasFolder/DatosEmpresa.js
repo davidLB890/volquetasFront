@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { getEmpresaId } from "../../api";
-import { useLocation } from "react-router-dom";
-import { Card, Spinner, Alert, Button, Collapse, Modal } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Card, Spinner, Alert, Button, Collapse, Modal, Container } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import ContactosEmpresa from "./ContactosEmpresa";
 import AgregarContactoEmpresa from "./AgregarContactoEmpresa";
 import ModificarEmpresa from "./ModificarEmpresa";
 import ListaObras from "../ObrasFolder/ListaObras";
 import ListaPermisos from "../PermisosFolder/ListaPermisos";
+import ListaPedidosEmpresa from "../PedidosFolder/ListaPedidosEmpresa";
 import AgregarObra from "../ObrasFolder/AgregarObra";
+import AgregarPermiso from "../PermisosFolder/AgregarPermiso"; // Ajusta la ruta según sea necesario
 
 const DatosEmpresa = () => {
   const [empresa, setEmpresa] = useState(null);
@@ -18,17 +20,23 @@ const DatosEmpresa = () => {
   const [showAgregarContacto, setShowAgregarContacto] = useState(false);
   const [showModificarEmpresa, setShowModificarEmpresa] = useState(false);
   const [showAgregarObra, setShowAgregarObra] = useState(false);
+  const [showAgregarPermiso, setShowAgregarPermiso] = useState(false); // Estado para manejar el modal de agregar permiso
+  const [actualizarPermisos, setActualizarPermisos] = useState(false); // Estado para manejar la actualización de permisos
 
   const getToken = useAuth();
   const location = useLocation();
-  const { empresaId } = location.state;
+  const navigate = useNavigate();
+  const { empresaId, fromPedido } = location.state;
 
   useEffect(() => {
     const fetchEmpresa = async () => {
       const usuarioToken = getToken();
       try {
         const response = await getEmpresaId(empresaId, usuarioToken);
-        setEmpresa(response.data);
+        setEmpresa({
+          ...response.data,
+          permisos: response.data.permisos || [], // Asegurarse de que permisos sea un arreglo
+        });
         setLoading(false);
       } catch (error) {
         console.error(
@@ -62,6 +70,15 @@ const DatosEmpresa = () => {
     setShowAgregarObra(false);
   };
 
+  const handlePermisoAgregado = (nuevoPermiso) => {
+    setEmpresa((prevEmpresa) => ({
+      ...prevEmpresa,
+      permisos: [...(prevEmpresa.permisos || []), nuevoPermiso],
+    }));
+    setShowAgregarPermiso(false);
+    setActualizarPermisos(!actualizarPermisos); // Cambia la bandera para actualizar ListaPermisos
+  };
+
   if (loading) {
     return <Spinner animation="border" />;
   }
@@ -71,7 +88,12 @@ const DatosEmpresa = () => {
   }
 
   return (
-    <div>
+    <Container>
+      {fromPedido && (
+        <Button variant="secondary" onClick={() => navigate(-1)}>
+          &larr; Volver al Pedido
+        </Button>
+      )}
       <Card className="mt-3">
         <Card.Header>
           <h2>{empresa.nombre}</h2>
@@ -131,6 +153,17 @@ const DatosEmpresa = () => {
           >
             Agregar Obra
           </Button>
+          <Button
+            onClick={() => setShowAgregarPermiso(true)}
+            className="ml-2"
+            variant="primary"
+            style={{
+              padding: "0.5rem 1rem",
+              marginRight: "0.5rem",
+            }}
+          >
+            Agregar Permiso
+          </Button>
           <Collapse in={showContactos}>
             <div id="contactos-collapse">
               <ContactosEmpresa contactos={empresa.contactos} />
@@ -138,13 +171,6 @@ const DatosEmpresa = () => {
           </Collapse>
         </Card.Body>
       </Card>
-      <AgregarContactoEmpresa
-        show={showAgregarContacto}
-        onHide={() => setShowAgregarContacto(false)}
-        empresaId={empresaId}
-        obras={empresa.obras}
-        onContactoAgregado={handleContactoAgregado}
-      />
       <ModificarEmpresa
         show={showModificarEmpresa}
         onHide={() => setShowModificarEmpresa(false)}
@@ -152,7 +178,8 @@ const DatosEmpresa = () => {
         onEmpresaModificada={handleEmpresaModificada}
       />
       <ListaObras obras={empresa.obras} />
-      <ListaPermisos empresaId={empresaId} />
+      <ListaPermisos empresaId={empresaId} actualizar={actualizarPermisos} />
+      <ListaPedidosEmpresa empresaId={empresa.id} />
       <Modal show={showAgregarObra} onHide={() => setShowAgregarObra(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Agregar Obra</Modal.Title>
@@ -164,7 +191,19 @@ const DatosEmpresa = () => {
           />
         </Modal.Body>
       </Modal>
-    </div>
+      <Modal show={showAgregarPermiso} onHide={() => setShowAgregarPermiso(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Agregar Permiso</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <AgregarPermiso
+            empresaId={empresaId}
+            onHide={() => setShowAgregarPermiso(false)}
+            onPermisoAgregado={handlePermisoAgregado}
+          />
+        </Modal.Body>
+      </Modal>
+    </Container>
   );
 };
 

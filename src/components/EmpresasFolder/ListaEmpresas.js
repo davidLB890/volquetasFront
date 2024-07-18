@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getEmpresasLetra } from "../../api";
 import { useNavigate } from "react-router-dom";
-import { Container, Table, Button, Spinner, Alert, Nav } from "react-bootstrap";
+import { Container, Table, Button, Spinner, Alert, Nav, Card } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import BuscarEmpresaPorNombre from "./BuscarEmpresaPorNombre"; // Ajusta la ruta según sea necesario
 
@@ -58,6 +58,8 @@ const ListaEmpresas = () => {
 
   return (
     <Container className="mt-4">
+      <Card className="mt-3">
+        <Card.Body>
       <BuscarEmpresaPorNombre onSearchComplete={handleSearchComplete} getToken={getToken} />
       <Nav className="pagination justify-content-center">
         <Nav.Item>
@@ -118,6 +120,8 @@ const ListaEmpresas = () => {
           )}
         </tbody>
       </Table>
+      </Card.Body>
+      </Card>
     </Container>
   );
 };

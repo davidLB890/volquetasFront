@@ -46,7 +46,6 @@ const CustomSidebar = ({ userRole }) => {
         style={{ overflowY: "auto", height: "calc(100vh - 150px)" }}
       >
         <Nav className="navbar-nav">
-
           <div
             onMouseEnter={() => handleMouseEnter("clientes")}
             onMouseLeave={handleMouseLeave}
@@ -72,9 +71,6 @@ const CustomSidebar = ({ userRole }) => {
               </div>
             </Nav.Item>
           </div>
-
-          
-
           <div
             onMouseEnter={() => handleMouseEnter("empleados")}
             onMouseLeave={handleMouseLeave}
@@ -100,7 +96,6 @@ const CustomSidebar = ({ userRole }) => {
               </div>
             </Nav.Item>
           </div>
-
           <div
             onMouseEnter={() => handleMouseEnter("camiones")}
             onMouseLeave={handleMouseLeave}
@@ -126,7 +121,6 @@ const CustomSidebar = ({ userRole }) => {
               </div>
             </Nav.Item>
           </div>
-
           <div
             onMouseEnter={() => handleMouseEnter("volquetas")}
             onMouseLeave={handleMouseLeave}
@@ -149,7 +143,6 @@ const CustomSidebar = ({ userRole }) => {
               </div>
             </Nav.Item>
           </div>
-
           {userRole === "admin" && (
             <div
               onMouseEnter={() => handleMouseEnter("usuarios")}
@@ -174,56 +167,6 @@ const CustomSidebar = ({ userRole }) => {
               </Nav.Item>
             </div>
           )}
-
-          {/*<div
-            onMouseEnter={() => handleMouseEnter("obras")}
-            onMouseLeave={handleMouseLeave}
-            className="nav-item-container"
-          >
-            <Nav.Item className="nav-item">
-              <div
-                onClick={() => toggleExpand("obras")}
-                className="nav-link cursor-pointer nav-item-title"
-              >
-                <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                  <i className="ni ni-single-02 text-primary text-sm opacity-10"></i>
-                </div>
-                <span className="nav-link-text ms-1">Obras</span>
-              </div>
-              <div className={`nav-submenu ms-5 collapse ${expanded === "obras" ? "show" : ""}`}>
-                <Nav.Link as={Link} to="/obras" onClick={handleMouseLeave}>
-                  Lista de obras
-                </Nav.Link>
-              </div>
-            </Nav.Item>
-          </div> */}
-
-          {/* <div
-            onMouseEnter={() => handleMouseEnter("volquetas")}
-            onMouseLeave={handleMouseLeave}
-            className="nav-item-container"
-          >
-            <Nav.Item className="nav-item">
-              <div
-                onClick={() => toggleExpand("volquetas")}
-                className="nav-link cursor-pointer nav-item-title"
-              >
-                <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                  <i className="ni ni-archive-2 text-warning text-sm opacity-10"></i>
-                </div>
-                <span className="nav-link-text ms-1">Volquetas</span>
-              </div>
-              <div className={`nav-submenu ms-5 collapse ${expanded === "volquetas" ? "show" : ""}`}>
-                <Nav.Link as={Link} to="/" onClick={handleMouseLeave}>
-                  Ubicación
-                </Nav.Link>
-                <Nav.Link as={Link} to="/" onClick={handleMouseLeave}>
-                  Otras
-                </Nav.Link>
-              </div>
-            </Nav.Item>
-          </div> */}
-
         </Nav>
       </div>
     </aside>
@@ -231,6 +174,7 @@ const CustomSidebar = ({ userRole }) => {
 };
 
 export default CustomSidebar;
+
 
 
 
