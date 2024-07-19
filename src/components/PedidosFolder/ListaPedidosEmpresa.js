@@ -93,7 +93,7 @@ const ListaPedidosEmpresa = ({ empresaId }) => {
         aria-expanded={open}
         className="mb-3 boton-personalizado"
       >
-        Lista de Obras
+        Lista de Pedidos
       </Button>
       <Collapse in={open}>
         <div id="lista-pedidos-collapse">
@@ -184,7 +184,7 @@ const ListaPedidosEmpresa = ({ empresaId }) => {
           <Table striped bordered hover className="mt-3">
             <thead>
               <tr>
-                <th>Horario Sugerido</th>
+                <th>Fecha creación</th>
                 <th>Dirección</th>
                 <th>Precio</th>
                 <th>Pagado</th>
@@ -199,11 +199,7 @@ const ListaPedidosEmpresa = ({ empresaId }) => {
                   onClick={() => handleRowClick(pedido)}
                 >
                   <td>
-                    {pedido.Sugerencias[0]?.horarioSugerido
-                      ? new Date(
-                          pedido.Sugerencias[0].horarioSugerido
-                        ).toLocaleString()
-                      : "N/A"}
+                  <td>{pedido.createdAt ? new Date(pedido.createdAt).toLocaleDateString() : "N/A"}</td>
                   </td>
                   <td>{pedido.Obra.calle}</td>
                   <td>{pedido.pagoPedido.precio}</td>

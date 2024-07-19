@@ -95,7 +95,7 @@ const ListaObras = ({ obras = [] }) => {
                         onChange={(e) => setFiltroTipo(e.target.value)}
                         style={{ width: "100%" }}
                       >
-                        <option value="">Todos</option>
+                        <option value="">Filtrar por activas</option>
                         <option value="1">Activas</option>
                         <option value="0">No activas</option>
                       </Form.Control>

@@ -156,7 +156,7 @@ const ListaPedido = () => {
       <Table striped bordered hover className="mt-3">
         <thead>
           <tr>
-            <th>Horario Sugerido</th>
+            <th>Fecha Creación</th>
             <th>Cliente</th>
             <th>Dirección</th>
             <th>Precio</th>
@@ -175,7 +175,7 @@ const ListaPedido = () => {
                 style={{ backgroundColor: colorFondo, cursor: 'pointer' }}
                 onClick={() => handleRowClick(pedido)}
               >
-                <td>{pedido.Sugerencias[0]?.horarioSugerido ? new Date(pedido.Sugerencias[0].horarioSugerido).toLocaleString() : "N/A"}</td>
+                <td>{pedido.createdAt ? new Date(pedido.createdAt).toLocaleDateString() : "N/A"}</td>
                 <td>{esEmpresa ? pedido.Obra.empresa?.nombre : pedido.Obra.particular?.nombre}</td>
                 <td>{pedido.Obra.calle}</td>
                 <td>{pedido.pagoPedido.precio}</td>
