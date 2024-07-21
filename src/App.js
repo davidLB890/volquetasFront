@@ -35,6 +35,7 @@ import Volquetas from './components/VolquetasFolder/Volquetas';
 import AgregarVolqueta from './components/VolquetasFolder/AgregarVolqueta';
 import DatosPedido from './components/PedidosFolder/DatosPedido';
 import DatosPermiso from './components/PermisosFolder/DatosPermiso';
+import Cajas from './components/CajasFolder/Cajas';
 
 function App() {
   const location = useLocation();
@@ -101,6 +102,9 @@ function App() {
             <Route path="/volquetas/crear" element={<AgregarVolqueta />} />
             {/* PERMISOS */}
             {/* <Route path="/permiso/datos/:permisoId" element={<DatosPermiso />} /> */}
+
+            {/* CAJAs */}
+            <Route path="/cajas" element={<Cajas />} />
           </Routes>
         </div>
       </div>

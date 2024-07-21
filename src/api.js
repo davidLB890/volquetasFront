@@ -1,5 +1,5 @@
 // src/api.js
-import axios from "axios";
+import axios from 'axios';
 
 //const API_URL = 'http://localhost:3000/api'; // Ajusta la URL según sea necesario
 const API_URL = process.env.REACT_APP_API_URL;
@@ -18,29 +18,26 @@ api.interceptors.response.use(
       return Promise.reject(error.response.data); // Devolvemos el error específico de la respuesta
     } else if (error.request) {
       // Errores de solicitud (sin respuesta del servidor)
-      console.error("Error de solicitud", error.request);
+      console.error('Error de solicitud', error.request);
       return Promise.reject({
-        error: "No se pudo conectar con el servidor. Inténtelo más tarde.",
+        error: 'No se pudo conectar con el servidor. Inténtelo más tarde.',
       });
     } else {
       // Otros errores
-      console.error("Error", error.message);
+      console.error('Error', error.message);
       return Promise.reject({
-        error: "Ocurrió un error inesperado. Inténtelo más tarde.",
+        error: 'Ocurrió un error inesperado. Inténtelo más tarde.',
       });
     }
   }
 );
-
-
-
 
 //EMPLEADOS
 export const crearEmpleado = (empleado, usuarioToken) => {
   return axios.post(`${API_URL}/empleados`, empleado, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -48,7 +45,7 @@ export const eliminarEmpleado = (empleadoId, usuarioToken) => {
   return axios.delete(`${API_URL}/empleados/${empleadoId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -67,7 +64,7 @@ export const obtenerEmpleados = (usuarioToken) => {
   return axios.get(`${API_URL}/empleados`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -81,7 +78,7 @@ export const obtenerEmpleado = (empleadoId, usuarioToken) => {
 export const getEmpleadosSinUsuario = () => {
   return axios.get(`${API_URL}/empleados/sin-usuario-activos`, {
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -92,9 +89,6 @@ export const putEmpleado = (empleadoId, empleado, usuarioToken) => {
     },
   });
 };
-
-
-
 
 //USUARIOS
 export const loginUsuario = (email, password) => {
@@ -110,7 +104,7 @@ export const confirmarUsuario = (email, usuarioToken) => {
     {
       headers: {
         Authorization: usuarioToken,
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     }
   );
@@ -119,20 +113,17 @@ export const obtenerUsuarios = (usuarioToken) => {
   return axios.get(`${API_URL}/usuarios`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
-
-
-
 
 //CAMIONES
 export const getCamiones = (usuarioToken) => {
   return axios.get(`${API_URL}/camiones`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -140,7 +131,7 @@ export const getCamioneId = (camionId, usuarioToken) => {
   return axios.get(`${API_URL}/camiones${camionId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -148,7 +139,7 @@ export const crearCamion = (camion, usuarioToken) => {
   return axios.post(`${API_URL}/camiones`, camion, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -156,7 +147,7 @@ export const deleteCamion = (camionId, usuarioToken) => {
   return axios.delete(`${API_URL}/camiones/${camionId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -168,15 +159,12 @@ export const putCamion = (camionId, camion, usuarioToken) => {
   });
 };
 
-
-
-
 //HISTÓRICO-CAMION
 export const getHistoricoCamionActual = (usuarioToken) => {
   return axios.get(`${API_URL}/historico-camion/asignacion`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -184,25 +172,20 @@ export const getHistoricoCamion = (camionId, usuarioToken) => {
   return axios.get(`${API_URL}/historico-camion?camionId=${camionId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
 export const getHistoricoChofer = (empleadoId, usuarioToken) => {
-  console.log("id chofer " + empleadoId);
+  console.log('id chofer ' + empleadoId);
   return axios.get(`${API_URL}/historico-camion?empleadoId=${empleadoId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
-export const postHistoricoCamion = (
-  camionId,
-  choferId,
-  fechaInicio,
-  usuarioToken
-) => {
+export const postHistoricoCamion = (camionId, choferId, fechaInicio, usuarioToken) => {
   const body = {
     camionId: camionId,
     empleadoId: choferId,
@@ -211,20 +194,17 @@ export const postHistoricoCamion = (
   return axios.post(`${API_URL}/historico-camion`, body, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
-
-
-
 
 //SERVICIOS
 export const postServicio = (servicio, usuarioToken) => {
   return axios.post(`${API_URL}/servicios`, servicio, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -232,7 +212,7 @@ export const getServicioPorCamion = (camionId, usuarioToken) => {
   return axios.get(`${API_URL}/servicios/${camionId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -241,63 +221,45 @@ export const getServicioPorCamionFecha = (camionId, mes, anio, usuarioToken) => 
     params: {
       month: mes,
       year: anio,
-      camionId: camionId
+      camionId: camionId,
     },
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
-}
-
-
+};
 
 //JORNALES
-export const getJornalesEmpleado = (
-  empleadoId,
-  fechaInicio,
-  fechaFin,
-  usuarioToken
-) => {
-  return axios.get(
-    `${API_URL}/jornales/${empleadoId}/${fechaInicio}/${fechaFin}`,
-    {
-      headers: {
-        Authorization: usuarioToken,
-        "Content-Type": "application/json",
-      },
-    }
-  );
+export const getJornalesEmpleado = (empleadoId, fechaInicio, fechaFin, usuarioToken) => {
+  return axios.get(`${API_URL}/jornales/${empleadoId}/${fechaInicio}/${fechaFin}`, {
+    headers: {
+      Authorization: usuarioToken,
+      'Content-Type': 'application/json',
+    },
+  });
 };
 export const getDatosJornales = (fechaInicio, fechaFin, usuarioToken) => {
   return axios.get(`${API_URL}/datos/todos/${fechaInicio}/${fechaFin}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
-export const getDatosJornalEmpleado = (
-  empleadoId,
-  fechaInicio,
-  fechaFin,
-  usuarioToken
-) => {
-  return axios.get(
-    `${API_URL}/datos/${empleadoId}/${fechaInicio}/${fechaFin}`,
-    {
-      headers: {
-        Authorization: usuarioToken,
-        "Content-Type": "application/json",
-      },
-    }
-  );
+export const getDatosJornalEmpleado = (empleadoId, fechaInicio, fechaFin, usuarioToken) => {
+  return axios.get(`${API_URL}/datos/${empleadoId}/${fechaInicio}/${fechaFin}`, {
+    headers: {
+      Authorization: usuarioToken,
+      'Content-Type': 'application/json',
+    },
+  });
 };
 export const postJornal = (jornal, usuarioToken) => {
   return axios.post(`${API_URL}/jornales`, jornal, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -305,7 +267,7 @@ export const deleteJornal = (jornalId, usuarioToken) => {
   return axios.delete(`${API_URL}/jornales/${jornalId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -317,15 +279,12 @@ export const putJornal = (jornalId, jornal, usuarioToken) => {
   });
 };
 
-
-
-
 //TELÉFONOS
 export const postTelefono = (telefonoData, usuarioToken) => {
   return axios.post(`${API_URL}/telefonos`, telefonoData, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -333,13 +292,10 @@ export const putTelefono = (telefonoId, telefonoData, usuarioToken) => {
   return axios.put(`${API_URL}/telefonos/${telefonoId}`, telefonoData, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
-
-
-
 
 //CLIENTES
 //Particulares
@@ -347,7 +303,7 @@ export const getParticulares = (usuarioToken) => {
   return axios.get(`${API_URL}/particulares`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -355,7 +311,7 @@ export const postParticular = (particular, usuarioToken) => {
   return axios.post(`${API_URL}/particulares`, particular, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -363,7 +319,7 @@ export const getParticularId = (particularId, usuarioToken) => {
   return axios.get(`${API_URL}/particulares/${particularId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -371,7 +327,7 @@ export const getParticularLetra = (letra, usuarioToken) => {
   return axios.get(`${API_URL}/particulares/buscar?letraInicial=${letra}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -379,23 +335,23 @@ export const getParticularNombre = (nombre, usuarioToken) => {
   return axios.get(`${API_URL}/particulares/buscar?nombre=${nombre}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
-}
+};
 export const putParticular = (particularId, particular, usuarioToken) => {
   return axios.put(`${API_URL}/particulares/${particularId}`, particular, {
     headers: {
       Authorization: usuarioToken,
     },
   });
-}
+};
 //Empresas
 export const getEmpresas = (usuarioToken) => {
   return axios.get(`${API_URL}/empresas`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -403,7 +359,7 @@ export const getEmpresasLetra = (letra, usuarioToken) => {
   return axios.get(`${API_URL}/empresas/buscar?letraInicial=${letra}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -411,23 +367,23 @@ export const getEmpresasNombre = (nombre, usuarioToken) => {
   return axios.get(`${API_URL}/empresas/buscar?nombre=${nombre}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
-}
+};
 export const getEmpresaId = (empresaId, usuarioToken) => {
   return axios.get(`${API_URL}/empresas/${empresaId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
-}
+};
 export const postEmpresa = (empresa, usuarioToken) => {
   return axios.post(`${API_URL}/empresas`, empresa, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -437,13 +393,13 @@ export const putEmpresa = (empresaId, empresa, usuarioToken) => {
       Authorization: usuarioToken,
     },
   });
-}
+};
 //Contacto-Empresa
 export const getContactoEmpresa = (usuarioToken) => {
   return axios.get(`${API_URL}/contacto-empresas`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -451,27 +407,28 @@ export const postContactoEmpresa = (contactoEmpresa, usuarioToken) => {
   return axios.post(`${API_URL}/contacto-empresas`, contactoEmpresa, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
 export const asignarContactoEmpresa = (contactoId, obraId, usuarioToken) => {
-  return axios.put(`${API_URL}/contacto-empresas/asignar/${contactoId}`, { obraId }, {
-    headers: {
-      Authorization: usuarioToken,
-    },
-  });
+  return axios.put(
+    `${API_URL}/contacto-empresas/asignar/${contactoId}`,
+    { obraId },
+    {
+      headers: {
+        Authorization: usuarioToken,
+      },
+    }
+  );
 };
-
-
-
 
 //OBRAS
 export const getObras = (usuarioToken) => {
   return axios.get(`${API_URL}/obras`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -479,7 +436,7 @@ export const getObraId = (obraId, usuarioToken) => {
   return axios.get(`${API_URL}/obras/${obraId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -487,7 +444,7 @@ export const postObra = (obra, usuarioToken) => {
   return axios.post(`${API_URL}/obras`, obra, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -509,20 +466,17 @@ export const deleteObra = (obraId, usuarioToken) => {
   return axios.delete(`${API_URL}/obras/${obraId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
-
-
-
 
 //PERMISOS
 export const getPermisos = (usuarioToken) => {
   return axios.get(`${API_URL}/permisos`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -530,7 +484,7 @@ export const getPermisoIdEmpresa = (empresaId, usuarioToken) => {
   return axios.get(`${API_URL}/permisos/empresa/${empresaId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -538,11 +492,11 @@ export const getPermisoIdParticular = (particularId, usuarioToken) => {
   return axios.get(`${API_URL}/permisos/particular/${particularId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
-export const getPermisoIdFiltro = (permisoId, usuarioToken, {fechaInicio, fechaFin}) => {
+export const getPermisoIdFiltro = (permisoId, usuarioToken, { fechaInicio, fechaFin }) => {
   return axios.get(`${API_URL}/permisos/${permisoId}`, {
     params: {
       fechaInicio,
@@ -550,7 +504,7 @@ export const getPermisoIdFiltro = (permisoId, usuarioToken, {fechaInicio, fechaF
     },
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -558,34 +512,32 @@ export const postPermiso = (permiso, usuarioToken) => {
   return axios.post(`${API_URL}/permisos`, permiso, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
-}
+};
 export const putPermiso = (permisoId, permiso, usuarioToken) => {
   return axios.put(`${API_URL}/permisos/${permisoId}`, permiso, {
     headers: {
       Authorization: usuarioToken,
     },
   });
-}
+};
 export const deletePermiso = (permisoId, usuarioToken) => {
   return axios.delete(`${API_URL}/permisos/${permisoId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
-}
-
-
+};
 
 //PEDIDOS
 export const getPedidos = (usuarioToken) => {
   return axios.get(`${API_URL}/pedidos-filtro`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -600,7 +552,7 @@ export const getPedidosFiltro = (usuarioToken, { estado, fechaInicio, fechaFin, 
     },
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -608,15 +560,15 @@ export const getPedidosPorEmpresa = (empresaId, usuarioToken) => {
   return axios.get(`${API_URL}/pedidos/empresa/${empresaId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
-}
+};
 export const getPedidoId = (pedidoId, usuarioToken) => {
   return axios.get(`${API_URL}/pedidos/${pedidoId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -624,7 +576,7 @@ export const postPedidoNuevo = (pedido, usuarioToken) => {
   return axios.post(`${API_URL}/pedidos/nuevo`, pedido, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -632,7 +584,7 @@ export const postPedidoMultiple = (pedido, usuarioToken) => {
   return axios.post(`${API_URL}/pedidos/multiple`, pedido, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -640,7 +592,7 @@ export const postPedidoEntregaLevante = (pedido, usuarioToken) => {
   return axios.post(`${API_URL}/pedidos/entrega-levante`, pedido, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -648,21 +600,17 @@ export const postPedidoRecambio = (pedido, usuarioToken) => {
   return axios.post(`${API_URL}/pedidos/recambio`, pedido, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
-
-
-
-
 
 //VOLQUETAS
 export const getVolquetas = (usuarioToken) => {
   return axios.get(`${API_URL}/volquetas`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -670,7 +618,7 @@ export const postVolqueta = (volqueta, usuarioToken) => {
   return axios.post(`${API_URL}/volquetas`, volqueta, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 };
@@ -685,7 +633,17 @@ export const deleteVolqueta = (volquetaId, usuarioToken) => {
   return axios.delete(`${API_URL}/volquetas/${volquetaId}`, {
     headers: {
       Authorization: usuarioToken,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
+    },
+  });
+};
+
+//CAJAS
+export const obtenerCajas = (fechaInicio, fechaFin, usuarioToken) => {
+  return axios.get(`${API_URL}cajas?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, {
+    headers: {
+      Authorization: usuarioToken,
+      'Content-Type': 'application/json',
     },
   });
 };

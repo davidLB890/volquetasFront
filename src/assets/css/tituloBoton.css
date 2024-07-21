@@ -1,23 +1,31 @@
 .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .table th,
-  .table td {
-    text-align: center;
-    vertical-align: middle;
-  }
-  
-  .table th {
-    width: auto;
-  }
-  
-  .deshabilitado {
-    background-color: #f5abb2; /* Color de fondo para deshabilitados */
-  }
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .volqueta-perdida {
-    background-color: #ffcccc; /* Rojo claro */
-  }
+.table th,
+.table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table th {
+  width: auto;
+}
+
+.deshabilitado {
+  background-color: #f5abb2; /* Color de fondo para deshabilitados */
+}
+
+.volqueta-perdida {
+  background-color: #ffcccc; /* Rojo claro */
+}
+
+.negativo {
+  color: #f5abb2;
+}
+
+.positivo {
+  color: #79e791;
+}
