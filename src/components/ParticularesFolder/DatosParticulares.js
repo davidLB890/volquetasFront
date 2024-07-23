@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { getParticularId } from "../../api";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Card, Spinner, Alert, Button, Modal, Container } from "react-bootstrap";
+import {
+  Card,
+  Spinner,
+  Alert,
+  Button,
+  Modal,
+  Container,
+} from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import ModificarParticular from "./ModificarParticular"; // Ajusta la ruta según sea necesario
 import TelefonosParticular from "./TelefonosParticular"; // Ajusta la ruta según sea necesario
@@ -9,7 +16,7 @@ import ListaObras from "../ObrasFolder/ListaObras"; // Ajusta la ruta según sea
 import AgregarObra from "../ObrasFolder/AgregarObra"; // Ajusta la ruta según sea necesario
 import AgregarTelefono from "../TelefonosFolder/AgregarTelefono"; // Ajusta la ruta según sea necesario
 import ListaPermisos from "../PermisosFolder/ListaPermisos";
-import ListaPedidosEmpresa from "../PedidosFolder/ListaPedidosEmpresa"; // Asegúrate de ajustar la ruta según sea necesario
+import ListaPedidosEmpresaOParticular from "../PedidosFolder/ListaPedidosEmpresaOParticular"; // Asegúrate de ajustar la ruta según sea necesario
 
 const DatosParticular = () => {
   const [particular, setParticular] = useState(null);
@@ -151,18 +158,15 @@ const DatosParticular = () => {
       />
       <ListaObras obras={particular.obras} />
       <ListaPermisos particularId={particular.id} />
-      <ListaPedidosEmpresa empresaId={particular.id} />
-      <Modal show={showAgregarObra} onHide={() => setShowAgregarObra(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Agregar Obra</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <AgregarObra
-            particularId={particularId}
-            onObraAgregada={handleObraAgregada}
-          />
-        </Modal.Body>
-      </Modal>
+      <ListaPedidosEmpresaOParticular particularId={particular.id} />
+
+      <AgregarObra
+        show={showAgregarObra}
+        onHide={() => setShowAgregarObra(false)}
+        particularId={particularId}
+        onObraAgregada={handleObraAgregada}
+      />
+
       <AgregarTelefono
         show={showAgregarTelefono}
         onHide={handleHideAgregarTelefono}

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { getParticularLetra } from "../../api";
+import { getParticularLetra, getParticularNombre } from "../../api";
 import { useNavigate } from "react-router-dom";
-import { Container, Table, Button, Spinner, Alert, Nav, Card } from "react-bootstrap";
+import { Container, Table, Button, Spinner, Alert, Nav, Card, Form, Row, Col } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
-import BuscarParticularPorNombre from "./BuscarParticularPorNombre"; // Ajusta la ruta según sea necesario
+import ListaResultadosNombre from "../ListaResultadosNombre"; // Ajusta la ruta según sea necesario
 
 const ListaParticulares = () => {
   const [particulares, setParticulares] = useState([]);
@@ -11,6 +11,8 @@ const ListaParticulares = () => {
   const [error, setError] = useState("");
   const [selectedLetter, setSelectedLetter] = useState("A");
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
 
   const getToken = useAuth();
   const navigate = useNavigate();
@@ -26,10 +28,7 @@ const ListaParticulares = () => {
         setParticulares(response.data);
         setLoading(false);
       } catch (error) {
-        console.error(
-          "Error al obtener los particulares:",
-          error.response?.data?.error || error.message
-        );
+        console.error("Error al obtener los particulares:", error.response?.data?.error || error.message);
         setError("Error al obtener los particulares");
         setLoading(false);
       }
@@ -38,8 +37,21 @@ const ListaParticulares = () => {
     fetchParticulares(selectedLetter);
   }, [selectedLetter, getToken]);
 
-  const handleSearchComplete = (particularesEncontrados) => {
-    setParticulares(particularesEncontrados);
+  const handleSearch = async () => {
+    const usuarioToken = getToken();
+    setLoading(true);
+    setError("");
+    setShowSearchResults(false);
+    try {
+      const response = await getParticularNombre(searchTerm, usuarioToken);
+      setSearchResults(response.data);
+      setShowSearchResults(true);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error al buscar los particulares:", error.response?.data?.error || error.message);
+      setError("Error al buscar los particulares");
+      setLoading(false);
+    }
   };
 
   const handleNavigateToParticular = (particularId) => {
@@ -49,6 +61,11 @@ const ListaParticulares = () => {
   const handleLetterClick = (letra) => {
     setSearchTerm("");
     setSelectedLetter(letra);
+    setShowSearchResults(false);
+  };
+
+  const handleSearchTermChange = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   if (loading) {
@@ -63,19 +80,28 @@ const ListaParticulares = () => {
     <Container className="mt-4">
       <Card className="mt-3">
         <Card.Body>
-          <BuscarParticularPorNombre
-            onSearchComplete={handleSearchComplete}
-            getToken={getToken}
-          />
+          <Form>
+            <Row className="mb-3">
+              <Col>
+                <Form.Control
+                  type="text"
+                  placeholder="Busca el nombre del particular"
+                  value={searchTerm}
+                  onChange={handleSearchTermChange}
+                />
+              </Col>
+              <Col>
+                <Button onClick={handleSearch} variant="primary">Buscar</Button>
+              </Col>
+            </Row>
+          </Form>
           <Nav className="pagination justify-content-center">
             <Nav.Item>
               <Nav.Link
                 className="page-link"
                 onClick={() =>
                   handleLetterClick(
-                    selectedLetter === "A"
-                      ? "Z"
-                      : letters[letters.indexOf(selectedLetter) - 1]
+                    selectedLetter === "A" ? "Z" : letters[letters.indexOf(selectedLetter) - 1]
                   )
                 }
               >
@@ -86,9 +112,7 @@ const ListaParticulares = () => {
             {letters.map((letra) => (
               <Nav.Item key={letra}>
                 <Nav.Link
-                  className={`page-link ${
-                    letra === selectedLetter ? "active" : ""
-                  }`}
+                  className={`page-link ${letra === selectedLetter ? "active" : ""}`}
                   onClick={() => handleLetterClick(letra)}
                 >
                   {letra}
@@ -100,9 +124,7 @@ const ListaParticulares = () => {
                 className="page-link"
                 onClick={() =>
                   handleLetterClick(
-                    selectedLetter === "Z"
-                      ? "A"
-                      : letters[letters.indexOf(selectedLetter) + 1]
+                    selectedLetter === "Z" ? "A" : letters[letters.indexOf(selectedLetter) + 1]
                   )
                 }
               >
@@ -111,42 +133,44 @@ const ListaParticulares = () => {
               </Nav.Link>
             </Nav.Item>
           </Nav>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {particulares.length === 0 ? (
+          {showSearchResults ? (
+            <ListaResultadosNombre
+              resultados={searchResults}
+              onSeleccionar={handleNavigateToParticular}
+            />
+          ) : (
+            <Table striped bordered hover>
+              <thead>
                 <tr>
-                  <td colSpan="3">
-                    No hay particulares que comiencen con la letra "
-                    {selectedLetter}" o que coincidan con "{searchTerm}".
-                  </td>
+                  <th>Nombre</th>
+                  <th></th>
                 </tr>
-              ) : (
-                particulares.map((particular) => (
-                  <tr key={particular.id}>
-                    <td>{particular.nombre}</td>
-                    <td>{particular.descripcion}</td>
-                    <td>
-                      <Button
-                        variant="primary"
-                        onClick={() =>
-                          handleNavigateToParticular(particular.id)
-                        }
-                      >
-                        Ver Datos
-                      </Button>
+              </thead>
+              <tbody>
+                {particulares.length === 0 ? (
+                  <tr>
+                    <td colSpan="2">
+                      No hay particulares que comiencen con la letra "{selectedLetter}".
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </Table>
+                ) : (
+                  particulares.map((particular) => (
+                    <tr key={particular.id}>
+                      <td>{particular.nombre}</td>
+                      <td>
+                        <Button
+                          variant="primary"
+                          onClick={() => handleNavigateToParticular(particular.id)}
+                        >
+                          Ver Datos
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </Table>
+          )}
         </Card.Body>
       </Card>
     </Container>

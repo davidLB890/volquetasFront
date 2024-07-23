@@ -1,37 +1,41 @@
 import React, { useState } from "react";
 import { Form, Button, Row, Col, Spinner, Alert } from "react-bootstrap";
-import { getParticularNombre, getParticularId } from "../../api";
-import { useNavigate } from "react-router-dom";
+import { getParticularNombre } from "../../api";
+import useAuth from "../../hooks/useAuth";
 import ListaResultadosNombre from "../ListaResultadosNombre"; // Ajusta la ruta según sea necesario
 
-const BuscarParticularPorNombre = ({ onSeleccionar, getToken }) => {
+const BuscarParticularPorNombre = ({ onSeleccionar }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showResults, setShowResults] = useState(false);
-
-  const navigate = useNavigate();
+  const [hasSearched, setHasSearched] = useState(false);
+  const [particularSeleccionado, setParticularSeleccionado] = useState(null);
+  const getToken = useAuth();
 
   const handleSearch = async () => {
     const usuarioToken = getToken();
     setLoading(true);
     setError("");
-    setShowResults(false);
+    setParticularSeleccionado(null); // Limpiar el particular seleccionado antes de una nueva búsqueda
+    onSeleccionar(null, ""); // Limpiar el ID y el nombre del particular en el componente padre
     try {
       const response = await getParticularNombre(searchTerm, usuarioToken);
       setResultados(response.data);
-      setShowResults(true);
       setLoading(false);
+      setHasSearched(true); // Establece el estado para indicar que se ha realizado una búsqueda
     } catch (error) {
       console.error("Error al buscar los particulares:", error.response?.data?.error || error.message);
       setError("Error al buscar los particulares");
       setLoading(false);
+      setHasSearched(true); // Establece el estado para indicar que se ha realizado una búsqueda
     }
   };
 
-  const handleNavigateToParticular = (particularId) => {
-    navigate("/particulares/datos", { state: { particularId } });
+  const handleSeleccionar = (id, nombre) => {
+    setParticularSeleccionado({ id, nombre });
+    onSeleccionar(id, nombre);
+    setSearchTerm(""); // Limpiar el término de búsqueda para evitar mostrar el término de búsqueda anterior
   };
 
   return (
@@ -40,7 +44,7 @@ const BuscarParticularPorNombre = ({ onSeleccionar, getToken }) => {
         <Col>
           <Form.Control
             type="text"
-            placeholder="Busca el nombre del particular"
+            placeholder={particularSeleccionado ? `Particular seleccionado: ${particularSeleccionado.nombre}` : "Busca el nombre del particular"}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -51,7 +55,9 @@ const BuscarParticularPorNombre = ({ onSeleccionar, getToken }) => {
       </Row>
       {loading && <Spinner animation="border" />}
       {error && <Alert variant="danger">{error}</Alert>}
-      {showResults && <ListaResultadosNombre resultados={resultados} onSeleccionar={handleNavigateToParticular} />}
+      {hasSearched && !particularSeleccionado && (
+        <ListaResultadosNombre resultados={resultados} onSeleccionar={handleSeleccionar} />
+      )}
     </>
   );
 };

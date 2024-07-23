@@ -16,9 +16,9 @@ const DetallesObra = ({ obra, setShowModificarObra }) => {
         <Card.Text>
           <strong>Barrio:</strong> {obra.barrio}
         </Card.Text>
-        <Card.Text>
+        {/* <Card.Text>
           <strong>Coordenadas:</strong> {obra.coordenadas}
-        </Card.Text>
+        </Card.Text> */}
         <Card.Text>
           <strong>Número de Puerta:</strong> {obra.numeroPuerta}
         </Card.Text>

@@ -1,31 +1,269 @@
+// src/components/PedidosFolder/DatosPedido.js
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Spinner,
   Alert,
-  Form,
   Container,
   Row,
   Col,
   Card,
   Button,
 } from "react-bootstrap";
-import { obtenerEmpleado, getPermisoIdEmpresa } from "../../api";
+import {
+  obtenerEmpleado,
+  getPermisoIdEmpresa,
+  getPedidoId,
+  getObraId,
+} from "../../api"; // Asegúrate de ajustar la ruta según sea necesario
 import useAuth from "../../hooks/useAuth";
 import DatosObra from "../ObrasFolder/DatosObra";
 import SelectPermiso from "../PermisosFolder/selectPermiso"; // Asegúrate de ajustar la ruta según sea necesario
+import MovimientosYSugerencias from "../MovimientosFolder/MovimientosYSugerencias"; // Asegúrate de ajustar la ruta según sea necesario
+import DetallesPedido from "./DetallesPedido"; // Asegúrate de ajustar la ruta según sea necesario
+import ContactosObraSimple from "../ObrasFolder/ContactosObraSimple";
+import PagoPedido from "../PagosPedidoFolder/PagosPedido";
 
 const DatosPedido = () => {
   const location = useLocation();
-  const pedido = location.state?.pedido;
+  const pedidoId = location.state?.pedidoId;
+  const volquetaId = location.state?.volquetaId;
+  const [pedido, setPedido] = useState(null);
+  const [obra, setObra] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [mostrarObra, setMostrarObra] = useState(false);
+  const [permisos, setPermisos] = useState([]);
+  const [selectedPermiso, setSelectedPermiso] = useState("");
+  const navigate = useNavigate();
+  const getToken = useAuth();
+
+  const fetchPedido = async () => {
+    const usuarioToken = getToken();
+    try {
+      const response = await getPedidoId(pedidoId, usuarioToken);
+      setPedido(response.data);
+      setLoading(false);
+      if (response.data.permisoId) {
+        setSelectedPermiso(response.data.permisoId);
+      }
+      if (response.data.obraId) {
+        fetchObra(response.data.obraId, usuarioToken);
+      }
+    } catch (error) {
+      console.error(
+        "Error al obtener los detalles del pedido:",
+        error.response?.data?.error || error.message
+      );
+      setError("Error al obtener los detalles del pedido");
+      setLoading(false);
+    }
+  };
+
+  const fetchObra = async (obraId, usuarioToken) => {
+    try {
+      const response = await getObraId(obraId, usuarioToken);
+      setObra(response.data);
+    } catch (error) {
+      console.error(
+        "Error al obtener los detalles de la obra:",
+        error.response?.data?.error || error.message
+      );
+      setError("Error al obtener los detalles de la obra");
+    }
+  };
+
+  useEffect(() => {
+    if (pedidoId) {
+      fetchPedido();
+    }
+  }, [pedidoId, getToken]);
+
+  const handleNavigateToEmpresa = (empresaId) => {
+    navigate("/empresas/datos", { state: { empresaId, fromPedido: true } });
+  };
+
+  const handleNavigateToParticular = (particularId) => {
+    navigate("/particulares/datos", {
+      state: { particularId, fromPedido: true },
+    });
+  };
+
+  const handleToggleObra = () => {
+    setMostrarObra(!mostrarObra);
+  };
+
+  const handleVerPedido = async (pedidoId) => {
+    const usuarioToken = getToken();
+    try {
+      const response = await getPedidoId(pedidoId, usuarioToken);
+      navigate("/pedidos/datos", { state: { pedidoId } });
+    } catch (error) {
+      console.error(
+        "Error al obtener los detalles del pedido:",
+        error.response?.data?.error || error.message
+      );
+      setError("Error al obtener los detalles del pedido");
+      setTimeout(() => setError(""), 5000);
+    }
+  };
+
+  useEffect(() => {
+    const fetchPermisos = async () => {
+      if (pedido && pedido.Obra && pedido.Obra.empresa) {
+        const usuarioToken = getToken();
+        try {
+          const response = await getPermisoIdEmpresa(
+            pedido.Obra.empresa.id,
+            usuarioToken
+          );
+          setPermisos(response.data);
+        } catch (error) {
+          console.error(
+            "Error al obtener los permisos:",
+            error.response?.data?.error || error.message
+          );
+          setError("Error al obtener los permisos");
+          setTimeout(() => setError(""), 5000);
+        }
+      }
+    };
+    if (pedido) {
+      fetchPermisos();
+    }
+  }, [pedido, getToken]);
+
+  const handlePermisoSelect = (permisoId) => {
+    setSelectedPermiso(permisoId);
+  };
+
+  const handlePedidoModificado = () => {
+    fetchPedido();
+  };
+
+  if (loading) {
+    return <Spinner animation="border" />;
+  }
+
+  if (error) {
+    return <Alert variant="danger">{error}</Alert>;
+  }
+
+  return (
+    <Container>
+      {volquetaId && (
+        <Button
+          variant="secondary"
+          className="mt-3 ml-3"
+          onClick={() =>
+            navigate("/volquetas/datos", { state: { volquetaId } })
+          }
+        >
+          Volver a Volqueta
+        </Button>
+      )}
+      <Card className="mt-3">
+        <Card.Header>
+          <h1>
+            Detalles del Pedido {pedido.id}{" "}
+            {pedido.referenciaId ? pedido.referenciaId : ""}
+          </h1>
+        </Card.Header>
+        <Card.Body>
+          <MovimientosYSugerencias
+            movimientos={pedido.Movimientos}
+            handleVerPedido={handleVerPedido}
+            pedidoId={pedido.id}
+          />
+          <Row>
+            <Col md={6}>
+              <DetallesPedido
+                detalles={pedido}
+                onPedidoModificado={handlePedidoModificado}
+              />
+            </Col>
+            <Col md={6}>
+              {obra && (
+                <ContactosObraSimple
+                  obra={obra}
+                  cliente={
+                    pedido.Obra.particular
+                      ? { particular: pedido.Obra.particular }
+                      : { empresa: pedido.Obra.empresa }
+                  }
+                />
+              )}
+              <PagoPedido pago={pedido.pagoPedido} />
+            </Col>
+          </Row>
+        </Card.Body>
+      </Card>
+      {mostrarObra && <DatosObra obraId={pedido.Obra?.id} />}
+    </Container>
+  );
+};
+
+export default DatosPedido;
+
+
+// src/components/PedidosFolder/DatosPedido.js
+/* import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  Spinner,
+  Alert,
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+} from "react-bootstrap";
+import { obtenerEmpleado, getPermisoIdEmpresa, getPedidoId } from "../../api"; // Asegúrate de ajustar la ruta según sea necesario
+import useAuth from "../../hooks/useAuth";
+import DatosObra from "../ObrasFolder/DatosObra";
+import SelectPermiso from "../PermisosFolder/selectPermiso"; // Asegúrate de ajustar la ruta según sea necesario
+import Movimientos from "../MovimientosFolder/Movimientos"; // Asegúrate de ajustar la ruta según sea necesario
+import DetallesPedido from "./DetallesPedido"; // Asegúrate de ajustar la ruta según sea necesario
+import ContactosObraSimple from "../ObrasFolder/ContactosObraSimple";
+
+const DatosPedido = () => {
+  const location = useLocation();
+  const pedidoId = location.state?.pedidoId;
+  const volquetaId = location.state?.volquetaId;
+  const [pedido, setPedido] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [mostrarObra, setMostrarObra] = useState(false);
   const [choferes, setChoferes] = useState({});
   const [permisos, setPermisos] = useState([]);
-  const [movimientos, setMovimientos] = useState(pedido?.Movimientos || []);
-  const [selectedPermiso, setSelectedPermiso] = useState(pedido?.permisoId || "");
+  const [selectedPermiso, setSelectedPermiso] = useState("");
   const navigate = useNavigate();
   const getToken = useAuth();
+
+  const fetchPedido = async () => {
+    const usuarioToken = getToken();
+    try {
+      const response = await getPedidoId(pedidoId, usuarioToken);
+      setPedido(response.data);
+      setLoading(false);
+      if (response.data.permisoId) {
+        setSelectedPermiso(response.data.permisoId);
+      }
+    } catch (error) {
+      console.error(
+        "Error al obtener los detalles del pedido:",
+        error.response?.data?.error || error.message
+      );
+      setError("Error al obtener los detalles del pedido");
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (pedidoId) {
+      fetchPedido();
+    }
+  }, [pedidoId, getToken]);
 
   const handleNavigateToEmpresa = (empresaId) => {
     navigate("/empresas/datos", { state: { empresaId, fromPedido: true } });
@@ -57,20 +295,39 @@ const DatosPedido = () => {
     }
   };
 
+  const handleVerPedido = async (pedidoId) => {
+    const usuarioToken = getToken();
+    try {
+      const response = await getPedidoId(pedidoId, usuarioToken);
+      navigate("/pedidos/datos", { state: { pedidoId } });
+    } catch (error) {
+      console.error(
+        "Error al obtener los detalles del pedido:",
+        error.response?.data?.error || error.message
+      );
+      setError("Error al obtener los detalles del pedido");
+      setTimeout(() => setError(""), 5000);
+    }
+  };
+
   useEffect(() => {
     const fetchChoferes = async () => {
       if (pedido && pedido.Sugerencias) {
         const nuevosChoferes = {};
         for (const sugerencia of pedido.Sugerencias) {
           if (sugerencia.choferSugeridoId) {
-            const nombreChofer = await buscarChofer(sugerencia.choferSugeridoId);
+            const nombreChofer = await buscarChofer(
+              sugerencia.choferSugeridoId
+            );
             nuevosChoferes[sugerencia.choferSugeridoId] = nombreChofer;
           }
         }
         setChoferes(nuevosChoferes);
       }
     };
-    fetchChoferes();
+    if (pedido) {
+      fetchChoferes();
+    }
   }, [pedido]);
 
   useEffect(() => {
@@ -78,7 +335,10 @@ const DatosPedido = () => {
       if (pedido && pedido.Obra && pedido.Obra.empresa) {
         const usuarioToken = getToken();
         try {
-          const response = await getPermisoIdEmpresa(pedido.Obra.empresa.id, usuarioToken);
+          const response = await getPermisoIdEmpresa(
+            pedido.Obra.empresa.id,
+            usuarioToken
+          );
           setPermisos(response.data);
         } catch (error) {
           console.error(
@@ -90,30 +350,262 @@ const DatosPedido = () => {
         }
       }
     };
-    fetchPermisos();
+    if (pedido) {
+      fetchPermisos();
+    }
   }, [pedido, getToken]);
 
   const handlePermisoSelect = (permisoId) => {
     setSelectedPermiso(permisoId);
   };
 
-  const handleMovimientoChange = (index, key, value) => {
-    const newMovimientos = [...movimientos];
-    newMovimientos[index][key] = value;
-    setMovimientos(newMovimientos);
+  const handlePedidoModificado = () => {
+    fetchPedido();
   };
 
-  if (!pedido) {
-    return (
-      <Alert variant="danger">No se encontraron detalles del pedido.</Alert>
-    );
+  if (loading) {
+    return <Spinner animation="border" />;
+  }
+
+  if (error) {
+    return <Alert variant="danger">{error}</Alert>;
   }
 
   return (
     <Container>
+      {volquetaId && (
+        <Button
+          variant="secondary"
+          className="mt-3 ml-3"
+          onClick={() =>
+            navigate("/volquetas/datos", { state: { volquetaId } })
+          }
+        >
+          Volver a Volqueta
+        </Button>
+      )}
       <Card className="mt-3">
         <Card.Header>
-          <h1>Detalles del Pedido {pedido.id} {pedido.referenciaId ? pedido.referenciaId : ""}</h1>
+          <h1>
+            Detalles del Pedido {pedido.id}{" "}
+            {pedido.referenciaId ? pedido.referenciaId : ""}
+          </h1>
+        </Card.Header>
+        <Card.Body>
+          <Row>
+            <Col md={6}>
+              <DetallesPedido
+                detalles={pedido}
+                onPedidoModificado={handlePedidoModificado}
+              />
+            </Col>
+            <Col md={6}>
+              <Card>
+                {/*    }  
+              
+              </Card>
+              {pedido.Obra?.empresa && (
+                <SelectPermiso
+                  empresaId={pedido.Obra.empresa.id}
+                  onSelect={handlePermisoSelect}
+                />
+              )}
+              <p>
+                <strong>Permiso Asignado:</strong>{" "}
+                {selectedPermiso ? selectedPermiso : "Ninguno"}
+              </p>
+            </Col>
+          </Row>
+          <Movimientos
+            movimientos={pedido.Movimientos}
+            choferes={choferes}
+            handleVerPedido={handleVerPedido}
+          />
+        </Card.Body>
+      </Card>
+      {mostrarObra && <DatosObra obraId={pedido.Obra?.id} />}
+    </Container>
+  );
+};
+
+export default DatosPedido; */
+
+/* import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  Spinner,
+  Alert,
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Form,
+} from "react-bootstrap";
+import { obtenerEmpleado, getPermisoIdEmpresa, getPedidoId } from "../../api"; // Asegúrate de ajustar la ruta según sea necesario
+import useAuth from "../../hooks/useAuth";
+import DatosObra from "../ObrasFolder/DatosObra";
+import SelectPermiso from "../PermisosFolder/selectPermiso"; // Asegúrate de ajustar la ruta según sea necesario
+import Movimientos from "../MovimientosFolder/Movimientos"; // Asegúrate de ajustar la ruta según sea necesario
+
+const DatosPedido = () => {
+  const location = useLocation();
+  const pedidoId = location.state?.pedidoId;
+  const volquetaId = location.state?.volquetaId;
+  const [pedido, setPedido] = useState(null);
+  const [error, setError] = useState("");
+  const [mostrarObra, setMostrarObra] = useState(false);
+  const [choferes, setChoferes] = useState({});
+  const [permisos, setPermisos] = useState([]);
+  const [selectedPermiso, setSelectedPermiso] = useState("");
+  const navigate = useNavigate();
+  const getToken = useAuth();
+
+  useEffect(() => {
+    const fetchPedido = async () => {
+      const usuarioToken = getToken();
+      try {
+        const response = await getPedidoId(pedidoId, usuarioToken);
+        setPedido(response.data);
+        if (response.data.permisoId) {
+          setSelectedPermiso(response.data.permisoId);
+        }
+      } catch (error) {
+        console.error(
+          "Error al obtener los detalles del pedido:",
+          error.response?.data?.error || error.message
+        );
+        setError("Error al obtener los detalles del pedido");
+        setTimeout(() => setError(""), 5000);
+      }
+    };
+
+    if (pedidoId) {
+      fetchPedido();
+    }
+  }, [pedidoId, getToken]);
+
+  const handleNavigateToEmpresa = (empresaId) => {
+    navigate("/empresas/datos", { state: { empresaId, fromPedido: true } });
+  };
+
+  const handleNavigateToParticular = (particularId) => {
+    navigate("/particulares/datos", {
+      state: { particularId, fromPedido: true },
+    });
+  };
+
+  const handleToggleObra = () => {
+    setMostrarObra(!mostrarObra);
+  };
+
+  const buscarChofer = async (choferId) => {
+    const usuarioToken = getToken();
+    try {
+      const response = await obtenerEmpleado(choferId, usuarioToken);
+      return response.data.nombre;
+    } catch (error) {
+      console.error(
+        "Error al obtener el chofer del pedido:",
+        error.response?.data?.error || error.message
+      );
+      setError("Error al obtener el chofer del pedido");
+      setTimeout(() => setError(""), 5000);
+      return "Error al obtener chofer";
+    }
+  };
+
+  const handleVerPedido = async (pedidoId) => {
+    const usuarioToken = getToken();
+    try {
+      const response = await getPedidoId(pedidoId, usuarioToken);
+      navigate("/pedidos/datos", { state: { pedidoId } });
+    } catch (error) {
+      console.error(
+        "Error al obtener los detalles del pedido:",
+        error.response?.data?.error || error.message
+      );
+      setError("Error al obtener los detalles del pedido");
+      setTimeout(() => setError(""), 5000);
+    }
+  };
+
+  useEffect(() => {
+    const fetchChoferes = async () => {
+      if (pedido && pedido.Sugerencias) {
+        const nuevosChoferes = {};
+        for (const sugerencia of pedido.Sugerencias) {
+          if (sugerencia.choferSugeridoId) {
+            const nombreChofer = await buscarChofer(
+              sugerencia.choferSugeridoId
+            );
+            nuevosChoferes[sugerencia.choferSugeridoId] = nombreChofer;
+          }
+        }
+        setChoferes(nuevosChoferes);
+      }
+    };
+    if (pedido) {
+      fetchChoferes();
+    }
+  }, [pedido]);
+
+  useEffect(() => {
+    const fetchPermisos = async () => {
+      if (pedido && pedido.Obra && pedido.Obra.empresa) {
+        const usuarioToken = getToken();
+        try {
+          const response = await getPermisoIdEmpresa(
+            pedido.Obra.empresa.id,
+            usuarioToken
+          );
+          setPermisos(response.data);
+        } catch (error) {
+          console.error(
+            "Error al obtener los permisos:",
+            error.response?.data?.error || error.message
+          );
+          setError("Error al obtener los permisos");
+          setTimeout(() => setError(""), 5000);
+        }
+      }
+    };
+    if (pedido) {
+      fetchPermisos();
+    }
+  }, [pedido, getToken]);
+
+  const handlePermisoSelect = (permisoId) => {
+    setSelectedPermiso(permisoId);
+  };
+
+  if (!pedido) {
+    return <Spinner animation="border" />;
+  }
+
+  if (error) {
+    return <Alert variant="danger">{error}</Alert>;
+  }
+
+  return (
+    <Container>
+      {volquetaId && (
+        <Button
+          variant="secondary"
+          className="mt-3 ml-3"
+          onClick={() =>
+            navigate("/volquetas/datos", { state: { volquetaId } })
+          }
+        >
+          Volver a Volqueta
+        </Button>
+      )}
+      <Card className="mt-3">
+        <Card.Header>
+          <h1>
+            Detalles del Pedido {pedido.id}{" "}
+            {pedido.referenciaId ? pedido.referenciaId : ""}
+          </h1>
         </Card.Header>
         <Card.Body>
           <Row>
@@ -197,56 +689,22 @@ const DatosPedido = () => {
             </Col>
             <Col md={6}>
               {pedido.Obra?.empresa && (
-                <SelectPermiso empresaId={pedido.Obra.empresa.id} onSelect={handlePermisoSelect} />
+                <SelectPermiso
+                  empresaId={pedido.Obra.empresa.id}
+                  onSelect={handlePermisoSelect}
+                />
               )}
               <p>
-                <strong>Permiso Asignado:</strong> {selectedPermiso ? selectedPermiso : "Ninguno"}
+                <strong>Permiso Asignado:</strong>{" "}
+                {selectedPermiso ? selectedPermiso : "Ninguno"}
               </p>
-              <h3>Movimientos</h3>
-              {movimientos.length > 0 ? (
-                movimientos.map((movimiento, index) => (
-                  <div key={movimiento.id} style={{ marginBottom: "10px" }}>
-                    <Form.Group controlId={`movimiento-tipo-${index}`}>
-                      <Form.Label>Tipo</Form.Label>
-                      <Form.Control
-                        as="select"
-                        value={movimiento.tipo}
-                        onChange={(e) =>
-                          handleMovimientoChange(index, "tipo", e.target.value)
-                        }
-                      >
-                        <option value="entrega">Entrega</option>
-                        <option value="levante">Levante</option>
-                        <option value="otro">Otro</option>
-                      </Form.Control>
-                    </Form.Group>
-                    <Form.Group controlId={`movimiento-horario-${index}`}>
-                      <Form.Label>Horario</Form.Label>
-                      <Form.Control
-                        type="datetime-local"
-                        value={new Date(movimiento.horario).toISOString().slice(0, 16)}
-                        onChange={(e) =>
-                          handleMovimientoChange(index, "horario", e.target.value)
-                        }
-                      />
-                    </Form.Group>
-                    <Form.Group controlId={`movimiento-chofer-${index}`}>
-                      <Form.Label>Chofer</Form.Label>
-                      <Form.Control
-                        type="text"
-                        value={movimiento.choferId}
-                        onChange={(e) =>
-                          handleMovimientoChange(index, "choferId", e.target.value)
-                        }
-                      />
-                    </Form.Group>
-                  </div>
-                ))
-              ) : (
-                <p>No hay movimientos para este pedido.</p>
-              )}
             </Col>
           </Row>
+          <Movimientos
+            movimientos={pedido.Movimientos}
+            choferes={choferes}
+            handleVerPedido={handleVerPedido}
+          />
           <Button variant="primary" className="mt-3">
             Guardar Cambios
           </Button>
@@ -258,3 +716,4 @@ const DatosPedido = () => {
 };
 
 export default DatosPedido;
+ */

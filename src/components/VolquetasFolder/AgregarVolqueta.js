@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { postVolqueta } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
+import { TAMANOS_VOLQUETA, ESTADOS_VOLQUETA } from "../../config/config";
 
 const AgregarVolqueta = () => {
   const numeroVolquetaRef = useRef("");
@@ -109,22 +110,24 @@ const AgregarVolqueta = () => {
             </Form.Group>
 
             <Form.Group controlId="formTipo" className="mb-2">
-              <Form.Label>Tipo</Form.Label>
+              <Form.Label>Tamaño</Form.Label>
               <Form.Control as="select" ref={tipoRef} required>
-                <option value="">Seleccione el tipo</option>
-                <option value="grande">Grande</option>
-                <option value="mediana">Mediana</option>
-                <option value="pequeña">Pequeña</option>
+              {TAMANOS_VOLQUETA.map((tamano) => (
+                  <option key={tamano.value} value={tamano.value}>
+                    {tamano.label}
+                  </option>
+                ))}
               </Form.Control>
             </Form.Group>
 
             <Form.Group controlId="formEstado" className="mb-2">
               <Form.Label>Estado</Form.Label>
               <Form.Control as="select" ref={estadoRef} required>
-                <option value="">Seleccione el estado</option>
-                <option value="sana">Sana</option>
-                <option value="dañada">Dañada</option>
-                <option value="perdida">Perdida</option>
+              {ESTADOS_VOLQUETA.map((estado) => (
+                  <option key={estado.value} value={estado.value}>
+                    {estado.label}
+                  </option>
+                ))}
               </Form.Control>
             </Form.Group>
 

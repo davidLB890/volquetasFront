@@ -38,7 +38,7 @@ const SelectPermiso = ({ empresaId, onSelect }) => {
     <Form.Group controlId="selectPermiso">
       <Form.Label>Seleccionar Permiso (opcional)</Form.Label>
       <Form.Control as="select" onChange={(e) => onSelect(e.target.value)}>
-        <option value="">Seleccione un permiso (opcional)</option>
+        <option value="">Sin permiso</option>
         {permisos.map((permiso) => (
           <option key={permiso.id} value={permiso.id}>
             ID: {permiso.id} - Vence: {new Date(permiso.fechaVencimiento).toLocaleDateString()}

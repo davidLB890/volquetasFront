@@ -1,37 +1,41 @@
 import React, { useState } from "react";
 import { Form, Button, Row, Col, Spinner, Alert } from "react-bootstrap";
-import { getEmpresasNombre, getEmpresaId } from "../../api";
-import { useNavigate } from "react-router-dom";
+import { getEmpresasNombre } from "../../api";
+import useAuth from "../../hooks/useAuth";
 import ListaResultadosNombre from "../ListaResultadosNombre"; // Ajusta la ruta según sea necesario
 
-const BuscarEmpresaPorNombre = ({ onSeleccionar, getToken }) => {
+const BuscarEmpresaPorNombre = ({ onSeleccionar }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showResults, setShowResults] = useState(false);
-
-  const navigate = useNavigate();
+  const [hasSearched, setHasSearched] = useState(false); // Estado para verificar si se ha hecho una búsqueda
+  const [empresaSeleccionada, setEmpresaSeleccionada] = useState(null); // Estado para la empresa seleccionada
+  const getToken = useAuth();
 
   const handleSearch = async () => {
     const usuarioToken = getToken();
     setLoading(true);
     setError("");
-    setShowResults(false);
+    setEmpresaSeleccionada(null); // Limpiar la empresa seleccionada antes de una nueva búsqueda
+    onSeleccionar(null, ""); // Limpiar el ID y el nombre de la empresa en el componente padre
     try {
       const response = await getEmpresasNombre(searchTerm, usuarioToken);
       setResultados(response.data);
-      setShowResults(true);
       setLoading(false);
+      setHasSearched(true); // Establece el estado para indicar que se ha realizado una búsqueda
     } catch (error) {
       console.error("Error al buscar las empresas:", error.response?.data?.error || error.message);
       setError("Error al buscar las empresas");
       setLoading(false);
+      setHasSearched(true); // Establece el estado para indicar que se ha realizado una búsqueda
     }
   };
 
-  const handleNavigateToEmpresa = (empresaId) => {
-    navigate("/empresas/datos", { state: { empresaId } });
+  const handleSeleccionar = (id, nombre) => {
+    setEmpresaSeleccionada({ id, nombre });
+    onSeleccionar(id, nombre);
+    setSearchTerm(""); // Clear search term to prevent showing previous search term
   };
 
   return (
@@ -40,7 +44,7 @@ const BuscarEmpresaPorNombre = ({ onSeleccionar, getToken }) => {
         <Col>
           <Form.Control
             type="text"
-            placeholder="Busca el nombre de la empresa"
+            placeholder={empresaSeleccionada ? `Empresa seleccionada: ${empresaSeleccionada.nombre}` : "Busca el nombre de la empresa"}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -51,7 +55,9 @@ const BuscarEmpresaPorNombre = ({ onSeleccionar, getToken }) => {
       </Row>
       {loading && <Spinner animation="border" />}
       {error && <Alert variant="danger">{error}</Alert>}
-      {showResults && <ListaResultadosNombre resultados={resultados} onSeleccionar={handleNavigateToEmpresa} />}
+      {hasSearched && !empresaSeleccionada && (
+        <ListaResultadosNombre resultados={resultados} onSeleccionar={handleSeleccionar} />
+      )}
     </>
   );
 };

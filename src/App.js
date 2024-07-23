@@ -33,6 +33,7 @@ import { fetchEmpleados } from './features/empleadosSlice';
 import { fetchCamiones } from './features/camionesSlice';
 import Volquetas from './components/VolquetasFolder/Volquetas';
 import AgregarVolqueta from './components/VolquetasFolder/AgregarVolqueta';
+import DatosVolqueta from './components/VolquetasFolder/DatosVolqueta';
 import DatosPedido from './components/PedidosFolder/DatosPedido';
 import DatosPermiso from './components/PermisosFolder/DatosPermiso';
 
@@ -99,6 +100,7 @@ function App() {
             {/* VOLQUETAS */}
             <Route path="/volquetas" element={<Volquetas />} />
             <Route path="/volquetas/crear" element={<AgregarVolqueta />} />
+            <Route path="/volquetas/datos" element={<DatosVolqueta />} />
             {/* PERMISOS */}
             {/* <Route path="/permiso/datos/:permisoId" element={<DatosPermiso />} /> */}
           </Routes>

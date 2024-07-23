@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Spinner, Alert, Form, Row, Col, Button, Modal } from "react-bootstrap";
 import { getVolquetas, deleteVolqueta, getPedidoId } from "../../api";
 import useAuth from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import ModificarVolqueta from "./ModificarVolqueta";
 import "../../assets/css/tituloBoton.css"; // Asegúrate de ajustar la ruta según sea necesario
 
@@ -16,6 +17,7 @@ const ListaVolquetas = () => {
   const [volquetaSeleccionada, setVolquetaSeleccionada] = useState(null);
   const [showModificarVolqueta, setShowModificarVolqueta] = useState(false);
   const getToken = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchVolquetas = async () => {
@@ -166,18 +168,37 @@ const ListaVolquetas = () => {
                   variant="danger"
                   size="sm"
                   onClick={() => confirmarEliminar(volqueta)}
+                  style={{
+                    padding: "0.5rem 1rem",
+                    marginRight: "0.5rem",
+                  }}
                 >
                   Eliminar
                 </Button>
                 <Button
                   variant="primary"
                   size="sm"
+                  style={{
+                    padding: "0.5rem 1rem",
+                    marginRight: "0.5rem",
+                  }}
                   onClick={() => {
                     setVolquetaSeleccionada(volqueta);
                     setShowModificarVolqueta(true);
                   }}
                 >
                   Modificar
+                </Button>
+                <Button
+                  variant="info"
+                  size="sm"
+                  style={{
+                    padding: "0.5rem 1rem",
+                    marginRight: "0.5rem",
+                  }}
+                  onClick={() => navigate("/volquetas/datos", { state: { volquetaId: volqueta.numeroVolqueta } })}
+                >
+                  Datos
                 </Button>
               </td>
             </tr>

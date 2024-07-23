@@ -1,4 +1,3 @@
-// src/components/PedidosFolder/ListaPedidosEmpresa.js
 import React, { useEffect, useState } from "react";
 import {
   Container,
@@ -16,16 +15,12 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
 
-const ListaPedidosEmpresa = ({ empresaId }) => {
+const ListaPedidosEmpresaOParticular = ({ empresaId, particularId }) => {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [fechaInicio, setFechaInicio] = useState(
-    moment().startOf("week").format("YYYY-MM-DD")
-  );
-  const [fechaFin, setFechaFin] = useState(
-    moment().endOf("week").format("YYYY-MM-DD")
-  );
+  const [fechaInicio, setFechaInicio] = useState(moment().format("YYYY-MM-DD"));
+  const [fechaFin, setFechaFin] = useState(moment().format("YYYY-MM-DD"));
   const [estado, setEstado] = useState(null);
   const [tipoHorario, setTipoHorario] = useState("creacion");
   const [openFilters, setOpenFilters] = useState(false); // Estado para manejar el despliegue de filtros
@@ -56,9 +51,10 @@ const ListaPedidosEmpresa = ({ empresaId }) => {
       fechaFin,
       tipoHorario,
       empresaId,
+      particularId,
     };
     fetchPedidos(defaultParams);
-  }, [empresaId, getToken]);
+  }, [empresaId, particularId, getToken]);
 
   const handleFilterChange = (e) => {
     e.preventDefault();
@@ -68,6 +64,7 @@ const ListaPedidosEmpresa = ({ empresaId }) => {
       fechaFin,
       tipoHorario,
       empresaId,
+      particularId,
     };
     setLoading(true);
     fetchPedidos(params);
@@ -198,9 +195,7 @@ const ListaPedidosEmpresa = ({ empresaId }) => {
                   style={{ cursor: "pointer" }}
                   onClick={() => handleRowClick(pedido)}
                 >
-                  <td>
                   <td>{pedido.createdAt ? new Date(pedido.createdAt).toLocaleDateString() : "N/A"}</td>
-                  </td>
                   <td>{pedido.Obra.calle}</td>
                   <td>{pedido.pagoPedido.precio}</td>
                   <td>{pedido.pagoPedido.pagado ? "Sí" : "No"}</td>
@@ -215,4 +210,4 @@ const ListaPedidosEmpresa = ({ empresaId }) => {
   );
 };
 
-export default ListaPedidosEmpresa;
+export default ListaPedidosEmpresaOParticular;

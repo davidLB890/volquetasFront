@@ -1,12 +1,12 @@
-import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { postObra } from "../../api";
-import useAuth from "../../hooks/useAuth";
-import AlertMessage from "../AlertMessage";
+import React, { useRef, useState, useEffect } from "react";
+import { Modal, Form, Button, Alert, Row, Col } from "react-bootstrap";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
-import { Form, Button, Card, Alert } from "react-bootstrap";
+import AlertMessage from "../AlertMessage";
+import { postObra } from "../../api"; 
+import useAuth from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
-const AgregarObra = ({ onObraAgregada, empresaId }) => {
+const AgregarObra = ({ show, onHide, onObraAgregada, empresaId, particularId }) => {
   const calleRef = useRef("");
   const esquinaRef = useRef("");
   const barrioRef = useRef("");
@@ -14,23 +14,24 @@ const AgregarObra = ({ onObraAgregada, empresaId }) => {
   const numeroPuertaRef = useRef("");
   const descripcionRef = useRef("");
   const empresaIdRef = useRef("");
+  const particularIdRef = useRef("");
 
   const [detalleResiduos, setDetalleResiduos] = useState("");
   const [residuosMezclados, setResiduosMezclados] = useState(false);
   const [residuosReciclados, setResiduosReciclados] = useState(false);
-  const [frecuenciaSemanal, setFrecuenciaSemanal] = useState([]);
+  const [frecuenciaSemanalMinima, setFrecuenciaSemanalMinima] = useState([]);
+  const [frecuenciaSemanalMaxima, setFrecuenciaSemanalMaxima] = useState([]);
   const [destinoFinal, setDestinoFinal] = useState("");
   const [dias, setDias] = useState("");
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [mostrar, setMostrar] = useState(false);
 
-  const refs = [calleRef, esquinaRef, barrioRef, coordenadasRef, numeroPuertaRef, descripcionRef];
+  const refs = [calleRef];
   if (!empresaId) {
     refs.push(empresaIdRef);
   }
-  const boton = useHabilitarBoton(refs);
+  const botonHabilitado = useHabilitarBoton(refs);
 
   const navigate = useNavigate();
   const getToken = useAuth();
@@ -53,12 +54,14 @@ const AgregarObra = ({ onObraAgregada, empresaId }) => {
       numeroPuerta: numeroPuertaRef.current.value,
       descripcion: descripcionRef.current.value,
       empresaId: empresaId || empresaIdRef.current.value,
+      particularId: particularId || particularIdRef.current.value,
       detalleResiduos,
       residuosMezclados,
       residuosReciclados,
-      frecuenciaSemanal,
+      frecuenciaSemanalMinima,
+      frecuenciaSemanalMaxima,
       destinoFinal,
-      dias
+      dias,
     };
 
     try {
@@ -71,7 +74,6 @@ const AgregarObra = ({ onObraAgregada, empresaId }) => {
         setSuccess("");
       } else {
         console.log("Obra creada correctamente", datos);
-        setMostrar(true);
         setSuccess("Obra creada correctamente");
         setError("");
         onObraAgregada(datos);
@@ -81,7 +83,8 @@ const AgregarObra = ({ onObraAgregada, empresaId }) => {
         setDetalleResiduos("");
         setResiduosMezclados(false);
         setResiduosReciclados(false);
-        setFrecuenciaSemanal([]);
+        setFrecuenciaSemanalMinima([]);
+        setFrecuenciaSemanalMaxima([]);
         setDestinoFinal("");
         setDias("");
 
@@ -124,162 +127,173 @@ const AgregarObra = ({ onObraAgregada, empresaId }) => {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center">
-      <Card className="mt-5 w-40">
-        <Card.Header>
-          <Card.Title>Registro de Obra</Card.Title>
-        </Card.Header>
-        <Card.Body>
-          <Form>
-            <Form.Group controlId="formCalle" className="mb-2">
-              <Form.Label><span className="text-danger">*</span> Calle</Form.Label>
-              <Form.Control
-                ref={calleRef}
-                type="text"
-                placeholder="Calle"
-                required
-              />
-            </Form.Group>
+    <Modal show={show} onHide={onHide} size="lg">
+      <Modal.Header closeButton>
+        <Modal.Title>Registro de Obra</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group controlId="formCalle" className="mb-2">
+            <Form.Label>
+              <span className="text-danger">*</span> Calle
+            </Form.Label>
+            <Form.Control
+              ref={calleRef}
+              type="text"
+              placeholder="Calle"
+              required
+            />
+          </Form.Group>
 
-            <Form.Group controlId="formEsquina" className="mb-2">
-              <Form.Label><span className="text-danger">*</span> Esquina</Form.Label>
-              <Form.Control
-                ref={esquinaRef}
-                type="text"
-                placeholder="Esquina"
-                required
-              />
-            </Form.Group>
+          <h5 className="mt-4">Detalles extra</h5>
 
-            <Form.Group controlId="formBarrio" className="mb-2">
-              <Form.Label><span className="text-danger">*</span> Barrio</Form.Label>
-              <Form.Control
-                ref={barrioRef}
-                type="text"
-                placeholder="Barrio"
-                required
-              />
-            </Form.Group>
-
-            <Form.Group controlId="formCoordenadas" className="mb-2">
-              <Form.Label><span className="text-danger">*</span> Coordenadas</Form.Label>
-              <Form.Control
-                ref={coordenadasRef}
-                type="text"
-                placeholder="Coordenadas"
-                required
-              />
-            </Form.Group>
-
-            <Form.Group controlId="formNumeroPuerta" className="mb-2">
-              <Form.Label><span className="text-danger">*</span> Número de Puerta</Form.Label>
-              <Form.Control
-                ref={numeroPuertaRef}
-                type="text"
-                placeholder="Número de Puerta"
-                required
-              />
-            </Form.Group>
-
-            <Form.Group controlId="formDescripcion" className="mb-2">
-              <Form.Label><span className="text-danger">*</span> Descripción</Form.Label>
-              <Form.Control
-                ref={descripcionRef}
-                type="text"
-                placeholder="Descripción"
-                required
-              />
-            </Form.Group>
-
-            {!empresaId && (
-              <Form.Group controlId="formEmpresaId" className="mb-2">
-                <Form.Label><span className="text-danger">*</span> ID de la Empresa</Form.Label>
+          <Row>
+            <Col md={4}>
+              <Form.Group controlId="formEsquina" className="mb-2">
+                <Form.Label>Esquina</Form.Label>
                 <Form.Control
-                  ref={empresaIdRef}
+                  ref={esquinaRef}
                   type="text"
-                  placeholder="ID de la Empresa"
+                  placeholder="Esquina"
                   required
                 />
               </Form.Group>
-            )}
+            </Col>
+            <Col md={4}>
+              <Form.Group controlId="formNumeroPuerta" className="mb-2">
+                <Form.Label>Número de Puerta</Form.Label>
+                <Form.Control
+                  ref={numeroPuertaRef}
+                  type="text"
+                  placeholder="Número de Puerta"
+                  required
+                />
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group controlId="formBarrio" className="mb-2">
+                <Form.Label>Barrio</Form.Label>
+                <Form.Control
+                  ref={barrioRef}
+                  type="text"
+                  placeholder="Barrio"
+                  required
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
-            <h5 className="mt-4">Campos Opcionales</h5>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="formDescripcion" className="mb-2">
+                <Form.Label>Descripción</Form.Label>
+                <Form.Control
+                  ref={descripcionRef}
+                  type="text"
+                  placeholder="Descripción"
+                  required
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="formResiduos" className="mb-2">
+                <Form.Label>Detalle de Residuos</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Detalle de Residuos"
+                  value={detalleResiduos}
+                  onChange={(e) => setDetalleResiduos(e.target.value)}
+                />
+                <Form.Check
+                  type="checkbox"
+                  label="Residuos Mezclados"
+                  checked={residuosMezclados}
+                  onChange={(e) => setResiduosMezclados(e.target.checked)}
+                />
+                <Form.Check
+                  type="checkbox"
+                  label="Residuos Reciclados"
+                  checked={residuosReciclados}
+                  onChange={(e) => setResiduosReciclados(e.target.checked)}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
-            <Form.Group controlId="formDetalleResiduos" className="mb-2">
-              <Form.Label>Detalle de Residuos</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Detalle de Residuos"
-                value={detalleResiduos}
-                onChange={(e) => setDetalleResiduos(e.target.value)}
-              />
-            </Form.Group>
+          <Row>
+            <Col md={4}>
+              <Form.Group controlId="formFrecuenciaSemanalMinima" className="mb-2">
+                <Form.Label>Frecuencia Semanal Mínima</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Mínima"
+                  value={frecuenciaSemanalMinima}
+                  onChange={(e) =>
+                    setFrecuenciaSemanalMinima(
+                      e.target.value.split(",").map(Number)
+                    )
+                  }
+                />
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group controlId="formFrecuenciaSemanalMaxima" className="mb-2">
+                <Form.Label>Frecuencia Semanal Máxima</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Máxima"
+                  value={frecuenciaSemanalMaxima}
+                  onChange={(e) =>
+                    setFrecuenciaSemanalMaxima(
+                      e.target.value.split(",").map(Number)
+                    )
+                  }
+                />
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group controlId="formDestinoFinal" className="mb-2">
+                <Form.Label>Destino Final</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Destino Final"
+                  value={destinoFinal}
+                  onChange={(e) => setDestinoFinal(e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
-            <Form.Group controlId="formResiduosMezclados" className="mb-2">
-              <Form.Check
-                type="checkbox"
-                label="Residuos Mezclados"
-                checked={residuosMezclados}
-                onChange={(e) => setResiduosMezclados(e.target.checked)}
-              />
-            </Form.Group>
+          <Form.Group controlId="formDias" className="mb-2">
+            <Form.Label>Días</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Días (ej: A solicitud)"
+              value={dias}
+              onChange={(e) => setDias(e.target.value)}
+            />
+          </Form.Group>
 
-            <Form.Group controlId="formResiduosReciclados" className="mb-2">
-              <Form.Check
-                type="checkbox"
-                label="Residuos Reciclados"
-                checked={residuosReciclados}
-                onChange={(e) => setResiduosReciclados(e.target.checked)}
-              />
-            </Form.Group>
+          <div className="text-center">
+            <Button
+              type="button"
+              variant="primary"
+              onClick={registrarObra}
+              disabled={!botonHabilitado}
+            >
+              Crear Obra
+            </Button>
+          </div>
 
-            <Form.Group controlId="formFrecuenciaSemanal" className="mb-2">
-              <Form.Label>Frecuencia Semanal</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Días de la semana (ej: 2,5)"
-                value={frecuenciaSemanal}
-                onChange={(e) => setFrecuenciaSemanal(e.target.value.split(',').map(Number))}
-              />
-            </Form.Group>
-
-            <Form.Group controlId="formDestinoFinal" className="mb-2">
-              <Form.Label>Destino Final</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Destino Final"
-                value={destinoFinal}
-                onChange={(e) => setDestinoFinal(e.target.value)}
-              />
-            </Form.Group>
-
-            <Form.Group controlId="formDias" className="mb-2">
-              <Form.Label>Días</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Días (ej: A solicitud)"
-                value={dias}
-                onChange={(e) => setDias(e.target.value)}
-              />
-            </Form.Group>
-
-            <div className="text-center">
-              <Button
-                type="button"
-                variant="primary"
-                onClick={registrarObra}
-                disabled={!boton}
-              >
-                Crear Obra
-              </Button>
-            </div>
-
-            {error && <AlertMessage type="error" message={error} className="mb-2" />}
-            {success && <AlertMessage type="success" message={success} className="mb-2" />}
-          </Form>
-        </Card.Body>
-      </Card>
-    </div>
+          {error && (
+            <AlertMessage type="error" message={error} className="mb-2" />
+          )}
+          {success && (
+            <AlertMessage type="success" message={success} className="mb-2" />
+          )}
+        </Form>
+      </Modal.Body>
+    </Modal>
   );
 };
 

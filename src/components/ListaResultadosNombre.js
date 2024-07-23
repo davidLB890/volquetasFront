@@ -22,7 +22,7 @@ const ListaResultadosNombre = ({ resultados, onSeleccionar }) => {
               <td>
                 <Button
                   variant="primary"
-                  onClick={() => onSeleccionar(item.id)}
+                  onClick={() => onSeleccionar(item.id, item.nombre)}
                 >
                   Seleccionar
                 </Button>

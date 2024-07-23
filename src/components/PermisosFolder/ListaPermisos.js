@@ -12,8 +12,9 @@ import {
 import { getPermisoIdEmpresa, getPermisoIdParticular, deletePermiso } from "../../api"; // Ajusta la ruta según sea necesario
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
-import ModificarPermiso from "./ModificarPermiso"; // Ajusta la ruta según sea necesario
-import DatosPermiso from "./DatosPermiso"; // Ajusta la ruta según sea necesario
+import ModificarPermiso from "./ModificarPermiso"; 
+import DatosPermiso from "./DatosPermiso"; 
+import PermisosVencimientoProximo from "./PermisosVencimientoProximo"; 
 
 const ListaPermisos = ({ empresaId, particularId, actualizar }) => {
   const [permisos, setPermisos] = useState([]);
@@ -55,6 +56,35 @@ const ListaPermisos = ({ empresaId, particularId, actualizar }) => {
 
     fetchPermisos();
   }, [empresaId, particularId, getToken, actualizar]);
+
+  useEffect(() => {
+    const fetchPermisosConFiltros = async () => {
+      const usuarioToken = getToken();
+      try {
+        let response;
+        if (empresaId) {
+          response = await getPermisoIdEmpresa(empresaId, usuarioToken); // Agrega 'true' para el parámetro 'activo'
+        } else if (particularId) {
+          response = await getPermisoIdParticular(particularId, usuarioToken); // Agrega 'true' para el parámetro 'activo'
+        } else {
+          setError("No se ha proporcionado un ID de empresa o particular.");
+          setLoading(false);
+          return;
+        }
+        setPermisos(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error(
+          "Error al obtener los permisos:",
+          error.response?.data?.error || error.message
+        );
+        setError("Error al obtener los permisos");
+        setLoading(false);
+      }
+    };
+
+    fetchPermisosConFiltros();
+  }, [/* List the state variables you want to track here */]);
 
   const handlePermisoModificado = (permisoModificado) => {
     setPermisos((prevPermisos) =>

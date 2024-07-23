@@ -13,10 +13,10 @@ const Dashboard = () => {
 
   useEffect(() => {
     const usuarioToken = getToken();
-    if (!usuarioToken) {
+    if (usuarioToken === null) {
       navigate("/login");
-    }
-  }, [navigate, getToken]);
+    } 
+  }, [getToken, navigate]);
 
   const handleAgregarPedido = () => {
     navigate("/pedidos/crear");

@@ -7,7 +7,7 @@ import useHabilitarBoton from "../../hooks/useHabilitarBoton";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import AgregarContactoEmpresa from "./AgregarContactoEmpresa";
 
-const AgregarEmpresa = () => {
+const AgregarEmpresa = ({ onSubmit }) => {
   const rutRef = useRef("");
   const nombreRef = useRef("");
   const razonSocialRef = useRef("");
@@ -17,8 +17,9 @@ const AgregarEmpresa = () => {
   const [mostrar, setMostrar] = useState(false);
   const [showAgregarContacto, setShowAgregarContacto] = useState(false);
   const [empresaAgregada, setEmpresaAgregada] = useState(null);
+  const [formularioVisible, setFormularioVisible] = useState(true); // Nuevo estado para controlar la visibilidad del formulario
 
-  const refs = [rutRef, nombreRef, razonSocialRef, descripcionRef];
+  const refs = [/* rutRef,  */nombreRef];
   const boton = useHabilitarBoton(refs);
 
   const navigate = useNavigate();
@@ -55,6 +56,10 @@ const AgregarEmpresa = () => {
         setEmpresaAgregada({ id: datos.id, nombre: datos.nombre });
         setSuccess("Empresa creada correctamente");
         setError("");
+        setFormularioVisible(false); // Ocultar el formulario al crear la empresa con éxito
+
+        // Aquí llamamos a onSubmit con los datos de la empresa creada
+        onSubmit({ id: datos.id, nombre: datos.nombre });
 
         // Limpiar los campos del formulario
         rutRef.current.value = "";
@@ -116,77 +121,80 @@ const AgregarEmpresa = () => {
           <Card.Title>Registro de Empresa</Card.Title>
         </Card.Header>
         <Card.Body>
-          <Form>
-            <Form.Group controlId="formRut" className="mb-2">
-              <Form.Control
-                ref={rutRef}
-                type="text"
-                placeholder="RUT"
-                required
-              />
-            </Form.Group>
+          {formularioVisible ? (
+            <Form>
+              <Form.Group controlId="formRut" className="mb-2">
+                <Form.Control
+                  ref={rutRef}
+                  type="text"
+                  placeholder="RUT"
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formNombre" className="mb-2">
-              <Form.Control
-                ref={nombreRef}
-                type="text"
-                placeholder="Nombre"
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formNombre" className="mb-2">
+                <Form.Control
+                  ref={nombreRef}
+                  type="text"
+                  placeholder="Nombre"
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formRazonSocial" className="mb-2">
-              <Form.Control
-                ref={razonSocialRef}
-                type="text"
-                placeholder="Razón Social"
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formRazonSocial" className="mb-2">
+                <Form.Control
+                  ref={razonSocialRef}
+                  type="text"
+                  placeholder="Razón Social"
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formDescripcion" className="mb-2">
-              <Form.Control
-                ref={descripcionRef}
-                type="text"
-                placeholder="Descripción"
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formDescripcion" className="mb-2">
+                <Form.Control
+                  ref={descripcionRef}
+                  type="text"
+                  placeholder="Descripción"
+                  required
+                />
+              </Form.Group>
 
+              <div className="text-center">
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={registrarEmpresa}
+                  disabled={!boton}
+                >
+                  Crear Empresa
+                </Button>
+              </div>
+
+              {error && <AlertMessage type="error" message={error} className="mb-2" />}
+              {success && <AlertMessage type="success" message={success} className="mb-2" />}
+            </Form>
+          ) : (
             <div className="text-center">
               <Button
-                type="button"
-                variant="primary"
-                onClick={registrarEmpresa}
-                disabled={!boton}
+                variant="secondary"
+                className="ml-2"
+                onClick={handleMostrarAgregarContacto}
               >
-                Crear Empresa
+                Click aquí para agregar contacto
               </Button>
-              {mostrar && (
-                <Button
-                  variant="secondary"
-                  className="ml-2"
-                  onClick={handleMostrarAgregarContacto}
-                >
-                  Click aquí para agregar contacto
-                </Button>
-              )}
             </div>
+          )}
 
-            {error && <AlertMessage type="error" message={error} className="mb-2" />}
-            {success && <AlertMessage type="success" message={success} className="mb-2" />}
-
-            {empresaAgregada && (
-              <AgregarContactoEmpresa
-                show={showAgregarContacto}
-                onHide={() => setShowAgregarContacto(false)}
-                empresaId={empresaAgregada.id}
-                nombre={empresaAgregada.nombre}
-                onContactoAgregado={handleContactoAgregado}
-                className="mb-2"
-              />
-            )}
-          </Form>
+          {empresaAgregada && (
+            <AgregarContactoEmpresa
+              show={showAgregarContacto}
+              onHide={() => setShowAgregarContacto(false)}
+              empresaId={empresaAgregada.id}
+              nombre={empresaAgregada.nombre}
+              onContactoAgregado={handleContactoAgregado}
+              className="mb-2"
+            />
+          )}
         </Card.Body>
       </Card>
     </div>

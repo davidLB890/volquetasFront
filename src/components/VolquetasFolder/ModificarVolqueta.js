@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { putVolqueta } from "../../api"; // Asegúrate de tener esta función en api.js
 import { Form, Button, Modal, Alert } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
+import { ESTADOS_VOLQUETA } from "../../config/config";
 
 const ModificarVolqueta = ({ volqueta, onHide, onUpdate }) => {
   const getToken = useAuth();
@@ -83,24 +84,14 @@ const ModificarVolqueta = ({ volqueta, onHide, onUpdate }) => {
             onChange={handleInputChange}
             required
           >
-            <option value="sana">Sana</option>
-            <option value="perdida">Perdida</option>
-            <option value="danada">Dañada</option>
+            {ESTADOS_VOLQUETA.map((estado) => (
+              <option key={estado.value} value={estado.value}>
+                {estado.label}
+              </option>
+            ))}
           </Form.Control>
         </Form.Group>
-        <Form.Group controlId="formOcupada">
-          <Form.Label>Ocupada</Form.Label>
-          <Form.Control
-            as="select"
-            name="ocupada"
-            value={nuevaVolqueta.ocupada}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="si">Sí</option>
-            <option value="no">No</option>
-          </Form.Control>
-        </Form.Group>
+
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>

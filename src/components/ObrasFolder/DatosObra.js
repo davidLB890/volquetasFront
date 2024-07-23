@@ -9,7 +9,7 @@ import ModificarObra from "./ModificarObra";
 import DetallesObra from "./DetallesObra";
 import ContactosObra from "./ContactosObra";
 
-const DatosObra = ({ obraId }) => {
+const DatosObra = ({ obraId, onObraModificada }) => {
   const [obra, setObra] = useState(null);
   const [empresa, setEmpresa] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -82,6 +82,7 @@ const DatosObra = ({ obraId }) => {
   const handleModificarObra = (obraModificada) => {
     setObra(obraModificada);
     setShowModificarObra(false);
+    if (onObraModificada) onObraModificada(obraModificada);
   };
 
   if (loading) {
@@ -142,6 +143,7 @@ const DatosObra = ({ obraId }) => {
 };
 
 export default DatosObra;
+
 
 
 //ya tengo la empresa acá mismo, si lo quiero mandar a los datos de la empresa en vez de que lo busque ahí, ya debería pasarle la empresa
