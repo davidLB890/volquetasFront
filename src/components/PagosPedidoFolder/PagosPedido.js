@@ -1,28 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Form, Button, Row, Col } from "react-bootstrap";
-import { putPagoPedidos } from "../../api"; // Ajusta la ruta según sea necesario
+import { useDispatch, useSelector } from "react-redux";
+import { updatePago } from "../../features/pedidoSlice"; // Asegúrate de ajustar la ruta según sea necesario
 import useAuth from "../../hooks/useAuth";
 import AlertMessage from "../AlertMessage";
-import ModificarPagoPedido from "./ModificarPegoPedido"; // Asegúrate de ajustar la ruta según sea necesario
+import ModificarPagoPedido from "./ModificarPagoPedido"; // Asegúrate de ajustar la ruta según sea necesario
 
-const PagoPedido = ({ pago }) => {
-  const [editablePago, setEditablePago] = useState({ ...pago });
+const PagoPedido = () => {
+  const dispatch = useDispatch();
+  const getToken = useAuth();
+  const pago = useSelector((state) => state.pedido.pedido.pagoPedido);
+  const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const getToken = useAuth();
 
   const handlePagadoChange = async () => {
     const usuarioToken = getToken();
-    const nuevoEstadoPagado = !editablePago.pagado;
-    setEditablePago({ ...editablePago, pagado: nuevoEstadoPagado });
+    const nuevoEstadoPagado = !pago.pagado;
 
     try {
-      await putPagoPedidos(
-        editablePago.id,
-        { pagado: nuevoEstadoPagado },
-        usuarioToken
-      );
+      await dispatch(updatePago({ pago: { ...pago, pagado: nuevoEstadoPagado }, usuarioToken })).unwrap();
       setSuccess("Estado de pago modificado correctamente");
       setError("");
       setTimeout(() => {
@@ -39,9 +36,11 @@ const PagoPedido = ({ pago }) => {
   };
 
   const cardStyle = {
-    backgroundColor: editablePago.pagado ? "#d4edda" : "#f8d7da", // Verde claro o rojo claro
-    borderColor: editablePago.pagado ? "#c3e6cb" : "#f5c6cb", // Verde claro o rojo claro
+    backgroundColor: pago?.pagado ? "#d4edda" : "#f8d7da", // Verde claro o rojo claro
+    borderColor: pago?.pagado ? "#c3e6cb" : "#f5c6cb", // Verde claro o rojo claro
   };
+
+  if (!pago) return null; // Maneja el caso donde no hay pago disponible
 
   return (
     <Card style={cardStyle}>
@@ -59,30 +58,30 @@ const PagoPedido = ({ pago }) => {
         <Row>
           <Col md={6}>
             <p>
-              <strong>Precio:</strong> ${editablePago.precio}
+              <strong>Precio:</strong> ${pago.precio}
             </p>
             <p>
               <Form.Check
                 type="checkbox"
                 label="Pagado"
                 name="pagado"
-                checked={editablePago.pagado}
+                checked={pago.pagado}
                 onChange={handlePagadoChange}
                 inline
               />
             </p>
             <p>
               <strong>Remito:</strong>{" "}
-              {editablePago.remito ? editablePago.remito : "No disponible"}
+              {pago.remito ? pago.remito : "No disponible"}
             </p>
           </Col>
           <Col md={6}>
             <p>
-              <strong>Tipo de Pago:</strong> {editablePago.tipoPago}
+              <strong>Tipo de Pago:</strong> {pago.tipoPago}
             </p>
             <p>
               <strong>Factura:</strong>{" "}
-              {editablePago.facturaId ? editablePago.facturaId : "No disponible"}
+              {pago.facturaId ? pago.facturaId : "No disponible"}
             </p>
           </Col>
         </Row>
@@ -90,7 +89,7 @@ const PagoPedido = ({ pago }) => {
       <ModificarPagoPedido
         show={showModal}
         onHide={() => setShowModal(false)}
-        pago={editablePago}
+        pago={pago}
       />
     </Card>
   );

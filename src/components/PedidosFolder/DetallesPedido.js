@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Card, Modal, Button } from "react-bootstrap";
+import { useDispatch } from "react-redux"; // Importa useDispatch
 import DatosObra from "../ObrasFolder/DatosObra"; // Asegúrate de ajustar la ruta según sea necesario
 import ModificarPedido from "./ModificarPedido"; // Asegúrate de ajustar la ruta según sea necesario
+import { updateObra } from "../../features/pedidoSlice"; // Importa la acción para actualizar la obra, ajusta la ruta según sea necesario
 
 const DetallesPedido = ({ detalles, onPedidoModificado }) => {
   const [mostrarObra, setMostrarObra] = useState(false);
   const [mostrarModificar, setMostrarModificar] = useState(false);
+  const dispatch = useDispatch(); // Usa useDispatch para despachar acciones
   const [obra, setObra] = useState(detalles.Obra);
 
   const handleToggleObra = () => {
@@ -23,6 +26,7 @@ const DetallesPedido = ({ detalles, onPedidoModificado }) => {
   const handleObraModificada = (obraModificada) => {
     setObra(obraModificada);
     setMostrarObra(false); // Cierra el modal después de la modificación
+    dispatch(updateObra(obraModificada)); // Actualiza la obra en el estado centralizado
   };
 
   return (

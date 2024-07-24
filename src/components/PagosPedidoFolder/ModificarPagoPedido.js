@@ -1,14 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import { putPagoPedidos } from "../../api"; // Ajusta la ruta según sea necesario
+import { useDispatch } from "react-redux";
+import { updatePago } from "../../features/pedidoSlice"; // Asegúrate de ajustar la ruta según sea necesario
 import useAuth from "../../hooks/useAuth";
 import AlertMessage from "../AlertMessage";
 
 const ModificarPagoPedido = ({ show, onHide, pago }) => {
+  const dispatch = useDispatch();
+  const getToken = useAuth();
   const [editablePago, setEditablePago] = useState({ ...pago });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const getToken = useAuth();
+
+  useEffect(() => {
+    setEditablePago(pago);
+  }, [pago]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -21,7 +27,7 @@ const ModificarPagoPedido = ({ show, onHide, pago }) => {
   const handleSave = async () => {
     const usuarioToken = getToken();
     try {
-      await putPagoPedidos(editablePago.id, editablePago, usuarioToken);
+      await dispatch(updatePago({ pago: editablePago, usuarioToken })).unwrap();
       setSuccess("Detalles de pago modificados correctamente");
       setError("");
       setTimeout(() => {

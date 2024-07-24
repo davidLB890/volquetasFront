@@ -1,4 +1,3 @@
-// src/components/VolquetasFolder/DatosVolqueta.js
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Spinner, Alert, Container, Card } from "react-bootstrap";
@@ -12,9 +11,8 @@ const DatosVolqueta = () => {
   const [volqueta, setVolqueta] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [choferes, setChoferes] = useState({});
+  const [choferes, setChoferes] = useState([]);
   const getToken = useAuth();
-  const navigate = useNavigate();
 
   const buscarChofer = async (choferId) => {
     const usuarioToken = getToken();
@@ -32,18 +30,6 @@ const DatosVolqueta = () => {
     }
   };
 
-  const handleVerPedido = async (pedidoId) => {
-    const usuarioToken = getToken();
-    try {
-      const response = await getPedidoId(pedidoId, usuarioToken);
-      navigate("/pedidos/datos", { state: { pedido: response.data, volquetaId } });
-    } catch (error) {
-      console.error("Error al obtener los detalles del pedido:", error.response?.data?.error || error.message);
-      setError("Error al obtener los detalles del pedido");
-      setTimeout(() => setError(""), 5000);
-    }
-  };
-
   useEffect(() => {
     const fetchVolqueta = async () => {
       const usuarioToken = getToken();
@@ -51,11 +37,11 @@ const DatosVolqueta = () => {
         const response = await getVolquetaId(volquetaId, usuarioToken);
         setVolqueta(response.data);
 
-        const nuevosChoferes = {};
+        const nuevosChoferes = [];
         for (const movimiento of response.data.Movimientos) {
-          if (movimiento.choferId) {
+          if (movimiento.choferId && !nuevosChoferes.some(c => c.id === movimiento.choferId)) {
             const nombreChofer = await buscarChofer(movimiento.choferId);
-            nuevosChoferes[movimiento.choferId] = nombreChofer;
+            nuevosChoferes.push({ id: movimiento.choferId, nombre: nombreChofer });
           }
         }
         setChoferes(nuevosChoferes);
@@ -107,8 +93,9 @@ const DatosVolqueta = () => {
           <Movimientos
             movimientos={volqueta.Movimientos}
             choferes={choferes}
+            pedidoId={volqueta.Movimientos.pedidoId}
             volquetaId={volquetaId}
-            handleVerPedido={handleVerPedido}
+            /* handleVerPedido={handleVerPedido} */
           />
         </Card.Body>
       </Card>

@@ -1,42 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
-import { postMovimiento } from "../../api"; // Ajusta la ruta según sea necesario
+import { postMovimiento } from "../../api"; // Adjust the path as necessary
 import useAuth from "../../hooks/useAuth";
-import { TIPOS_MOVIMIENTO } from "../../config/config"; // Ajusta la ruta según sea necesario
+import { TIPOS_MOVIMIENTO } from "../../config/config"; // Adjust the path as necessary
 
-const AgregarMovimiento = ({ show, onHide, pedidoId, choferes }) => {
+const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, numeroVolqueta, onMovimientoAgregado }) => {
   const getToken = useAuth();
-
   const [choferId, setChoferId] = useState("");
   const [horario, setHorario] = useState("");
-  const [numeroVolqueta, setNumeroVolqueta] = useState("");
-  const [tipo, setTipo] = useState(TIPOS_MOVIMIENTO[0]);
+  const [tipo, setTipo] = useState(tipoMovimiento);
+  const [numero, setNumero] = useState(numeroVolqueta || "");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    setTipo(tipoMovimiento);
+    if (tipoMovimiento === "levante" && numeroVolqueta) {
+      setNumero(numeroVolqueta);
+    } else {
+      setNumero("");
+    }
+  }, [tipoMovimiento, numeroVolqueta]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const usuarioToken = getToken();
+    
+    // Asegúrate de que numero sea una cadena antes de llamar a trim
+    let numeroVolqueta = numero;
+    if (numeroVolqueta !== null && numeroVolqueta !== undefined) {
+        numeroVolqueta = String(numeroVolqueta).trim();
+    } else {
+        numeroVolqueta = null;
+    }
+
     const movimiento = {
       pedidoId,
       choferId,
       horario,
-      numeroVolqueta: numeroVolqueta || null,
       tipo,
+      numeroVolqueta: numeroVolqueta || null,
     };
-
     try {
-      console.log("Movimiento a agregar:", movimiento);
-      await postMovimiento(movimiento, usuarioToken);
+      const response = await postMovimiento(movimiento, usuarioToken);
       setSuccess("Movimiento agregado correctamente");
       setError("");
       setTimeout(() => {
+        onMovimientoAgregado(response.data);
         setSuccess("");
         onHide();
-      }, 2000);
+      }, 1000);
     } catch (error) {
-      console.error("Error al agregar el movimiento:", error.response || error.message);
-      setError(error.response?.data?.error + error.response?.data?.detalle);
+      console.error("Error al agregar el movimiento:", error.response?.data?.error || error.message);
+      setError(error.response?.data?.detalle);
       setSuccess("");
     }
   };
@@ -75,21 +91,13 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes }) => {
               required
             />
           </Form.Group>
-          <Form.Group controlId="formNumeroVolqueta">
-            <Form.Label>Número de Volqueta (opcional)</Form.Label>
-            <Form.Control
-              type="text"
-              value={numeroVolqueta}
-              onChange={(e) => setNumeroVolqueta(e.target.value)}
-            />
-          </Form.Group>
           <Form.Group controlId="formTipo">
             <Form.Label>Tipo</Form.Label>
             <Form.Control
               as="select"
               value={tipo}
-              onChange={(e) => setTipo(e.target.value)}
               required
+              disabled // Disable to prevent changes, since it's pre-selected
             >
               {TIPOS_MOVIMIENTO.map((tipo) => (
                 <option key={tipo} value={tipo}>
@@ -97,6 +105,14 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes }) => {
                 </option>
               ))}
             </Form.Control>
+          </Form.Group>
+          <Form.Group controlId="formNumeroVolqueta">
+            <Form.Label>Número de Volqueta</Form.Label>
+            <Form.Control
+              type="text"
+              value={numero}
+              onChange={(e) => setNumero(e.target.value)}
+            />
           </Form.Group>
           <Button variant="secondary" onClick={onHide} className="mr-2">
             Cancelar

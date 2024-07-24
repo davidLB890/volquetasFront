@@ -71,7 +71,8 @@ const ListaPedidosEmpresaOParticular = ({ empresaId, particularId }) => {
   };
 
   const handleRowClick = (pedido) => {
-    navigate("/pedidos/datos", { state: { pedido } });
+    console.log("Pedido:", pedido);
+    navigate("/pedidos/datos", { state: { pedidoId: pedido.id, empresaId: empresaId, particularId: particularId } });
   };
 
   if (loading) {

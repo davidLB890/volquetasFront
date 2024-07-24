@@ -727,3 +727,18 @@ export const postMovimiento = (movimiento, usuarioToken) => {
     },
   });
 }
+export const putMovimiento = (movimientoId, movimiento, usuarioToken) => {
+  return axios.put(`${API_URL}movimientos/${movimientoId}`, movimiento, {
+    headers: {
+      Authorization: usuarioToken,
+    },
+  });
+}
+export const deleteMovimientoAPI = (movimientoId, usuarioToken) => {
+  return axios.delete(`${API_URL}movimientos/${movimientoId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}

@@ -150,7 +150,7 @@ const AgregarPedido = () => {
       try {
         const pedidoResponse = await getPedidoId(pedidoId, usuarioToken);
         console.log(pedidoResponse.data);
-        navigate("/pedidos/datos", { state: pedidoResponse.data });
+        navigate("/pedidos/datos", { state: {pedidoId: pedidoResponse.data.id} });
       } catch (fetchError) {
         console.error(
           "Error al obtener los detalles del pedido:",
