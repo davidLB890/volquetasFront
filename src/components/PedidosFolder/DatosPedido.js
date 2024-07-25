@@ -1,8 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux';
-import { Spinner, Alert, Container, Row, Col, Card, Button } from "react-bootstrap";
-import { fetchPedido, fetchObra, fetchPermisos, updatePedido, addMovimiento, deleteMovimiento, modifyMovimiento } from '../../features/pedidoSlice';
+import { useDispatch, useSelector } from "react-redux";
+import {
+  Spinner,
+  Alert,
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+} from "react-bootstrap";
+import {
+  fetchPedido,
+  fetchObra,
+  fetchPermisos,
+  updatePedido,
+  addMovimiento,
+  deleteMovimiento,
+  modifyMovimiento,
+  addSugerencia,
+  deleteSugerencia,
+  modifySugerencia,
+} from "../../features/pedidoSlice";
 import useAuth from "../../hooks/useAuth";
 import DatosObra from "../ObrasFolder/DatosObra";
 import MovimientosYSugerencias from "../MovimientosFolder/MovimientosYSugerencias"; // Asegúrate de ajustar la ruta según sea necesario
@@ -17,7 +36,9 @@ const DatosPedido = () => {
   const empresaId = location.state?.empresaId;
   const particularId = location.state?.particularId;
   const dispatch = useDispatch();
-  const { pedido, obra, permisos, loading, error } = useSelector((state) => state.pedido);
+  const { pedido, obra, permisos, loading, error } = useSelector(
+    (state) => state.pedido
+  );
   const getToken = useAuth();
   const navigate = useNavigate();
   const [mostrarObra, setMostrarObra] = useState(false);
@@ -37,7 +58,9 @@ const DatosPedido = () => {
   useEffect(() => {
     if (pedido?.Obra?.empresa?.id) {
       const usuarioToken = getToken();
-      dispatch(fetchPermisos({ empresaId: pedido.Obra.empresa.id, usuarioToken }));
+      dispatch(
+        fetchPermisos({ empresaId: pedido.Obra.empresa.id, usuarioToken })
+      );
     }
   }, [dispatch, getToken, pedido]);
 
@@ -45,20 +68,63 @@ const DatosPedido = () => {
     setMostrarObra(!mostrarObra);
   };
 
+  const handleMovimientoAgregado = (nuevoMovimiento) => {
+    dispatch(addMovimiento(nuevoMovimiento));
+  };
+
+  const handleSugerenciaAgregada = (nuevaSugerencia) => {
+    dispatch(addSugerencia(nuevaSugerencia));
+  };
+
+/*   const handleSugerenciaAgregada = (nuevaSugerencia) => {
+    const usuarioToken = getToken();
+    dispatch(
+      postNuevaSugerencia({ sugerencia: nuevaSugerencia, usuarioToken })
+    ).then((action) => {
+      if (action.meta.requestStatus === "fulfilled") {
+        dispatch(fetchPedido({ pedidoId, usuarioToken }));
+      }
+    });
+  }; */
+
   const handleMovimientoModificado = (movimientoModificado) => {
-    dispatch(modifyMovimiento(movimientoModificado));
+    const usuarioToken = getToken();
+    dispatch(
+      modifyMovimiento({
+        movimientoId: movimientoModificado.id,
+        movimiento: movimientoModificado,
+        usuarioToken,
+      })
+    );
   };
 
   const handleMovimientoEliminado = (movimientoId) => {
-    dispatch(deleteMovimiento(movimientoId));
+    const usuarioToken = getToken();
+    dispatch(deleteMovimiento({ movimientoId, usuarioToken }));
+  };
+
+
+  const handleSugerenciaModificada = (sugerenciaModificada) => {
+    const usuarioToken = getToken();
+    dispatch(
+      modifySugerencia({
+        sugerenciaId: sugerenciaModificada.id,
+        sugerencia: {
+          ...sugerenciaModificada,
+          choferSugeridoId: Number(sugerenciaModificada.choferSugeridoId),
+        },
+        usuarioToken,
+      })
+    );
   };
 
   const handlePedidoModificado = (updatedPedido) => {
     dispatch(updatePedido(updatedPedido));
   };
 
-  const handleMovimientoAgregado = (nuevoMovimiento) => {
-    dispatch(addMovimiento(nuevoMovimiento));
+  const handleSugerenciaEliminada = (sugerenciaId) => {
+    const usuarioToken = getToken();
+    dispatch(deleteSugerencia({ sugerenciaId, usuarioToken }));
   };
 
   if (loading) {
@@ -70,7 +136,9 @@ const DatosPedido = () => {
   }
 
   if (!pedido) {
-    return <Alert variant="danger">No se encontraron detalles del pedido.</Alert>;
+    return (
+      <Alert variant="danger">No se encontraron detalles del pedido.</Alert>
+    );
   }
 
   return (
@@ -79,7 +147,9 @@ const DatosPedido = () => {
         <Button
           variant="secondary"
           className="mt-3 ml-3"
-          onClick={() => navigate("/volquetas/datos", { state: { volquetaId } })}
+          onClick={() =>
+            navigate("/volquetas/datos", { state: { volquetaId } })
+          }
         >
           Volver a Volqueta
         </Button>
@@ -97,7 +167,9 @@ const DatosPedido = () => {
         <Button
           variant="secondary"
           className="mt-3 ml-3"
-          onClick={() => navigate("/particulares/datos", { state: { particularId } })}
+          onClick={() =>
+            navigate("/particulares/datos", { state: { particularId } })
+          }
         >
           Volver a Particular
         </Button>
@@ -113,10 +185,14 @@ const DatosPedido = () => {
         <Card.Body>
           <MovimientosYSugerencias
             movimientos={pedido.Movimientos}
+            sugerencias={pedido.Sugerencias}
             pedidoId={pedidoId}
             onMovimientoAgregado={handleMovimientoAgregado}
             onMovimientoModificado={handleMovimientoModificado}
             onMovimientoEliminado={handleMovimientoEliminado}
+            onSugerenciaAgregada={handleSugerenciaAgregada}
+            onSugerenciaModificada={handleSugerenciaModificada}
+            onSugerenciaEliminada={handleSugerenciaEliminada}
           />
           <Row>
             <Col md={6}>
@@ -147,13 +223,6 @@ const DatosPedido = () => {
 };
 
 export default DatosPedido;
-
-
-
-
-
-
-
 
 // src/components/PedidosFolder/DatosPedido.js
 /* import React, { useState, useEffect } from "react";

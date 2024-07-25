@@ -44,6 +44,7 @@ const ModificarMovimiento = ({ show, onHide, movimiento, choferes, onMovimientoM
       const response = await dispatch(modifyMovimiento({ movimientoId: movimiento.id, movimiento: movimientoModificado, usuarioToken })).unwrap();
       setSuccess("Movimiento modificado correctamente");
       setError("");
+      console.log("Movimiento modificado:", response);
       onMovimientoModificado(response);
       setTimeout(() => {
         setSuccess("");

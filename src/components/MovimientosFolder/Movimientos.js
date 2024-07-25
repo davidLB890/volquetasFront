@@ -83,99 +83,97 @@ const Movimientos = ({
   };
 
   return (
-    <Card>
-    <Card.Header>
-      <div className="d-flex justify-content-between align-items-center">
-        <h4 className="mb-0">Movimientos</h4>
-        {location.pathname.includes("/pedidos/datos") && renderAgregarButton()}
-      </div>
-    </Card.Header>
-    <Card.Body>
-      {movimientos.length === 0 ? (
-        <p>No hay movimientos para este pedido.</p>
-      ) : (
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Número de Volqueta</th>
-              <th>Horario</th>
-              <th>Tipo</th>
-              <th>Chofer</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {movimientos.map((movimiento) => (
-              <tr key={movimiento?.id}>
-                <td>{movimiento?.numeroVolqueta || "N/A"}</td>
-                <td>{movimiento?.horario ? new Date(movimiento.horario).toLocaleString() : "N/A"}</td>
-                <td>{movimiento?.tipo || "N/A"}</td>
-                <td>{choferes.find(chofer => chofer.id === movimiento?.choferId)?.nombre || "N/A"}</td>
-                <td>
-                  {location.pathname.includes("/pedidos/datos") ? (
-                    <>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => handleDeleteMovimiento(movimiento?.id)}
-                        className="mr-2"
-                        style={{
-                          padding: "0.5rem 1rem",
-                          marginRight: "0.5rem",
-                        }}
-                      >
-                        Eliminar
-                      </Button>
-                      <Button
-                        variant="warning"
-                        size="sm"
-                        onClick={() => handleModificarMovimiento(movimiento)}
-                        className="mr-2"
-                        style={{
-                          padding: "0.5rem 1rem",
-                          marginRight: "0.5rem",
-                        }}
-                      >
-                        Modificar
-                      </Button>
-                    </>
-                  ) : (
+    <div>
+  <div className="d-flex justify-content-between align-items-center">
+    <h4 className="mb-0">Movimientos</h4>
+    {location.pathname.includes("/pedidos/datos") && renderAgregarButton()}
+  </div>
+  <div>
+    {movimientos.length === 0 ? (
+      <p>No hay movimientos para este pedido.</p>
+    ) : (
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Número de Volqueta</th>
+            <th>Horario</th>
+            <th>Tipo</th>
+            <th>Chofer</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {movimientos.map((movimiento) => (
+            <tr key={movimiento?.id}>
+              <td>{movimiento?.numeroVolqueta || "-"}</td>
+              <td>{movimiento?.horario ? new Date(movimiento.horario).toLocaleString() : "-"}</td>
+              <td>{movimiento?.tipo || "-"}</td>
+              <td>{choferes.find(chofer => chofer.id === movimiento?.choferId)?.nombre || "Sin chofer asignado"}</td>
+              <td>
+                {location.pathname.includes("/pedidos/datos") ? (
+                  <>
                     <Button
-                      variant="info"
+                      variant="danger"
                       size="sm"
-                      onClick={() => handleVerPedido(movimiento?.pedidoId)}
+                      onClick={() => handleDeleteMovimiento(movimiento?.id)}
                       className="mr-2"
+                      style={{
+                        padding: "0.5rem 1rem",
+                        marginRight: "0.5rem",
+                      }}
                     >
-                      Ver Pedido
+                      Eliminar
                     </Button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      )}
-      {error && <Alert variant="danger">{error}</Alert>}
-    </Card.Body>
-  
-    <AgregarMovimiento
-      show={showAgregarMovimiento}
-      onHide={handleHideModal}
-      pedidoId={pedidoId}
-      choferes={choferes}
-      tipoMovimiento={tipoMovimiento}
-      numeroVolqueta={numeroVolqueta}
-      onMovimientoAgregado={onMovimientoAgregado}
-    />
-  
-    <ModificarMovimiento
-      show={showModificarMovimiento}
-      onHide={() => setShowModificarMovimiento(false)}
-      movimiento={movimientoSeleccionado}
-      choferes={choferes}
-      onMovimientoModificado={onMovimientoModificado}
-    />
-  </Card>
+                    <Button
+                      variant="warning"
+                      size="sm"
+                      onClick={() => handleModificarMovimiento(movimiento)}
+                      className="mr-2"
+                      style={{
+                        padding: "0.5rem 1rem",
+                        marginRight: "0.5rem",
+                      }}
+                    >
+                      Modificar
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    variant="info"
+                    size="sm"
+                    onClick={() => handleVerPedido(movimiento?.pedidoId)}
+                    className="mr-2"
+                  >
+                    Ver Pedido
+                  </Button>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    )}
+    {error && <Alert variant="danger">{error}</Alert>}
+  </div>
+
+  <AgregarMovimiento
+    show={showAgregarMovimiento}
+    onHide={handleHideModal}
+    pedidoId={pedidoId}
+    choferes={choferes}
+    tipoMovimiento={tipoMovimiento}
+    numeroVolqueta={numeroVolqueta}
+    onMovimientoAgregado={onMovimientoAgregado}
+  />
+
+  <ModificarMovimiento
+    show={showModificarMovimiento}
+    onHide={() => setShowModificarMovimiento(false)}
+    movimiento={movimientoSeleccionado}
+    choferes={choferes}
+    onMovimientoModificado={onMovimientoModificado}
+  />
+</div>
   
   );
 };

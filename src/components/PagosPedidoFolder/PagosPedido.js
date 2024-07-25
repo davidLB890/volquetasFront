@@ -19,7 +19,12 @@ const PagoPedido = () => {
     const nuevoEstadoPagado = !pago.pagado;
 
     try {
-      await dispatch(updatePago({ pago: { ...pago, pagado: nuevoEstadoPagado }, usuarioToken })).unwrap();
+      await dispatch(
+        updatePago({
+          pago: { ...pago, pagado: nuevoEstadoPagado },
+          usuarioToken,
+        })
+      ).unwrap();
       setSuccess("Estado de pago modificado correctamente");
       setError("");
       setTimeout(() => {
@@ -44,13 +49,11 @@ const PagoPedido = () => {
 
   return (
     <Card style={cardStyle}>
-      <Card.Header>
-        <div className="header">
-          <Card.Title>Detalles de Pago</Card.Title>
-          <Button variant="secondary" onClick={() => setShowModal(true)}>
-            Modificar
-          </Button>
-        </div>
+      <Card.Header className="header">
+        <Card.Title>Detalles de Pago</Card.Title>
+        <Button variant="secondary" onClick={() => setShowModal(true)}>
+          Modificar
+        </Button>
       </Card.Header>
       <Card.Body>
         {error && <AlertMessage type="error" message={error} />}

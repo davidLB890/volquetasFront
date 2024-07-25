@@ -1,8 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getPedidoId, getObraId, getPermisoIdEmpresa, putPagoPedidos, deleteMovimientoAPI, putMovimiento } from '../api';
+import { getPedidoId, getObraId, getPermisoIdEmpresa, putPagoPedidos, deleteMovimientoAPI, putMovimiento 
+  , postSugerencia, putSugerencia, deleteSugerenciaAPI
+} from '../api';
 
 
 //THUNKS
+// funciones asíncronas que se utilizan para manejar la lógica de negocio compleja, 
+//como llamadas a APIs, antes de despachar acciones al store de Redux.
 export const fetchPedido = createAsyncThunk('pedido/fetchPedido', async ({ pedidoId, usuarioToken }, { rejectWithValue }) => {
   try {
     const response = await getPedidoId(pedidoId, usuarioToken);
@@ -57,6 +61,24 @@ export const modifyMovimiento = createAsyncThunk('pedido/modifyMovimiento', asyn
   }
 });
 
+export const modifySugerencia = createAsyncThunk('pedido/modifySugerencia', async ({ sugerenciaId, sugerencia, usuarioToken }, { rejectWithValue }) => {
+  try {
+    const response = await putSugerencia(sugerenciaId, sugerencia, usuarioToken);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.error || error.message);
+  }
+});
+
+export const deleteSugerencia = createAsyncThunk('pedido/deleteSugerencia', async ({ sugerenciaId, usuarioToken }, { rejectWithValue }) => {
+  try {
+    await deleteSugerenciaAPI(sugerenciaId, usuarioToken);
+    return sugerenciaId;
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.error || error.message);
+  }
+});
+
 const pedidoSlice = createSlice({
   name: 'pedido',
   initialState: {
@@ -73,6 +95,9 @@ const pedidoSlice = createSlice({
     addMovimiento: (state, action) => {
       state.pedido.Movimientos.push(action.payload);
     },
+    addSugerencia: (state, action) => {
+      state.pedido.Sugerencias.push(action.payload);
+    },
     updateObra: (state, action) => {
       state.pedido.Obra = action.payload;
     },
@@ -86,6 +111,19 @@ const pedidoSlice = createSlice({
       }
     },
   },
+  addSugerencia: (state, action) => {
+    state.pedido.Sugerencias.push(action.payload);
+  },
+  deleteSugerencia: (state, action) => {
+    state.pedido.Sugerencias = state.pedido.Sugerencias.filter(sugerencia => sugerencia.id !== action.payload);
+  },
+  modifySugerencia: (state, action) => {
+    const index = state.pedido.Sugerencias.findIndex(sugerencia => sugerencia.id === action.payload.id);
+    if (index !== -1) {
+      state.pedido.Sugerencias[index] = action.payload;
+    }
+  },
+
   extraReducers: (builder) => {
     builder
       .addCase(fetchPedido.pending, (state) => {
@@ -146,11 +184,24 @@ const pedidoSlice = createSlice({
       })
       .addCase(modifyMovimiento.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+      })
+      .addCase(modifySugerencia.fulfilled, (state, action) => {
+        const index = state.pedido.Sugerencias.findIndex(sugerencia => sugerencia.id === action.payload.id);
+        if (index !== -1) {
+          state.pedido.Sugerencias[index] = action.payload;
+        }
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(modifySugerencia.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(deleteSugerencia.fulfilled, (state, action) => {
+        state.pedido.Sugerencias = state.pedido.Sugerencias.filter(sugerencia => sugerencia.id !== action.payload);
       });
   },
 });
 
-export const { updatePedido, addMovimiento, updateObra } = pedidoSlice.actions;
+export const { updatePedido, addMovimiento, addSugerencia, updateObra } = pedidoSlice.actions;
 
 export default pedidoSlice.reducer;

@@ -742,3 +742,28 @@ export const deleteMovimientoAPI = (movimientoId, usuarioToken) => {
     },
   });
 }
+
+//SUGERENCIAS
+export const postSugerencia = (sugerencia, usuarioToken) => {
+  return axios.post(`${API_URL}sugerencias`, sugerencia, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
+export const putSugerencia = (sugerenciaId, sugerencia, usuarioToken) => {
+  return axios.put(`${API_URL}sugerencias/${sugerenciaId}`, sugerencia, {
+    headers: {
+      Authorization: usuarioToken,
+    },
+  }); 
+}
+export const deleteSugerenciaAPI = (sugerenciaId, usuarioToken) => {
+  return axios.delete(`${API_URL}sugerencias/${sugerenciaId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}

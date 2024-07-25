@@ -39,7 +39,6 @@ const ListaPedido = () => {
     const usuarioToken = getToken();
     try {
       const response = await getPedidosFiltro(usuarioToken, params);
-      console.log("Pedidos:", response);
       setPedidos(response.data);
       setLoading(false);
     } catch (error) {
