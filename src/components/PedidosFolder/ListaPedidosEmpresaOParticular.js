@@ -21,7 +21,7 @@ const ListaPedidosEmpresaOParticular = ({ empresaId, particularId }) => {
   const [error, setError] = useState("");
   const [fechaInicio, setFechaInicio] = useState(moment().format("YYYY-MM-DD"));
   const [fechaFin, setFechaFin] = useState(moment().format("YYYY-MM-DD"));
-  const [estado, setEstado] = useState(null);
+  const [estado, setEstado] = useState("");
   const [tipoHorario, setTipoHorario] = useState("creacion");
   const [openFilters, setOpenFilters] = useState(false); // Estado para manejar el despliegue de filtros
   const [open, setOpen] = useState(false);

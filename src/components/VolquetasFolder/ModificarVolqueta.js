@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { putVolqueta } from "../../api"; // Asegúrate de tener esta función en api.js
+import { putVolquetaAPI } from "../../api"; // Asegúrate de tener esta función en api.js
 import { Form, Button, Modal, Alert } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import { ESTADOS_VOLQUETA } from "../../config/config";
@@ -35,7 +35,7 @@ const ModificarVolqueta = ({ volqueta, onHide, onUpdate }) => {
   const handleModificar = async () => {
     const usuarioToken = getToken();
     try {
-      const response = await putVolqueta(volqueta.numeroVolqueta, {
+      const response = await putVolquetaAPI(volqueta.numeroVolqueta, {
         ...nuevaVolqueta,
         ocupada: nuevaVolqueta.ocupada === "si",
       }, usuarioToken);
@@ -49,7 +49,10 @@ const ModificarVolqueta = ({ volqueta, onHide, onUpdate }) => {
       }, 2000);
     } catch (error) {
       console.error("Error al actualizar la volqueta:", error.response?.data?.error || error.message);
-      setError(error.response?.data?.error || "Error al actualizar la volqueta");
+      const errorMsg = typeof error.response?.data?.error === 'string'
+        ? error.response.data.error
+        : 'Error al actualizar la volqueta';
+      setError(errorMsg);
       setTimeout(() => setError(""), 5000);
     }
   };
@@ -106,4 +109,3 @@ const ModificarVolqueta = ({ volqueta, onHide, onUpdate }) => {
 };
 
 export default ModificarVolqueta;
-

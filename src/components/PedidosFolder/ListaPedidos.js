@@ -24,7 +24,7 @@ const ListaPedido = () => {
   const [error, setError] = useState("");
   const [fechaInicio, setFechaInicio] = useState(moment().format("YYYY-MM-DD"));
   const [fechaFin, setFechaFin] = useState(moment().format("YYYY-MM-DD"));
-  const [estado, setEstado] = useState(null);
+  const [estado, setEstado] = useState("");
   const [tipoHorario, setTipoHorario] = useState("creacion");
   const [empresaId, setEmpresaId] = useState(null);
   const [particularId, setParticularId] = useState(null);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Form, Button, Row, Col } from "react-bootstrap";
+import { Card, Form, Button, Row, Col, Container } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { updatePago } from "../../features/pedidoSlice"; // Asegúrate de ajustar la ruta según sea necesario
 import useAuth from "../../hooks/useAuth";
@@ -48,7 +48,8 @@ const PagoPedido = () => {
   if (!pago) return null; // Maneja el caso donde no hay pago disponible
 
   return (
-    <Card style={cardStyle}>
+    <Container>
+      <Card className="mt-3" style={cardStyle}>
       <Card.Header className="header">
         <Card.Title>Detalles de Pago</Card.Title>
         <Button variant="secondary" onClick={() => setShowModal(true)}>
@@ -95,6 +96,7 @@ const PagoPedido = () => {
         pago={pago}
       />
     </Card>
+  </Container>
   );
 };
 

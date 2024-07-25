@@ -15,7 +15,7 @@ export const ESTADOS_PEDIDO = [
 ];
 
 export const ESTADOS_VOLQUETA = [
-  { value: "", label: "" },
+  { value: "", label: "Todos" },
   { value: "ok", label: "Ok" },
   { value: "perdida", label: "Perdida" },
   { value: "danada", label: "Dañada" },
@@ -39,3 +39,4 @@ export const TIPOS_MOVIMIENTO = ["entrega", "levante"];
 
 export const PRECIO_VOLQUETA_GRANDE = 3200;
 export const PRECIO_VOLQUETA_PEQUENA = 1600;
+export const IVA = 0.13;

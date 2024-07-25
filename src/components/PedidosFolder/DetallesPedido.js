@@ -6,6 +6,7 @@ import ModificarPedido from "./ModificarPedido"; // Asegúrate de ajustar la rut
 import { updateObra } from "../../features/pedidoSlice"; // Importa la acción para actualizar la obra, ajusta la ruta según sea necesario
 
 const DetallesPedido = ({ detalles, onPedidoModificado }) => {
+  console.log("DetallesPedido", detalles);
   const [mostrarObra, setMostrarObra] = useState(false);
   const [mostrarModificar, setMostrarModificar] = useState(false);
   const dispatch = useDispatch(); // Usa useDispatch para despachar acciones
@@ -35,7 +36,7 @@ const DetallesPedido = ({ detalles, onPedidoModificado }) => {
         <Card.Header>
           <div className="header">
             <h4>Información</h4>
-            <Button variant="primary" onClick={handleToggleModificar}>
+            <Button variant="secondary" onClick={handleToggleModificar}>
               Modificar
             </Button>
           </div>

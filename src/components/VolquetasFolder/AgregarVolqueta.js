@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { postVolqueta } from "../../api";
+import { useDispatch, useSelector } from "react-redux";
+import { addVolqueta } from "../../features/volquetasSlice";
 import useAuth from "../../hooks/useAuth";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
 import { TAMANOS_VOLQUETA, ESTADOS_VOLQUETA } from "../../config/config";
@@ -12,23 +13,22 @@ const AgregarVolqueta = () => {
   const estadoRef = useRef("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
+  const dispatch = useDispatch();
+  const { error: addError } = useSelector((state) => state.volquetas);
   const refs = [numeroVolquetaRef, tipoRef, estadoRef];
   const boton = useHabilitarBoton(refs);
-
   const navigate = useNavigate();
   const getToken = useAuth();
 
   useEffect(() => {
-    const usuarioToken = getToken();
-    if (!usuarioToken) {
-      navigate("/");
+    if (addError) {
+      setError(addError);
+      setSuccess("");
     }
-  }, [getToken, navigate]);
+  }, [addError]);
 
   const registrarVolqueta = async () => {
     const usuarioToken = getToken();
-
     const volqueta = {
       numeroVolqueta: numeroVolquetaRef.current.value,
       tipo: tipoRef.current.value,
@@ -36,58 +36,20 @@ const AgregarVolqueta = () => {
     };
 
     try {
-      const response = await postVolqueta(volqueta, usuarioToken);
-      const datos = response.data;
+      await dispatch(addVolqueta({ volqueta, usuarioToken })).unwrap();
+      setSuccess("Volqueta creada correctamente");
+      setError("");
 
-      if (datos.error) {
-        console.error(datos.error);
-        setError(datos.error.message || "Error al crear la volqueta");
+      numeroVolquetaRef.current.value = "";
+      tipoRef.current.value = "";
+      estadoRef.current.value = "";
+
+      setTimeout(() => {
         setSuccess("");
-      } else {
-        console.log("Volqueta creada correctamente", datos);
-        setSuccess("Volqueta creada correctamente");
-        setError("");
-
-        // Limpiar los campos del formulario
-        numeroVolquetaRef.current.value = "";
-        tipoRef.current.value = "";
-        estadoRef.current.value = "";
-
-        setTimeout(() => {
-          setSuccess("");
-        }, 10000);
-      }
+      }, 10000);
     } catch (error) {
-      console.error(
-        "Error al conectar con el servidor:",
-        error.response?.data || error.message
-      );
-
-      let errorMessage = "Error inesperado. Inténtelo más tarde.";
-      if (error.response?.data) {
-        if (typeof error.response.data === "string") {
-          errorMessage = error.response.data;
-        } else if (typeof error.response.data === "object") {
-          if (
-            error.response.data.detalle &&
-            Array.isArray(error.response.data.detalle)
-          ) {
-            errorMessage = error.response.data.detalle.join(", ");
-          } else {
-            errorMessage =
-              error.response.data.error || JSON.stringify(error.response.data);
-          }
-        }
-      } else {
-        errorMessage = error.message;
-      }
-
-      setError(errorMessage);
+      setError(error);
       setSuccess("");
-
-      if (error.response?.status === 401) {
-        navigate("/login");
-      }
     }
   };
 
@@ -112,7 +74,7 @@ const AgregarVolqueta = () => {
             <Form.Group controlId="formTipo" className="mb-2">
               <Form.Label>Tamaño</Form.Label>
               <Form.Control as="select" ref={tipoRef} required>
-              {TAMANOS_VOLQUETA.map((tamano) => (
+                {TAMANOS_VOLQUETA.map((tamano) => (
                   <option key={tamano.value} value={tamano.value}>
                     {tamano.label}
                   </option>
@@ -123,7 +85,7 @@ const AgregarVolqueta = () => {
             <Form.Group controlId="formEstado" className="mb-2">
               <Form.Label>Estado</Form.Label>
               <Form.Control as="select" ref={estadoRef} required>
-              {ESTADOS_VOLQUETA.map((estado) => (
+                {ESTADOS_VOLQUETA.map((estado) => (
                   <option key={estado.value} value={estado.value}>
                     {estado.label}
                   </option>

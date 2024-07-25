@@ -29,8 +29,9 @@ const Movimientos = ({
 
   const handleHideModal = () => setShowAgregarMovimiento(false);
 
-  const handleVerPedido = (pedidoId) => {
-    navigate("/pedidos/datos", { state: { pedidoId: pedidoId, volquetaId: numeroVolqueta } });
+  const handleVerPedido = (pedidoId, volquetaId) => {
+    console.log(volquetaId)
+    navigate("/pedidos/datos", { state: { pedidoId: pedidoId, volquetaId: volquetaId } });
   };
 
   const handleShowModal = (tipo) => {
@@ -141,7 +142,7 @@ const Movimientos = ({
                   <Button
                     variant="info"
                     size="sm"
-                    onClick={() => handleVerPedido(movimiento?.pedidoId)}
+                    onClick={() => handleVerPedido(movimiento?.pedidoId, movimiento?.numeroVolqueta)}
                     className="mr-2"
                   >
                     Ver Pedido

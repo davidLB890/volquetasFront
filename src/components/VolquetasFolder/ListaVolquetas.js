@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Table, Spinner, Alert, Form, Row, Col, Button, Modal } from "react-bootstrap";
-import { getVolquetas, deleteVolqueta, getPedidoId } from "../../api";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchVolquetas, deleteVolqueta, fetchVolquetaUbicacion } from "../../features/volquetasSlice";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import ModificarVolqueta from "./ModificarVolqueta";
+import { TAMANOS_VOLQUETA, ESTADOS_VOLQUETA } from "../../config/config";
 import "../../assets/css/tituloBoton.css"; // Asegúrate de ajustar la ruta según sea necesario
 
 const ListaVolquetas = () => {
-  const [volquetas, setVolquetas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const { volquetas, loading, error } = useSelector((state) => state.volquetas);
   const [filtroOcupada, setFiltroOcupada] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("");
   const [filtroEstado, setFiltroEstado] = useState("");
@@ -20,31 +21,23 @@ const ListaVolquetas = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchVolquetas = async () => {
+    const fetchVolquetasWithUbicacion = async () => {
       const usuarioToken = getToken();
-      try {
-        const response = await getVolquetas(usuarioToken);
-        const volquetasConUbicacion = await Promise.all(
-          response.data.map(async (volqueta) => {
-            const movimientoEntrega = volqueta.Movimientos.find(mov => mov.tipo === 'entrega');
-            if (movimientoEntrega) {
-              const ubicacion = await buscarUbicacion(movimientoEntrega.pedidoId);
-              return { ...volqueta, ubicacion };
-            }
-            return { ...volqueta, ubicacion: "No disponemos de la ubicación" };
-          })
-        );
-        setVolquetas(volquetasConUbicacion);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error al obtener las volquetas:", error.response?.data?.error || error.message);
-        setError("Error al obtener las volquetas");
-        setLoading(false);
+      const volquetasData = await dispatch(fetchVolquetas(usuarioToken)).unwrap();
+      for (const volqueta of volquetasData) {
+        const movimientoEntrega = volqueta.Movimientos.find(mov => mov.tipo === "entrega");
+        if (movimientoEntrega) {
+          await dispatch(fetchVolquetaUbicacion({
+            pedidoId: movimientoEntrega.pedidoId,
+            volquetaId: volqueta.numeroVolqueta,
+            usuarioToken,
+          }));
+        }
       }
     };
 
-    fetchVolquetas();
-  }, [getToken]);
+    fetchVolquetasWithUbicacion();
+  }, [dispatch, getToken]);
 
   const handleFiltroOcupadaChange = (e) => {
     setFiltroOcupada(e.target.value);
@@ -60,15 +53,13 @@ const ListaVolquetas = () => {
 
   const handleEliminar = async (volquetaId) => {
     const usuarioToken = getToken();
-    try {
-      await deleteVolqueta(volquetaId, usuarioToken);
-      setVolquetas(volquetas.filter(volqueta => volqueta.numeroVolqueta !== volquetaId));
-      setShowConfirmModal(false);
-    } catch (error) {
-      console.error("Error al eliminar la volqueta:", error.response?.data?.error || error.message);
-      setError("Error al eliminar la volqueta");
-      setTimeout(() => setError(""), 5000);
-    }
+    await dispatch(deleteVolqueta({ volquetaId, usuarioToken })).unwrap();
+    setShowConfirmModal(false);
+  };
+
+  const handleUpdateVolqueta = (volqueta) => {
+    dispatch(fetchVolquetas(getToken()));
+    setShowModificarVolqueta(false);
   };
 
   const confirmarEliminar = (volqueta) => {
@@ -78,19 +69,6 @@ const ListaVolquetas = () => {
 
   const handleConfirmEliminar = () => {
     handleEliminar(volquetaSeleccionada.numeroVolqueta);
-  };
-
-  const buscarUbicacion = async (pedidoId) => {
-    const usuarioToken = getToken();
-    try {
-      const response = await getPedidoId(pedidoId, usuarioToken);
-      return response.data.Obra.calle;
-    } catch (error) {
-      console.error("Error al obtener la ubicación del pedido:", error.response?.data?.error || error.message);
-      setError("Error al obtener la ubicación del pedido");
-      setTimeout(() => setError(""), 5000);
-      return "Error al obtener ubicación";
-    }
   };
 
   const volquetasFiltradas = volquetas.filter((volqueta) => {
@@ -124,11 +102,14 @@ const ListaVolquetas = () => {
         </Col>
         <Col>
           <Form.Group controlId="filtroTipo">
-            <Form.Label>Tipo</Form.Label>
+            <Form.Label>Tamaño</Form.Label>
             <Form.Control as="select" value={filtroTipo} onChange={handleFiltroTipoChange}>
               <option value="">Todos</option>
-              <option value="grande">Grande</option>
-              <option value="chica">Chica</option>
+              {TAMANOS_VOLQUETA.map((tipo) => (
+                <option key={tipo.value} value={tipo.value}>
+                  {tipo.label}
+                </option>
+              ))}
             </Form.Control>
           </Form.Group>
         </Col>
@@ -136,10 +117,11 @@ const ListaVolquetas = () => {
           <Form.Group controlId="filtroEstado">
             <Form.Label>Estado</Form.Label>
             <Form.Control as="select" value={filtroEstado} onChange={handleFiltroEstadoChange}>
-              <option value="">Todos</option>
-              <option value="sana">Sana</option>
-              <option value="perdida">Perdida</option>
-              <option value="danada">Dañada</option>
+              {ESTADOS_VOLQUETA.map((estado) => (
+                <option key={estado.value} value={estado.value}>
+                  {estado.label}
+                </option>
+              ))}
             </Form.Control>
           </Form.Group>
         </Col>
@@ -162,7 +144,7 @@ const ListaVolquetas = () => {
               <td>{volqueta.estado}</td>
               <td>{volqueta.tipo}</td>
               <td>{volqueta.ocupada ? "Sí" : "No"}</td>
-              <td>{volqueta.ubicacion}</td>
+              <td>{volqueta.ubicacion || "No disponemos de la ubicación"}</td>
               <td>
                 <Button
                   variant="danger"
@@ -206,14 +188,7 @@ const ListaVolquetas = () => {
         </tbody>
       </Table>
       {showModificarVolqueta && volquetaSeleccionada && (
-        <ModificarVolqueta
-          volqueta={volquetaSeleccionada}
-          onHide={() => setShowModificarVolqueta(false)}
-          onUpdate={(updatedVolqueta) => {
-            setVolquetas(volquetas.map(v => v.numeroVolqueta === updatedVolqueta.numeroVolqueta ? updatedVolqueta : v));
-            setShowModificarVolqueta(false);
-          }}
-        />
+        <ModificarVolqueta volqueta={volquetaSeleccionada} onHide={() => setShowModificarVolqueta(false)} onUpdate={handleUpdateVolqueta} />
       )}
       <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
         <Modal.Header closeButton>

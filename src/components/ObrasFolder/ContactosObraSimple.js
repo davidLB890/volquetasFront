@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Card, Spinner, Alert, Table } from "react-bootstrap";
+/* import React, { useEffect, useState } from "react";
+import { Card, Spinner, Alert, Table, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 const ContactosObraSimple = ({ obra, cliente }) => {
+  console.log(obra);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -89,50 +90,55 @@ const ContactosObraSimple = ({ obra, cliente }) => {
   };
 
   return (
-    <Card>
-      <Card.Header >
-        <Card.Title>Contactos</Card.Title>
-        <p>(Para modificar u obtener más detalles diríjase a la empresa)</p>
-      </Card.Header>
-      <Card.Body >
-        <p>
-          <strong>Cliente:</strong>{" "}
-          {cliente.particular ? (
-            <span
-              className="link-primary"
-              onClick={() => handleNavigateToParticular(cliente.particular.id)}
-              style={{ cursor: "pointer" }}
-            >
-              {cliente.particular.nombre}
-            </span>
-          ) : (
-            <span
-              className="link-primary"
-              onClick={() => handleNavigateToEmpresa(cliente.empresa.id)}
-              style={{ cursor: "pointer" }}
-            >
-              {cliente.empresa.nombre}
-            </span>
-          )}
-        </p>
-        {obra.particular ? (
-          renderParticularInfo()
-        ) : obra.empresa ? (
-          obra.contactosDesignados.length > 0 ? (
-            renderContactosDesignados()
+    <Container>
+      <Card className="mt-3">
+        <Card.Header>
+          <Card.Title>Contactos</Card.Title>
+          <p>(Para modificar u obtener más detalles diríjase a la empresa)</p>
+        </Card.Header>
+        <Card.Body>
+          <p>
+            <strong>Cliente:</strong>{" "}
+            {cliente.particular ? (
+              <span
+                className="link-primary"
+                onClick={() =>
+                  handleNavigateToParticular(cliente.particular.id)
+                }
+                style={{ cursor: "pointer" }}
+              >
+                {cliente.particular.nombre}
+              </span>
+            ) : (
+              <span
+                className="link-primary"
+                onClick={() => handleNavigateToEmpresa(cliente.empresa.id)}
+                style={{ cursor: "pointer" }}
+              >
+                {cliente.empresa.nombre}
+              </span>
+            )}
+          </p>
+          {obra.particular ? (
+            renderParticularInfo()
+          ) : obra.empresa ? (
+            obra.contactosDesignados.length > 0 ? (
+              renderContactosDesignados()
+            ) : (
+              <Alert variant="info">
+                No hay contactos designados para esta obra.
+              </Alert>
+            )
           ) : (
             <Alert variant="info">
-              No hay contactos designados para esta obra.
+              No hay información de contacto disponible.
             </Alert>
-          )
-        ) : (
-          <Alert variant="info">
-            No hay información de contacto disponible.
-          </Alert>
-        )}
-      </Card.Body>
-    </Card>
+          )}
+        </Card.Body>
+      </Card>
+    </Container>
   );
 };
 
 export default ContactosObraSimple;
+ */

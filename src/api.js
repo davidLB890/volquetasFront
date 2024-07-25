@@ -253,12 +253,7 @@ export const getServicioPorCamionFecha = (camionId, mes, anio, usuarioToken) => 
 
 
 //JORNALES
-export const getJornalesEmpleado = (
-  empleadoId,
-  fechaInicio,
-  fechaFin,
-  usuarioToken
-) => {
+export const getJornalesEmpleado = (empleadoId, fechaInicio, fechaFin,usuarioToken) => {
   return axios.get(
     `${API_URL}jornales/${empleadoId}/${fechaInicio}/${fechaFin}`,
     {
@@ -674,15 +669,21 @@ export const getVolquetas = (usuarioToken) => {
     },
   });
 };
-export const getVolquetaId = (volquetaId, usuarioToken) => {
-  return axios.get(`${API_URL}volquetas/${volquetaId}`, {
+export const getVolquetaId = (volquetaId, usuarioToken, fechaInicio, fechaFin) => {
+  console.log(volquetaId, fechaInicio, fechaFin);
+  let url = `${API_URL}/volquetas/${volquetaId}`;
+  if (fechaInicio && fechaFin) {
+    url += `?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+  }
+  return axios.get(url, {
     headers: {
       Authorization: usuarioToken,
       "Content-Type": "application/json",
     },
   });
+
 };
-export const postVolqueta = (volqueta, usuarioToken) => {
+export const postVolquetaAPI = (volqueta, usuarioToken) => {
   return axios.post(`${API_URL}volquetas`, volqueta, {
     headers: {
       Authorization: usuarioToken,
@@ -690,14 +691,14 @@ export const postVolqueta = (volqueta, usuarioToken) => {
     },
   });
 };
-export const putVolqueta = (volquetaId, volqueta, usuarioToken) => {
+export const putVolquetaAPI = (volquetaId, volqueta, usuarioToken) => {
   return axios.put(`${API_URL}volquetas/${volquetaId}`, volqueta, {
     headers: {
       Authorization: usuarioToken,
     },
   });
 };
-export const deleteVolqueta = (volquetaId, usuarioToken) => {
+export const deleteVolquetaAPI = (volquetaId, usuarioToken) => {
   return axios.delete(`${API_URL}volquetas/${volquetaId}`, {
     headers: {
       Authorization: usuarioToken,
