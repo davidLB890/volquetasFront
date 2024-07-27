@@ -584,7 +584,7 @@ export const getPedidos = (usuarioToken) => {
     },
   });
 };
-export const getPedidosFiltro = (usuarioToken, { estado, fechaInicio, fechaFin, tipoHorario, empresaId, particularId }) => {
+export const getPedidosFiltro = (usuarioToken, { estado, fechaInicio, fechaFin, tipoHorario, empresaId, particularId, obraId }) => {
   return axios.get(`${API_URL}pedidos-filtro`, {
     params: {
       estado,
@@ -592,7 +592,8 @@ export const getPedidosFiltro = (usuarioToken, { estado, fechaInicio, fechaFin, 
       fechaFin,
       tipoHorario,
       empresaId,
-      particularId
+      particularId,
+      obraId,
     },
     headers: {
       Authorization: usuarioToken,

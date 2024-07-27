@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Table,
   Spinner,
@@ -10,7 +10,7 @@ import {
   Collapse,
   Container,
 } from "react-bootstrap";
-import { getPedidosFiltro } from "../../api"; // Asegúrate de tener esta función en api.js
+import { getEmpresaId, getParticularId, getPedidosFiltro } from "../../api"; // Asegúrate de tener esta función en api.js
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
@@ -22,16 +22,20 @@ const ListaPedido = () => {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [fechaInicio, setFechaInicio] = useState(moment().format("YYYY-MM-DD"));
-  const [fechaFin, setFechaFin] = useState(moment().format("YYYY-MM-DD"));
+ // Establecer fecha de inicio y fin por defecto al día corriente
+ const [fechaInicio, setFechaInicio] = useState(moment().startOf('day').add(1, 'hours').format("YYYY-MM-DDTHH:mm"));
+ const [fechaFin, setFechaFin] = useState(moment().endOf('day').format("YYYY-MM-DDTHH:mm"));
   const [estado, setEstado] = useState("");
   const [tipoHorario, setTipoHorario] = useState("creacion");
   const [empresaId, setEmpresaId] = useState(null);
+  const [obras, setObras] = useState([]);
+  const [obraId, setObraId] = useState("");
   const [particularId, setParticularId] = useState(null);
   const [empresaNombre, setEmpresaNombre] = useState("");
   const [particularNombre, setParticularNombre] = useState("");
   const [openFilters, setOpenFilters] = useState(false); // Estado para manejar el despliegue de filtros
   const [filtroTipo, setFiltroTipo] = useState("empresa"); // Estado para manejar el filtro de empresa o particular
+  const hasMounted = useRef(false); // Ref para verificar si el componente está montado
   const getToken = useAuth();
   const navigate = useNavigate();
 
@@ -59,9 +63,31 @@ const ListaPedido = () => {
       tipoHorario,
       empresaId,
       particularId,
+      obraId,
     };
     fetchPedidos(defaultParams);
   }, [getToken]);
+
+  useEffect(() => {
+    const fetchObras = async () => {
+      const usuarioToken = getToken();
+      let response;
+      if (empresaId) {
+        response = await getEmpresaId(empresaId, usuarioToken);
+      } else if (particularId) {
+        response = await getParticularId(particularId, usuarioToken);
+      }
+      if (response && response.data && response.data.obras) {
+        setObras(response.data.obras);
+      }
+    };
+
+    if (hasMounted.current && (empresaId || particularId)) {
+      fetchObras();
+    } else {
+      hasMounted.current = true;
+    }
+  }, [empresaId, particularId, getToken]);
 
   const handleFilterChange = (e) => {
     e.preventDefault();
@@ -72,7 +98,9 @@ const ListaPedido = () => {
       tipoHorario,
       empresaId,
       particularId,
+      obraId: obraId === "" ? "" : Number(obraId),
     };
+    console.log(params);
     setLoading(true);
     fetchPedidos(params);
   };
@@ -89,6 +117,16 @@ const ListaPedido = () => {
     setParticularNombre(nombre);
     setEmpresaId(null);
     setEmpresaNombre("");
+  };
+
+  const handleCancelarSeleccionEmpresa = () => {
+    setEmpresaId(null);
+    setEmpresaNombre("");
+  };
+
+  const handleCancelarSeleccionParticular = () => {
+    setParticularId(null);
+    setParticularNombre("");
   };
 
   const handleRowClick = (pedido) => {
@@ -110,29 +148,29 @@ const ListaPedido = () => {
         <div id="filtros-collapse">
           <Form onSubmit={handleFilterChange}>
             <Row>
-              <Col md={4}>
+              <Col md={2}>
                 <Form.Group controlId="fechaInicio">
                   <Form.Label>Fecha de Inicio *</Form.Label>
                   <Form.Control
-                    type="date"
+                    type="datetime-local"
                     value={fechaInicio}
                     onChange={(e) => setFechaInicio(e.target.value)}
                     required
                   />
                 </Form.Group>
               </Col>
-              <Col md={4}>
+              <Col md={2}>
                 <Form.Group controlId="fechaFin">
                   <Form.Label>Fecha de Fin *</Form.Label>
                   <Form.Control
-                    type="date"
+                    type="datetime-local"
                     value={fechaFin}
                     onChange={(e) => setFechaFin(e.target.value)}
                     required
                   />
                 </Form.Group>
               </Col>
-              <Col md={4}>
+              <Col md={2}>
                 <Form.Group controlId="tipoHorario">
                   <Form.Label>Tipo de Horario *</Form.Label>
                   <Form.Control
@@ -149,9 +187,6 @@ const ListaPedido = () => {
                   </Form.Control>
                 </Form.Group>
               </Col>
-            </Row>
-
-            <Row>
               <Col md={2}>
                 <Form.Group controlId="estado">
                   <Form.Label>Estado</Form.Label>
@@ -168,42 +203,80 @@ const ListaPedido = () => {
                   </Form.Control>
                 </Form.Group>
               </Col>
+            </Row>
 
-              <Col md={4}>
-                <Form.Group controlId="filtroTipo">
-                  <Form.Label>Filtro</Form.Label>
-                  <Form.Control
-                    as="select"
-                    value={filtroTipo}
-                    onChange={(e) => setFiltroTipo(e.target.value)}
-                  >
-                    <option value="empresa">Empresa</option>
-                    <option value="particular">Particular</option>
-                  </Form.Control>
-                </Form.Group>
+            <Row>
+              <Col md={3}>
+                {!empresaId && !particularId && (
+                  <Form.Group controlId="filtroTipo">
+                    <Form.Label>Filtro</Form.Label>
+                    <Form.Control
+                      as="select"
+                      value={filtroTipo}
+                      onChange={(e) => setFiltroTipo(e.target.value)}
+                    >
+                      <option value="empresa">Empresa</option>
+                      <option value="particular">Particular</option>
+                    </Form.Control>
+                  </Form.Group>
+                )}
                 {filtroTipo === "empresa" ? (
-                  <>
-                    {empresaNombre && (
+                  empresaId ? (
+                    <>
                       <Form.Text>
                         Empresa seleccionada: {empresaNombre}
                       </Form.Text>
-                    )}
+                      <Button
+                        variant="danger"
+                        onClick={handleCancelarSeleccionEmpresa}
+                      >
+                        Cancelar
+                      </Button>
+                    </>
+                  ) : (
                     <BuscarEmpresaPorNombre
                       onSeleccionar={handleEmpresaSeleccionada}
                     />
+                  )
+                ) : particularId ? (
+                  <>
+                    <Form.Text>
+                      Particular seleccionado: {particularNombre}
+                    </Form.Text>
+                    <Button
+                      variant="danger"
+                      onClick={handleCancelarSeleccionParticular}
+                    >
+                      Cancelar
+                    </Button>
                   </>
                 ) : (
-                  <>
-                    {particularNombre && (
-                      <Form.Text>
-                        Particular seleccionado: {particularNombre}
-                      </Form.Text>
-                    )}
-                    <BuscarParticularPorNombre
-                      onSeleccionar={handleParticularSeleccionado}
-                    />
-                  </>
+                  <BuscarParticularPorNombre
+                    onSeleccionar={handleParticularSeleccionado}
+                  />
                 )}
+              </Col>
+              <Col md={3}>
+                <Form.Group controlId="formObra">
+                  <Form.Label>Selecciona una obra</Form.Label>
+                  <Form.Control
+                    as="select"
+                    value={obraId}
+                    onChange={(e) => setObraId(e.target.value)}
+                    disabled={obras.length === 0}
+                  >
+                    <option value="">Sin obra</option>
+                    {obras.length === 0 ? (
+                      <option>No hay obras disponibles</option>
+                    ) : (
+                      obras.map((obra) => (
+                        <option key={obra.id} value={obra.id}>
+                          {obra.calle} {obra.esquina} {obra.numeroPuerta}
+                        </option>
+                      ))
+                    )}
+                  </Form.Control>
+                </Form.Group>
               </Col>
             </Row>
             <Button type="submit" className="mt-3">
@@ -217,10 +290,12 @@ const ListaPedido = () => {
         <thead>
           <tr>
             <th>
-              {tipoHorario === "creacion" && "Fecha Creación"} 
-              {(tipoHorario === "sugerenciaEntrega" || tipoHorario === "sugerenciaLevante") && "Fecha Sugerida"}
-              {(tipoHorario === "movimientoLevante") && "Fecha Levante"}
-              {(tipoHorario === "movimientoEntrega") && "Fecha Entrega"}
+              {tipoHorario === "creacion" && "Fecha Creación"}
+              {(tipoHorario === "sugerenciaEntrega" ||
+                tipoHorario === "sugerenciaLevante") &&
+                "Fecha Sugerida"}
+              {tipoHorario === "movimientoLevante" && "Fecha Levante"}
+              {tipoHorario === "movimientoEntrega" && "Fecha Entrega"}
             </th>
             <th>Cliente</th>
             <th>Estado</th>
@@ -243,17 +318,44 @@ const ListaPedido = () => {
               >
                 <td>
                   {tipoHorario === "creacion" &&
-                    (pedido.createdAt ? new Date(pedido.createdAt).toLocaleDateString(): "N/A")}
-                  {(tipoHorario === "sugerenciaEntrega" || tipoHorario === "sugerenciaLevante") &&
-                    (() => {const sugerencia = pedido.Sugerencias.find((s) => s.horarioSugerido);
-                    return sugerencia? new Date(sugerencia.horarioSugerido).toLocaleDateString(): "N/A";})()}        
-                  {(tipoHorario === "movimientoLevante") &&
-                  (() => {const movimientoLevante = pedido.Movimientos.find((m) => m.tipo === "levante");
-                    return movimientoLevante ? new Date(movimientoLevante.horario).toLocaleDateString() : "N/A";})()}
-                  {(tipoHorario === "movimientoEntrega") &&
-                  (() => {const movimientosEntrega = pedido.Movimientos.filter((m) => m.tipo === "entrega");
-                  const segundoMovimientoEntrega = movimientosEntrega[1];
-                    return segundoMovimientoEntrega ? new Date(segundoMovimientoEntrega.horario).toLocaleDateString() : "N/A";})()}
+                    (pedido.createdAt
+                      ? new Date(pedido.createdAt).toLocaleDateString()
+                      : "N/A")}
+                  {(tipoHorario === "sugerenciaEntrega" ||
+                    tipoHorario === "sugerenciaLevante") &&
+                    (() => {
+                      const sugerencia = pedido.Sugerencias.find(
+                        (s) => s.horarioSugerido
+                      );
+                      return sugerencia
+                        ? new Date(
+                            sugerencia.horarioSugerido
+                          ).toLocaleDateString()
+                        : "N/A";
+                    })()}
+                  {tipoHorario === "movimientoLevante" &&
+                    (() => {
+                      const movimientoLevante = pedido.Movimientos.find(
+                        (m) => m.tipo === "levante"
+                      );
+                      return movimientoLevante
+                        ? new Date(
+                            movimientoLevante.horario
+                          ).toLocaleDateString()
+                        : "N/A";
+                    })()}
+                  {tipoHorario === "movimientoEntrega" &&
+                    (() => {
+                      const movimientosEntrega = pedido.Movimientos.filter(
+                        (m) => m.tipo === "entrega"
+                      );
+                      const segundoMovimientoEntrega = movimientosEntrega[1];
+                      return segundoMovimientoEntrega
+                        ? new Date(
+                            segundoMovimientoEntrega.horario
+                          ).toLocaleDateString()
+                        : "N/A";
+                    })()}
                 </td>
                 <td>
                   {esEmpresa

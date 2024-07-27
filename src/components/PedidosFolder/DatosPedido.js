@@ -156,7 +156,7 @@ const DatosPedido = () => {
             {pedido.referenciaId ? pedido.referenciaId : ""}
           </h2>
           </Col>
-          <Col md={5}>
+          <Col md={6}>
           {obra && (
                 <ContactosObraPedido
                   obra={obra}

@@ -55,8 +55,7 @@ const Movimientos = ({
       await dispatch(deleteMovimiento({ movimientoId, usuarioToken })).unwrap();
       onMovimientoEliminado(); // Ensure this function is called to update the state
     } catch (error) {
-      console.error("Error al eliminar el movimiento:", error.response?.data?.error || error.message);
-      setError("Error al eliminar el movimiento");
+      setError(error);
     }
   };
 
