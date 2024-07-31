@@ -50,53 +50,45 @@ const PagoPedido = () => {
   return (
     <Container>
       <Card className="mt-3" style={cardStyle}>
-      <Card.Header className="header">
-        <Card.Title>Detalles de Pago</Card.Title>
-        <Button variant="secondary" onClick={() => setShowModal(true)}>
-          Modificar
-        </Button>
-      </Card.Header>
-      <Card.Body>
-        {error && <AlertMessage type="error" message={error} />}
-        {success && <AlertMessage type="success" message={success} />}
-        <Row>
-          <Col md={6}>
-            <p>
-              <strong>Precio:</strong> ${pago.precio}
-            </p>
-            <p>
-              <Form.Check
-                type="checkbox"
-                label="Pagado"
-                name="pagado"
-                checked={pago.pagado}
-                onChange={handlePagadoChange}
-                inline
-              />
-            </p>
-            <p>
-              <strong>Remito:</strong>{" "}
-              {pago.remito ? pago.remito : "No disponible"}
-            </p>
-          </Col>
-          <Col md={6}>
-            <p>
-              <strong>Tipo de Pago:</strong> {pago.tipoPago}
-            </p>
-            <p>
-              <strong>Factura:</strong>{" "}
-              {pago.facturaId ? pago.facturaId : "No disponible"}
-            </p>
-          </Col>
-        </Row>
-      </Card.Body>
-      <ModificarPagoPedido
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        pago={pago}
-      />
-    </Card>
-  </Container>
+        <Card.Header className="header">
+          <Card.Title>Detalles de Pago</Card.Title>
+          <Button variant="secondary" onClick={() => setShowModal(true)}>
+            Modificar
+          </Button>
+        </Card.Header>
+        <Card.Body>
+          {error && <AlertMessage type="error" message={error} />}
+          {success && <AlertMessage type="success" message={success} />}
+          <Row>
+            <Col md={6}>
+              <div>
+                <p><strong>Precio:</strong> ${pago.precio}</p>
+                <Form.Check
+                  type="checkbox"
+                  label="Pagado"
+                  name="pagado"
+                  checked={pago.pagado}
+                  onChange={handlePagadoChange}
+                  inline
+                />
+                <p><strong>Remito:</strong> {pago.remito ? pago.remito : "No disponible"}</p>
+              </div>
+            </Col>
+            <Col md={6}>
+              <div>
+                <p><strong>Tipo de Pago:</strong> {pago.tipoPago}</p>
+                <p><strong>Factura:</strong> {pago.facturaId ? pago.facturaId : "No disponible"}</p>
+              </div>
+            </Col>
+          </Row>
+        </Card.Body>
+        <ModificarPagoPedido
+          show={showModal}
+          onHide={() => setShowModal(false)}
+          pago={pago}
+        />
+      </Card>
+    </Container>
   );
 };
 

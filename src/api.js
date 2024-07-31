@@ -617,6 +617,14 @@ export const getPedidoId = (pedidoId, usuarioToken) => {
     },
   });
 };
+export const getPedidosMultiples = (pedidoId, usuarioToken) => {
+  return axios.get(`${API_URL}pedidos-multiples/${pedidoId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
 export const postPedidoNuevo = (pedido, usuarioToken) => {
   return axios.post(`${API_URL}pedidos/nuevo`, pedido, {
     headers: {
@@ -642,6 +650,7 @@ export const postPedidoEntregaLevante = (pedido, usuarioToken) => {
   });
 };
 export const postPedidoRecambio = (pedido, usuarioToken) => {
+  console.log(pedido)
   return axios.post(`${API_URL}pedidos/recambio`, pedido, {
     headers: {
       Authorization: usuarioToken,
@@ -656,7 +665,13 @@ export const putPedido = (pedidoId, pedido, usuarioToken) => {
     },
   });
 }
-
+export const putPedidoPermiso = (pedidoId, permisoId, usuarioToken) => {
+  return axios.put(`${API_URL}pedidos-permiso/${pedidoId}`, { permisoId }, {
+    headers: {
+      Authorization: usuarioToken,
+    },
+  });
+}
 
 
 
@@ -671,7 +686,6 @@ export const getVolquetas = (usuarioToken) => {
   });
 };
 export const getVolquetaId = (volquetaId, usuarioToken, fechaInicio, fechaFin) => {
-  console.log(volquetaId, fechaInicio, fechaFin);
   let url = `${API_URL}/volquetas/${volquetaId}`;
   if (fechaInicio && fechaFin) {
     url += `?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;

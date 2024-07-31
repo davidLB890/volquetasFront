@@ -1,16 +1,15 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Card, Modal, Button } from "react-bootstrap";
-import { useDispatch } from "react-redux"; // Importa useDispatch
-import DatosObra from "../ObrasFolder/DatosObra"; // Asegúrate de ajustar la ruta según sea necesario
-import ModificarPedido from "./ModificarPedido"; // Asegúrate de ajustar la ruta según sea necesario
-import { updateObra } from "../../features/pedidoSlice"; // Importa la acción para actualizar la obra, ajusta la ruta según sea necesario
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Card, Modal, Button, Alert } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import DatosObra from "../ObrasFolder/DatosObra";
+import ModificarPedido from "./ModificarPedido";
+import { updateObra } from "../../features/pedidoSlice";
 
-const DetallesPedido = ({ detalles, onPedidoModificado }) => {
-  console.log("DetallesPedido", detalles);
+const DetallesPedido = () => {
   const [mostrarObra, setMostrarObra] = useState(false);
   const [mostrarModificar, setMostrarModificar] = useState(false);
-  const dispatch = useDispatch(); // Usa useDispatch para despachar acciones
-  const [obra, setObra] = useState(detalles.Obra);
+  const dispatch = useDispatch();
+  const { pedido, obra } = useSelector((state) => state.pedido);
 
   const handleToggleObra = () => {
     setMostrarObra(!mostrarObra);
@@ -25,10 +24,23 @@ const DetallesPedido = ({ detalles, onPedidoModificado }) => {
   };
 
   const handleObraModificada = (obraModificada) => {
-    setObra(obraModificada);
-    setMostrarObra(false); // Cierra el modal después de la modificación
-    dispatch(updateObra(obraModificada)); // Actualiza la obra en el estado centralizado
+    dispatch(updateObra(obraModificada));
+    setMostrarObra(false);
   };
+
+  useEffect(() => {
+    if (pedido?.Obra) {
+      dispatch(updateObra(pedido.Obra));
+    }
+  }, [pedido, dispatch]);
+
+  if (!pedido) {
+    return (
+      <Container>
+        <Alert variant="danger">No se encontraron detalles del pedido.</Alert>
+      </Container>
+    );
+  }
 
   return (
     <Container>
@@ -46,16 +58,16 @@ const DetallesPedido = ({ detalles, onPedidoModificado }) => {
             <Col md={6}>
               <p>
                 <strong>Fecha de Creación:</strong>{" "}
-                {detalles.createdAt
-                  ? new Date(detalles.createdAt).toLocaleDateString()
-                  : "N/A"}
+                {pedido.createdAt
+                  ? new Date(pedido.createdAt).toLocaleDateString()
+                  : "-"}
               </p>
               <p>
-                <strong>Estado:</strong> {detalles.estado}
+                <strong>Estado:</strong> {pedido.estado}
               </p>
-              {detalles.descripcion ? (
+              {pedido.descripcion ? (
                 <p>
-                  <strong>Descripción:</strong> {detalles.descripcion}
+                  <strong>Descripción:</strong> {pedido.descripcion}
                 </p>
               ) : null}
             </Col>
@@ -65,20 +77,20 @@ const DetallesPedido = ({ detalles, onPedidoModificado }) => {
                 <span
                   className="link-primary"
                   onClick={handleToggleObra}
-                  style={{ cursor: "pointer" }}
+                  style={{ cursor: "pointer" }} 
                 >
                   {obra?.calle} {obra?.numeroPuerta ? obra.numeroPuerta : ""}{" "}
                   {obra?.esquina ? "esq. " + obra.esquina : ""}
                 </span>
               </p>
               <p>
-                <strong>Creado Como:</strong> {detalles.creadoComo}
+                <strong>Creado Como:</strong> {pedido.creadoComo}
               </p>
               <p>
-                <strong>Permiso:</strong> {detalles.permisoId}
+                <strong>Permiso:</strong> {pedido.permisoId}
               </p>
               <p>
-                <strong>Nro Pesada:</strong> {detalles.nroPesada}
+                <strong>Nro Pesada:</strong> {pedido.nroPesada}
               </p>
             </Col>
           </Row>
@@ -100,8 +112,6 @@ const DetallesPedido = ({ detalles, onPedidoModificado }) => {
       <ModificarPedido
         show={mostrarModificar}
         onHide={handleToggleModificar}
-        pedido={detalles}
-        onPedidoModificado={onPedidoModificado}
       />
     </Container>
   );

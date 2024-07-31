@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Table, Spinner, Alert, Form, Row, Col, Button, Modal } from "react-bootstrap";
+import {
+  Table,
+  Spinner,
+  Alert,
+  Form,
+  Row,
+  Col,
+  Button,
+  Modal,
+} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchVolquetas, deleteVolqueta, fetchVolquetaUbicacion } from "../../features/volquetasSlice";
+import {
+  fetchVolquetas,
+} from "../../features/volquetasSlice";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import ModificarVolqueta from "./ModificarVolqueta";
 import { TAMANOS_VOLQUETA, ESTADOS_VOLQUETA } from "../../config/config";
 import "../../assets/css/tituloBoton.css"; // Asegúrate de ajustar la ruta según sea necesario
+import { deleteVolquetaAPI, putVolquetaAPI } from "../../api";
 
 const ListaVolquetas = () => {
   const dispatch = useDispatch();
@@ -21,22 +33,8 @@ const ListaVolquetas = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchVolquetasWithUbicacion = async () => {
-      const usuarioToken = getToken();
-      const volquetasData = await dispatch(fetchVolquetas(usuarioToken)).unwrap();
-      for (const volqueta of volquetasData) {
-        const movimientoEntrega = volqueta.Movimientos.find(mov => mov.tipo === "entrega");
-        if (movimientoEntrega) {
-          await dispatch(fetchVolquetaUbicacion({
-            pedidoId: movimientoEntrega.pedidoId,
-            volquetaId: volqueta.numeroVolqueta,
-            usuarioToken,
-          }));
-        }
-      }
-    };
-
-    fetchVolquetasWithUbicacion();
+    const usuarioToken = getToken();
+    dispatch(fetchVolquetas(usuarioToken));
   }, [dispatch, getToken]);
 
   const handleFiltroOcupadaChange = (e) => {
@@ -53,7 +51,8 @@ const ListaVolquetas = () => {
 
   const handleEliminar = async (volquetaId) => {
     const usuarioToken = getToken();
-    await dispatch(deleteVolqueta({ volquetaId, usuarioToken })).unwrap();
+    await deleteVolquetaAPI(volquetaId, usuarioToken);
+    dispatch(fetchVolquetas(usuarioToken));
     setShowConfirmModal(false);
   };
 
@@ -73,7 +72,8 @@ const ListaVolquetas = () => {
 
   const volquetasFiltradas = volquetas.filter((volqueta) => {
     return (
-      (filtroOcupada === "" || (filtroOcupada === "si" ? volqueta.ocupada : !volqueta.ocupada)) &&
+      (filtroOcupada === "" ||
+        (filtroOcupada === "si" ? volqueta.ocupada : !volqueta.ocupada)) &&
       (filtroTipo === "" || volqueta.tipo === filtroTipo) &&
       (filtroEstado === "" || volqueta.estado === filtroEstado)
     );
@@ -93,7 +93,11 @@ const ListaVolquetas = () => {
         <Col>
           <Form.Group controlId="filtroOcupada">
             <Form.Label>Ocupada</Form.Label>
-            <Form.Control as="select" value={filtroOcupada} onChange={handleFiltroOcupadaChange}>
+            <Form.Control
+              as="select"
+              value={filtroOcupada}
+              onChange={handleFiltroOcupadaChange}
+            >
               <option value="">Todas</option>
               <option value="si">Sí</option>
               <option value="no">No</option>
@@ -103,7 +107,11 @@ const ListaVolquetas = () => {
         <Col>
           <Form.Group controlId="filtroTipo">
             <Form.Label>Tamaño</Form.Label>
-            <Form.Control as="select" value={filtroTipo} onChange={handleFiltroTipoChange}>
+            <Form.Control
+              as="select"
+              value={filtroTipo}
+              onChange={handleFiltroTipoChange}
+            >
               <option value="">Todos</option>
               {TAMANOS_VOLQUETA.map((tipo) => (
                 <option key={tipo.value} value={tipo.value}>
@@ -116,7 +124,11 @@ const ListaVolquetas = () => {
         <Col>
           <Form.Group controlId="filtroEstado">
             <Form.Label>Estado</Form.Label>
-            <Form.Control as="select" value={filtroEstado} onChange={handleFiltroEstadoChange}>
+            <Form.Control
+              as="select"
+              value={filtroEstado}
+              onChange={handleFiltroEstadoChange}
+            >
               {ESTADOS_VOLQUETA.map((estado) => (
                 <option key={estado.value} value={estado.value}>
                   {estado.label}
@@ -133,18 +145,29 @@ const ListaVolquetas = () => {
             <th>Estado</th>
             <th>Tipo</th>
             <th>Ocupada</th>
-            <th>Ubicación</th>
+            <th>Último movimiento</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {volquetasFiltradas.map((volqueta) => (
-            <tr key={volqueta.numeroVolqueta} className={volqueta.estado === "perdida" ? "volqueta-perdida" : ""}>
+            <tr
+              key={volqueta.numeroVolqueta}
+              className={
+                volqueta.estado === "perdida" ? "volqueta-perdida" : ""
+              }
+            >
               <td>{volqueta.numeroVolqueta}</td>
               <td>{volqueta.estado}</td>
               <td>{volqueta.tipo}</td>
               <td>{volqueta.ocupada ? "Sí" : "No"}</td>
-              <td>{volqueta.ubicacion || "No disponemos de la ubicación"}</td>
+              <td>
+                {volqueta.Movimientos.length > 0
+                  ? volqueta.Movimientos[0].tipo === "entrega"
+                    ? `Entregada en ${volqueta.Movimientos[0]?.Pedido?.Obra?.calle}`
+                    : `Levantada ${volqueta.Movimientos[1] ? `en ${volqueta.Movimientos[1]?.Pedido?.Obra?.calle}` : ""}`
+                  : ""}
+              </td>
               <td>
                 <Button
                   variant="danger"
@@ -178,7 +201,11 @@ const ListaVolquetas = () => {
                     padding: "0.5rem 1rem",
                     marginRight: "0.5rem",
                   }}
-                  onClick={() => navigate("/volquetas/datos", { state: { volquetaId: volqueta.numeroVolqueta } })}
+                  onClick={() =>
+                    navigate("/volquetas/datos", {
+                      state: { volquetaId: volqueta.numeroVolqueta },
+                    })
+                  }
                 >
                   Datos
                 </Button>
@@ -188,17 +215,25 @@ const ListaVolquetas = () => {
         </tbody>
       </Table>
       {showModificarVolqueta && volquetaSeleccionada && (
-        <ModificarVolqueta volqueta={volquetaSeleccionada} onHide={() => setShowModificarVolqueta(false)} onUpdate={handleUpdateVolqueta} />
+        <ModificarVolqueta
+          volqueta={volquetaSeleccionada}
+          onHide={() => setShowModificarVolqueta(false)}
+          onUpdate={handleUpdateVolqueta}
+        />
       )}
       <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Confirmar Eliminación</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          ¿Estás seguro de que deseas eliminar la volqueta número {volquetaSeleccionada?.numeroVolqueta}?
+          ¿Estás seguro de que deseas eliminar la volqueta número{" "}
+          {volquetaSeleccionada?.numeroVolqueta}?
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+          <Button
+            variant="secondary"
+            onClick={() => setShowConfirmModal(false)}
+          >
             Cancelar
           </Button>
           <Button variant="danger" onClick={handleConfirmEliminar}>

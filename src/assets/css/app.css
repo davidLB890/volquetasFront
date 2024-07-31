@@ -53,6 +53,22 @@
   }
 }
 
+.table-container {
+  max-height: 70vh; /* Adjust this value as needed */
+  overflow-y: auto;
+}
+
+.table-responsive-scroll {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  overflow-x: auto;
+  background-color: white; /* Optional: To ensure it stands out from the content */
+  z-index: 1000; /* Optional: To ensure it is above other content */
+}
+
+
+
 /* .app-container {
   display: flex;
   flex-direction: column;

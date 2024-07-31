@@ -1,5 +1,75 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Spinner, Alert } from 'react-bootstrap';
+import { getPermisoIdEmpresa, getPermisoIdParticular } from '../../api';
+import useAuth from '../../hooks/useAuth';
+
+const SelectPermiso = ({ empresaId, particularId, onSelect, selectedPermisoId }) => {
+  const [permisos, setPermisos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const getToken = useAuth();
+
+  useEffect(() => {
+    const fetchPermisos = async () => {
+      const usuarioToken = getToken();
+      try {
+        let response;
+        if (empresaId) {
+          response = await getPermisoIdEmpresa(empresaId, usuarioToken);
+        } else if (particularId) {
+          response = await getPermisoIdParticular(particularId, usuarioToken);
+        }
+        if (!response) {
+          throw new Error("No se pudo obtener los permisos");
+        } else {
+          setPermisos(response.data);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error(error);
+        setError("Error al obtener los permisos");
+        setLoading(false);
+      }
+    };
+
+    fetchPermisos();
+  }, [empresaId, particularId, getToken]);
+
+  const handleSelectChange = (e) => {
+    const selectedId = e.target.value;
+    onSelect(selectedId);
+  };
+
+  if (loading) {
+    return <Spinner animation="border" />;
+  }
+
+  if (error) {
+    return <Alert variant="danger">{error}</Alert>;
+  }
+
+  return (
+    <Form.Group controlId="selectPermiso">
+      <Form.Label>Seleccionar Permiso (opcional)</Form.Label>
+      <Form.Control as="select" onChange={handleSelectChange} value={selectedPermisoId || ""}>
+        <option value="">Sin permiso</option>
+        {permisos.map((permiso) => (
+          <option key={permiso.id} value={permiso.id}>
+            ID: {permiso.id} - Vence: {new Date(permiso.fechaVencimiento).toLocaleDateString()}
+          </option>
+        ))}
+      </Form.Control>
+    </Form.Group>
+  );
+};
+
+export default SelectPermiso;
+
+
+
+
+/* import React, { useEffect, useState } from 'react';
+import { Form, Spinner, Alert } from 'react-bootstrap';
 import { getPermisoIdEmpresa } from '../../api';
 import useAuth from '../../hooks/useAuth';
 
@@ -49,4 +119,4 @@ const SelectPermiso = ({ empresaId, onSelect }) => {
   );
 };
 
-export default SelectPermiso;
+export default SelectPermiso; */

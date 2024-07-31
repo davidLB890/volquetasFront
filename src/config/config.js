@@ -7,7 +7,6 @@ export const TIPOS_HORARIO_PEDIDO = [
 ];
 
 export const ESTADOS_PEDIDO = [
-  { value: "", label: "Todos" },
   { value: "entregado", label: "Entregado" },
   { value: "iniciado", label: "Iniciado" },
   { value: "cancelado", label: "Cancelado" },
@@ -15,12 +14,11 @@ export const ESTADOS_PEDIDO = [
 ];
 
 export const ESTADOS_VOLQUETA = [
-  { value: "", label: "Todos" },
   { value: "ok", label: "Ok" },
+  { value: "para pintar", label: "Arreglandose" },
   { value: "perdida", label: "Perdida" },
-  { value: "danada", label: "Dañada" },
+  { value: "inutilizable", label: "Inutilizable" },
   { value: "quemada", label: "Quemada" },
-  { value: "arreglandose", label: "Arreglandose" },
 ];
 
 export const TAMANOS_VOLQUETA = [
@@ -29,7 +27,6 @@ export const TAMANOS_VOLQUETA = [
 ];
 
 export const TIPOS_PAGO = [
-  { value: "", label: "No seleccionado" },
   { value: "efectivo", label: "Efectivo" },
   { value: "transferencia", label: "Transferencia" },
   { value: "cheque", label: "Cheque" },

@@ -1,11 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { addVolqueta } from "../../features/volquetasSlice";
 import useAuth from "../../hooks/useAuth";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
 import { TAMANOS_VOLQUETA, ESTADOS_VOLQUETA } from "../../config/config";
+import { postVolquetaAPI } from "../../api"; // Asegúrate de tener esta función en api.js
 
 const AgregarVolqueta = () => {
   const numeroVolquetaRef = useRef("");
@@ -13,19 +12,10 @@ const AgregarVolqueta = () => {
   const estadoRef = useRef("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const dispatch = useDispatch();
-  const { error: addError } = useSelector((state) => state.volquetas);
   const refs = [numeroVolquetaRef, tipoRef, estadoRef];
   const boton = useHabilitarBoton(refs);
   const navigate = useNavigate();
   const getToken = useAuth();
-
-  useEffect(() => {
-    if (addError) {
-      setError(addError);
-      setSuccess("");
-    }
-  }, [addError]);
 
   const registrarVolqueta = async () => {
     const usuarioToken = getToken();
@@ -36,7 +26,7 @@ const AgregarVolqueta = () => {
     };
 
     try {
-      await dispatch(addVolqueta({ volqueta, usuarioToken })).unwrap();
+      await postVolquetaAPI(volqueta, usuarioToken);
       setSuccess("Volqueta creada correctamente");
       setError("");
 
@@ -48,7 +38,7 @@ const AgregarVolqueta = () => {
         setSuccess("");
       }, 10000);
     } catch (error) {
-      setError(error);
+      setError(error.response?.data?.error || error.message);
       setSuccess("");
     }
   };

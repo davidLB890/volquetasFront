@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
-import { postSugerencia } from "../../api"; // Adjust the path as necessary
+import { useDispatch } from "react-redux";
+import { postSugerencia as postSugerenciaAPI } from "../../api"; // Ajusta la ruta según sea necesario
+import { addSugerencia } from "../../features/pedidoSlice"; // Ajusta la ruta según sea necesario
 import useAuth from "../../hooks/useAuth";
 
 const AgregarSugerencia = ({
@@ -9,7 +11,6 @@ const AgregarSugerencia = ({
   pedidoId,
   choferes,
   tipoSugerencia,
-  onSugerenciaAgregada,
 }) => {
   const getToken = useAuth();
   const [choferSugeridoId, setChoferSugeridoId] = useState("");
@@ -17,6 +18,8 @@ const AgregarSugerencia = ({
   const [tipo, setTipo] = useState(tipoSugerencia);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setTipo(tipoSugerencia);
@@ -33,19 +36,16 @@ const AgregarSugerencia = ({
     };
 
     try {
-      const response = await postSugerencia(sugerencia, usuarioToken);
+      const response = await postSugerenciaAPI(sugerencia, usuarioToken);
+      dispatch(addSugerencia(response.data));
       setSuccess("Sugerencia agregada correctamente");
       setError("");
       setTimeout(() => {
-        onSugerenciaAgregada(response.data);
         setSuccess("");
         onHide();
       }, 1000);
     } catch (error) {
-      console.error(
-        "Error al agregar la sugerencia:",
-        error.response?.data?.error || error.message
-      );
+      console.error("Error al agregar la sugerencia:", error.response?.data?.error || error.message);
       setError(error.response?.data?.error || error.message);
       setSuccess("");
     }

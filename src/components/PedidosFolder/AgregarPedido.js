@@ -50,7 +50,7 @@ const AgregarPedido = () => {
   const [pagado, setPagado] = useState(false);
   const [cantidad, setCantidad] = useState(1);
   const [descripcion, setDescripcion] = useState("");
-  const [tipoPago, setTipoPago] = useState("");
+  const [tipoPago, setTipoPago] = useState("efectivo");
   const [precio, setPrecio] = useState(PRECIO_VOLQUETA_GRANDE);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -58,7 +58,7 @@ const AgregarPedido = () => {
   const navigate = useNavigate();
 
   const empleados = useSelector((state) => state.empleados.empleados);
-  const choferes = empleados.filter((empleado) => empleado.rol === "chofer");
+  const choferes = empleados.filter((empleado) => empleado.rol === "chofer" && empleado.habilitado);
 
   //const refs = [nombreRef, descripcionRef, emailRef, empresaIdRef];
   //const boton = useHabilitarBoton(refs);
@@ -67,7 +67,7 @@ const AgregarPedido = () => {
 
   useEffect(() => {
     if (particularSeleccionado || empresaSeleccionada) {
-      console.log("Obras:", obras);
+      setPermisoSeleccionado("");
     }
   }, [obras, particularSeleccionado, empresaSeleccionada]);
 
@@ -124,7 +124,7 @@ const AgregarPedido = () => {
       precio,
       pagado,
       tipoPago,
-      horarioSugerido,
+      horarioSugerido: horarioSugerido === "" ? null : horarioSugerido,
       choferSugeridoId: choferSeleccionado,
       cantidadMultiple: cantidad,
     };
@@ -144,13 +144,19 @@ const AgregarPedido = () => {
 
       console.log(response.data);
       setSuccess("Pedido enviado correctamente");
-      const pedidoId = response.data.nuevoPedido.id;
-      console.log("Pedido ID:", pedidoId);
+      let pedidoId;
+      if (Array.isArray(response.data)) {
+        pedidoId = response.data[0]?.id; // Toma el .id del primer elemento si es una lista
+      } else {
+        pedidoId = response.data.nuevoPedido.id; // Toma el .id directamente si es un objeto
+      }
 
       try {
         const pedidoResponse = await getPedidoId(pedidoId, usuarioToken);
         console.log(pedidoResponse.data);
-        navigate("/pedidos/datos", { state: {pedidoId: pedidoResponse.data.id} });
+        navigate("/pedidos/datos", {
+          state: { pedidoId: pedidoResponse.data.id },
+        });
       } catch (fetchError) {
         console.error(
           "Error al obtener los detalles del pedido:",
@@ -205,7 +211,7 @@ const AgregarPedido = () => {
         <Row>
           <Col md={4}>
             <Form.Group controlId="clienteTipo">
-              <Form.Label>Tipo de Cliente</Form.Label>
+              <Form.Label>Tipo de Cliente *</Form.Label>
               <div>
                 <Form.Check
                   inline
@@ -228,7 +234,7 @@ const AgregarPedido = () => {
           </Col>
           <Col md={4}>
             <Form.Group controlId="clienteEstado">
-              <Form.Label>Estado del Cliente</Form.Label>
+              <Form.Label>Estado del Cliente *</Form.Label>
               <div>
                 <Form.Check
                   inline
@@ -317,17 +323,19 @@ const AgregarPedido = () => {
           particularId={particularSeleccionado?.id}
         />
 
-        {clienteTipo === "empresa" && empresaSeleccionada && (
+        {(empresaSeleccionada || particularSeleccionado) && (
           <SelectPermiso
-            empresaId={empresaSeleccionada.id}
+            empresaId={empresaSeleccionada?.id}
+            particularId={particularSeleccionado?.id}
             onSelect={handlePermisoChange}
+            selectedPermisoId={permisoSeleccionado? permisoSeleccionado : null}
           />
         )}
 
         <Row>
           <Col>
             <Form.Group controlId="choferSeleccionado">
-              <Form.Label>Seleccionar Chofer</Form.Label>
+              <Form.Label>Chofer sugerido entrega</Form.Label>
               <Form.Control
                 as="select"
                 value={choferSeleccionado}
@@ -357,7 +365,7 @@ const AgregarPedido = () => {
         <Row>
           <Col>
             <Form.Group controlId="tipoPedido">
-              <Form.Label>Tipo de Pedido</Form.Label>
+              <Form.Label>Tipo de Pedido *</Form.Label>
               <div>
                 <Form.Check
                   type="radio"
@@ -419,7 +427,7 @@ const AgregarPedido = () => {
         <Row>
           <Col>
             <Form.Group controlId="tipoPago">
-              <Form.Label>Tipo de Pago</Form.Label>
+              <Form.Label>Tipo de Pago *</Form.Label>
               <Form.Control
                 as="select"
                 value={tipoPago}

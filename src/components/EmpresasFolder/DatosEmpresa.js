@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getEmpresaId } from "../../api";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Card,
-  Spinner,
-  Alert,
-  Button,
-  Collapse,
-  Modal,
-  Container,
-} from "react-bootstrap";
+import {Card,Spinner,Alert,Button,Collapse,Modal,Container,} from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import ContactosEmpresa from "./ContactosEmpresa";
 import AgregarContactoEmpresa from "./AgregarContactoEmpresa";

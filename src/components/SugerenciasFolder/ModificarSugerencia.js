@@ -1,23 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { modifySugerencia } from "../../features/pedidoSlice"; // Ajusta la ruta según sea necesario
+import { modifySugerencia } from "../../features/pedidoSlice"; // Asegúrate de ajustar la ruta
 import useAuth from "../../hooks/useAuth";
+import { putSugerencia } from "../../api"; // Asegúrate de tener un módulo API para manejar las solicitudes
 
-const ModificarSugerencia = ({ show, onHide, sugerencia, choferes, onSugerenciaModificada }) => {
+const ModificarSugerencia = ({ show, onHide, sugerencia, choferes }) => {
   const dispatch = useDispatch();
   const getToken = useAuth();
   const [choferSugeridoId, setChoferSugeridoId] = useState(sugerencia?.choferSugeridoId || "");
-  const [horarioSugerido, setHorarioSugerido] = useState(sugerencia?.horarioSugerido || "");
+  const [horarioSugerido, setHorarioSugerido] = useState("");
+  const [tipoSugerido, setTipoSugerido] = useState(sugerencia?.tipoSugerido || "");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
     if (sugerencia) {
       setChoferSugeridoId(sugerencia.choferSugeridoId);
-      setHorarioSugerido(sugerencia.horarioSugerido);
+      setHorarioSugerido(formatDateForInput(sugerencia.horarioSugerido));
+      setTipoSugerido(sugerencia.tipoSugerido);
     }
   }, [sugerencia]);
+
+  const formatDateForInput = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().slice(0, 16);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,19 +34,20 @@ const ModificarSugerencia = ({ show, onHide, sugerencia, choferes, onSugerenciaM
     const sugerenciaModificada = {
       choferSugeridoId: Number(choferSugeridoId) || null,
       horarioSugerido: horarioSugerido || null,
+      tipoSugerido: tipoSugerido || ""
     };
 
     try {
-      const response = await dispatch(modifySugerencia({ sugerenciaId: sugerencia.id, sugerencia: sugerenciaModificada, usuarioToken })).unwrap();
+      await putSugerencia(sugerencia.id, sugerenciaModificada, usuarioToken);
+      dispatch(modifySugerencia({ id: sugerencia.id, ...sugerenciaModificada }));
       setSuccess("Sugerencia modificada correctamente");
       setError("");
-      onSugerenciaModificada(response);
       setTimeout(() => {
         setSuccess("");
         onHide();
       }, 2000);
     } catch (error) {
-      setError(error);
+      setError(error.response?.data?.detalle || "Error al modificar la sugerencia");
       setSuccess("");
     }
   };
@@ -76,6 +85,19 @@ const ModificarSugerencia = ({ show, onHide, sugerencia, choferes, onSugerenciaM
               onChange={(e) => setHorarioSugerido(e.target.value)}
               required
             />
+          </Form.Group>
+          <Form.Group controlId="formTipoSugerido">
+            <Form.Label>Tipo</Form.Label>
+            <Form.Control
+              as="select"
+              value={tipoSugerido}
+              onChange={(e) => setTipoSugerido(e.target.value)}
+              required
+            >
+              <option value="">Seleccione un tipo</option>
+              <option value="entrega">Entrega</option>
+              <option value="levante">Levante</option>
+            </Form.Control>
           </Form.Group>
           <Button variant="secondary" onClick={onHide} className="mr-2">
             Cancelar

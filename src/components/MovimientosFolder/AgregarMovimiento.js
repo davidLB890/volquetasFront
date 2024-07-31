@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
-import { postMovimiento } from "../../api"; // Adjust the path as necessary
+import { postMovimiento } from "../../api"; // Ajusta la ruta según sea necesario
 import useAuth from "../../hooks/useAuth";
-import { TIPOS_MOVIMIENTO } from "../../config/config"; // Adjust the path as necessary
+import { addMovimiento } from "../../features/pedidoSlice"; // Ajusta la ruta según sea necesario
+import { useDispatch } from "react-redux";
+import { TIPOS_MOVIMIENTO } from "../../config/config"; // Ajusta la ruta según sea necesario
 
-const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, numeroVolqueta, onMovimientoAgregado }) => {
+const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, numeroVolqueta }) => {
   const getToken = useAuth();
   const [choferId, setChoferId] = useState("");
   const [horario, setHorario] = useState("");
@@ -12,6 +14,8 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
   const [numero, setNumero] = useState(numeroVolqueta || "");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setTipo(tipoMovimiento);
@@ -26,12 +30,11 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
     e.preventDefault();
     const usuarioToken = getToken();
     
-    // Asegúrate de que numero sea una cadena antes de llamar a trim
     let numeroVolqueta = numero;
     if (numeroVolqueta !== null && numeroVolqueta !== undefined) {
-        numeroVolqueta = String(numeroVolqueta).trim();
+      numeroVolqueta = parseInt(numeroVolqueta); // Convertir a número si es necesario
     } else {
-        numeroVolqueta = null;
+      numeroVolqueta = null;
     }
 
     const movimiento = {
@@ -41,12 +44,13 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
       tipo,
       numeroVolqueta: numeroVolqueta || null,
     };
+
     try {
       const response = await postMovimiento(movimiento, usuarioToken);
+      dispatch(addMovimiento(response.data));
       setSuccess("Movimiento agregado correctamente");
       setError("");
       setTimeout(() => {
-        onMovimientoAgregado(response.data);
         setSuccess("");
         onHide();
       }, 1000);

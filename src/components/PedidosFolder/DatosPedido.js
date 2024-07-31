@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {Spinner,Alert,Container,Row,Col,Card,Button,} from "react-bootstrap";
-import {fetchPedido,fetchObra,fetchPermisos,updatePedido,addMovimiento,deleteMovimiento,modifyMovimiento,
-  addSugerencia,  deleteSugerencia,modifySugerencia,} from "../../features/pedidoSlice";
+import {
+  Spinner,
+  Alert,
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+} from "react-bootstrap";
+import {
+  fetchPedido,
+  fetchObra,
+  fetchPermisos,
+  updatePedido,
+} from "../../features/pedidoSlice";
 import useAuth from "../../hooks/useAuth";
-import DatosObra from "../ObrasFolder/DatosObra";
-import MovimientosYSugerencias from "../MovimientosFolder/MovimientosYSugerencias"; // Asegúrate de ajustar la ruta según sea necesario
-import DetallesPedido from "./DetallesPedido"; // Asegúrate de ajustar la ruta según sea necesario
-import ContactosObraSimple from "../ObrasFolder/ContactosObraSimple";
-import PagoPedido from "../PagosPedidoFolder/PagosPedido";
+import MovimientosYSugerencias from "../MovimientosFolder/MovimientosYSugerencias"; // Ajusta la ruta según sea necesario
+import DetallesPedido from "./DetallesPedido"; // Ajusta la ruta según sea necesario
 import ContactosObraPedido from "../ObrasFolder/ContactosObraPedido";
+import PagoPedido from "../PagosPedidoFolder/PagosPedido";
+import Multiples from "./Multiples";
+import Recambio from "../RecambioFolder/Recambio";
 
 const DatosPedido = () => {
   const location = useLocation();
@@ -19,12 +31,11 @@ const DatosPedido = () => {
   const empresaId = location.state?.empresaId;
   const particularId = location.state?.particularId;
   const dispatch = useDispatch();
-  const { pedido, obra, permisos, loading, error } = useSelector(
-    (state) => state.pedido
-  );
+  const { pedido, obra, loading, error } = useSelector((state) => state.pedido);
   const getToken = useAuth();
   const navigate = useNavigate();
-  const [mostrarObra, setMostrarObra] = useState(false);
+
+  const [showRecambioModal, setShowRecambioModal] = useState(false);
 
   useEffect(() => {
     const usuarioToken = getToken();
@@ -46,58 +57,6 @@ const DatosPedido = () => {
       );
     }
   }, [dispatch, getToken, pedido]);
-
-  const handleToggleObra = () => {
-    setMostrarObra(!mostrarObra);
-  };
-
-  const handleMovimientoAgregado = (nuevoMovimiento) => {
-    dispatch(addMovimiento(nuevoMovimiento));
-  };
-
-  const handleSugerenciaAgregada = (nuevaSugerencia) => {
-    dispatch(addSugerencia(nuevaSugerencia));
-  };
-
-  const handleMovimientoModificado = (movimientoModificado) => {
-    const usuarioToken = getToken();
-    dispatch(
-      modifyMovimiento({
-        movimientoId: movimientoModificado.id,
-        movimiento: movimientoModificado,
-        usuarioToken,
-      })
-    );
-  };
-
-  const handleMovimientoEliminado = (movimientoId) => {
-    const usuarioToken = getToken();
-    dispatch(deleteMovimiento({ movimientoId, usuarioToken }));
-  };
-
-
-  const handleSugerenciaModificada = (sugerenciaModificada) => {
-    const usuarioToken = getToken();
-    dispatch(
-      modifySugerencia({
-        sugerenciaId: sugerenciaModificada.id,
-        sugerencia: {
-          ...sugerenciaModificada,
-          choferSugeridoId: Number(sugerenciaModificada.choferSugeridoId),
-        },
-        usuarioToken,
-      })
-    );
-  };
-
-  const handlePedidoModificado = (updatedPedido) => {
-    dispatch(updatePedido(updatedPedido));
-  };
-
-  const handleSugerenciaEliminada = (sugerenciaId) => {
-    const usuarioToken = getToken();
-    dispatch(deleteSugerencia({ sugerenciaId, usuarioToken }));
-  };
 
   if (loading) {
     return <Spinner animation="border" />;
@@ -149,64 +108,46 @@ const DatosPedido = () => {
 
       <Card className="mt-3">
         <Card.Header>
-        <Row>
-          <Col md={6}>
-          <h2>
-            Detalles del Pedido {pedido.id}{" "}
-            {pedido.referenciaId ? pedido.referenciaId : ""}
-          </h2>
-          </Col>
-          <Col md={6}>
-          {obra && (
-                <ContactosObraPedido
-                  obra={obra}
-                  cliente={
-                    pedido.Obra.particular
-                      ? { particular: pedido.Obra.particular }
-                      : { empresa: pedido.Obra.empresa }
-                  }
-                />
-              )}
-          </Col>
-        </Row>
-        </Card.Header>
-        <Card.Body>
-          <MovimientosYSugerencias
-            movimientos={pedido.Movimientos}
-            sugerencias={pedido.Sugerencias}
-            pedidoId={pedidoId}
-            onMovimientoAgregado={handleMovimientoAgregado}
-            onMovimientoModificado={handleMovimientoModificado}
-            onMovimientoEliminado={handleMovimientoEliminado}
-            onSugerenciaAgregada={handleSugerenciaAgregada}
-            onSugerenciaModificada={handleSugerenciaModificada}
-            onSugerenciaEliminada={handleSugerenciaEliminada}
-          />
           <Row>
             <Col md={6}>
-              <DetallesPedido
-                detalles={pedido}
-                onPedidoModificado={handlePedidoModificado}
-              />
+              <h2>
+                Detalles del pedido{" "}
+                {pedido.creadoComo === "multiple"
+                  ? ` ${pedido.id} (multiple) `
+                  : pedido.id}{" "}
+                en {obra?.calle}
+              </h2>
             </Col>
             <Col md={6}>
-              {/* {obra && (
-                <ContactosObraSimple
-                  obra={obra}
-                  cliente={
-                    pedido.Obra.particular
-                      ? { particular: pedido.Obra.particular }
-                      : { empresa: pedido.Obra.empresa }
-                  }
-                />
-              )} */}
-              
+              {obra && <ContactosObraPedido />}
+              {pedido.creadoComo === "multiple" && <Multiples />}
+            </Col>
+          </Row>
+        </Card.Header>
+        <Card.Body>
+          <MovimientosYSugerencias />
+          <Row>
+            <Col md={6}>
+              <DetallesPedido />
+            </Col>
+            <Col md={6}>
               <PagoPedido />
             </Col>
           </Row>
+          <Button
+            variant="warning"
+            className="mt-3"
+            onClick={() => setShowRecambioModal(true)}
+          >
+            Recambio
+          </Button>
+          <Recambio
+            show={showRecambioModal}
+            onHide={() => setShowRecambioModal(false)}
+            pedido={pedido}
+          />
         </Card.Body>
       </Card>
-      {mostrarObra && <DatosObra obraId={pedido.Obra?.id} />}
     </Container>
   );
 };

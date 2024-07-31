@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Table,
-  Spinner,
-  Alert,
-  Form,
-  Button,
-  Row,
-  Col,
-  Collapse,
-} from "react-bootstrap";
+import {Container,Table,Spinner,Alert,Form,Button,Row,Col,Collapse,} from "react-bootstrap";
 import { getPedidosFiltro } from "../../api"; // Asegúrate de tener esta función en api.js
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";

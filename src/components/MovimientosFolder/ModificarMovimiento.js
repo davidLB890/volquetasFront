@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { modifyMovimiento } from "../../features/pedidoSlice"; // Ajusta la ruta según sea necesario
+import { modifyMovimiento } from "../../features/pedidoSlice"; // Asegúrate de ajustar la ruta
 import useAuth from "../../hooks/useAuth";
+import { putMovimiento } from "../../api"; // Asegúrate de tener un módulo API para manejar las solicitudes
 
-const ModificarMovimiento = ({ show, onHide, movimiento, choferes, onMovimientoModificado }) => {
+const ModificarMovimiento = ({ show, onHide, movimiento, choferes }) => {
   const dispatch = useDispatch();
   const getToken = useAuth();
   const [choferId, setChoferId] = useState(movimiento?.choferId || "");
@@ -16,12 +17,15 @@ const ModificarMovimiento = ({ show, onHide, movimiento, choferes, onMovimientoM
   useEffect(() => {
     if (movimiento) {
       setChoferId(movimiento.choferId);
-      setHorario(movimiento.horario);
+      setHorario(formatDateForInput(movimiento.horario));
       setNumeroVolqueta(movimiento.numeroVolqueta);
-      /* setTipo(tipoMovimiento); */
     }
   }, [movimiento]);
 
+  const formatDateForInput = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().slice(0, 16);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,30 +33,33 @@ const ModificarMovimiento = ({ show, onHide, movimiento, choferes, onMovimientoM
 
     let numero = numeroVolqueta;
     if (numero !== null && numero !== undefined) {
-        numero = String(numero).trim();
+      numero = String(numero).trim();
     } else {
-        numero = null;
+      numero = null;
     }
 
     const movimientoModificado = {
+      id: movimiento.id,
       choferId,
       horario,
       numeroVolqueta: numero || null,
     };
 
     try {
-      const response = await dispatch(modifyMovimiento({ movimientoId: movimiento.id, movimiento: movimientoModificado, usuarioToken })).unwrap();
-      setSuccess("Movimiento modificado correctamente");
-      setError("");
-      console.log("Movimiento modificado:", response);
-      onMovimientoModificado(response);
-      setTimeout(() => {
-        setSuccess("");
-        onHide();
-      }, 2000);
+      const response = await putMovimiento(movimiento.id, movimientoModificado, usuarioToken);
+      if (response.status === 200) {
+        //TODO: la data no devuelve el movimiento, solo dice ok, por lo tanto no actualiza
+        dispatch(modifyMovimiento(response.data));
+        setSuccess("Movimiento modificado correctamente");
+        setError("");
+        setTimeout(() => {
+          setSuccess("");
+          onHide();
+        }, 2000);
+      }
     } catch (error) {
-      console.error("Error al modificar el movimiento:", error.response?.data?.error || error.message);
-      setError(error.response?.data?.detalle);
+      console.error("Error al modificar el movimiento:", error);
+      setError(error.response?.data?.detalle || "Error al modificar el movimiento");
       setSuccess("");
     }
   };
