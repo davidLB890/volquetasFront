@@ -56,6 +56,7 @@ const AgregarTelefono = ({
 
       onTelefonoAgregado(response.data);
     } catch (error) {
+      console.log("telefono error",error);
       setError(error.response?.data?.error || "Error al agregar el teléfono");
       setTimeout(() => setError(""), 7000);
     }

@@ -1,18 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
+import React from "react";
+import { useSelector } from "react-redux";
 
-const TelefonosParticular = ({ telefonos = [] }) => {
-  const [telefonosList, setTelefonosList] = useState(telefonos);
-
-  useEffect(() => {
-    setTelefonosList(telefonos);
-  }, [telefonos]);
+const TelefonosParticular = () => {
+  const telefonos = useSelector((state) => state.particular.particular?.Telefonos || []);
 
   return (
     <div>
       <ul>
-        {telefonosList.length > 0 ? (
-          telefonosList.map((telefono) => (
+        {telefonos.length > 0 ? (
+          telefonos.map((telefono) => (
             <li key={telefono.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span>
                 {telefono?.tipo && telefono?.telefono ? (

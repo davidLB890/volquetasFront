@@ -14,15 +14,16 @@ import {
   fetchPedido,
   fetchObra,
   fetchPermisos,
-  updatePedido,
 } from "../../features/pedidoSlice";
 import useAuth from "../../hooks/useAuth";
-import MovimientosYSugerencias from "../MovimientosFolder/MovimientosYSugerencias"; // Ajusta la ruta según sea necesario
-import DetallesPedido from "./DetallesPedido"; // Ajusta la ruta según sea necesario
+import MovimientosYSugerencias from "../MovimientosFolder/MovimientosYSugerencias"; 
+import DetallesPedido from "./DetallesPedido"; 
 import ContactosObraPedido from "../ObrasFolder/ContactosObraPedido";
 import PagoPedido from "../PagosPedidoFolder/PagosPedido";
 import Multiples from "./Multiples";
 import Recambio from "../RecambioFolder/Recambio";
+import Referencia from "./Referencia";
+import { deletePedidoId } from "../../api";
 
 const DatosPedido = () => {
   const location = useLocation();
@@ -57,6 +58,21 @@ const DatosPedido = () => {
       );
     }
   }, [dispatch, getToken, pedido]);
+
+  const handleEmliminar = () => {
+    const usuarioToken = getToken();
+    const body = {
+      obraId: pedido.Obra.id,
+      descripcion: pedido.descripcion? pedido.descripcion: "",
+      permisoId: pedido.permisoId? pedido.permisoId: null,
+      nroPesada: pedido.nroPesada? pedido.nroPesada: null,
+    }
+    try {
+      deletePedidoId(pedidoId, body, usuarioToken);
+      navigate("/");
+    } catch (error) {
+    }
+  }
 
   if (loading) {
     return <Spinner animation="border" />;
@@ -110,6 +126,7 @@ const DatosPedido = () => {
         <Card.Header>
           <Row>
             <Col md={6}>
+            {pedido.creadoComo==="recambio"&& <Referencia />}
               <h2>
                 Detalles del pedido{" "}
                 {pedido.creadoComo === "multiple"
@@ -146,6 +163,14 @@ const DatosPedido = () => {
             onHide={() => setShowRecambioModal(false)}
             pedido={pedido}
           />
+          <Button
+            variant="danger"
+            className="mt-3"
+            onClick={handleEmliminar}
+          >
+            Eliminar
+          </Button>
+          
         </Card.Body>
       </Card>
     </Container>

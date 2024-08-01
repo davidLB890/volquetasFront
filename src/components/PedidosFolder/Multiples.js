@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Container, Dropdown, DropdownButton, Row, Col, Spinner, Alert } from "react-bootstrap";
+import {
+  Container,
+  Dropdown,
+  DropdownButton,
+  Row,
+  Col,
+  Spinner,
+  Alert,
+} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getPedidosMultiples } from "../../api"; // Ajusta la ruta según sea necesario
@@ -16,16 +24,20 @@ const Multiples = () => {
   useEffect(() => {
     const fetchPedidosMultiples = async () => {
       const usuarioToken = getToken();
-      try {
-        const response = await getPedidosMultiples(pedido.id, usuarioToken);
-        // Filtramos el pedido actual
-        const filteredPedidos = response.data.filter(p => p.id !== pedido.id);
-        setPedidos(filteredPedidos);
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-        setError("Error al obtener los pedidos múltiples");
-        setLoading(false);
+      if (pedido.creadoComo === "multiple") {
+        try {
+          const response = await getPedidosMultiples(pedido.id, usuarioToken);
+          // Filtramos el pedido actual
+          const filteredPedidos = response.data.filter(
+            (p) => p.id !== pedido.id
+          );
+          setPedidos(filteredPedidos);
+          setLoading(false);
+        } catch (error) {
+          console.error(error);
+          setError("Error al obtener los pedidos múltiples");
+          setLoading(false);
+        }
       }
     };
 
@@ -50,10 +62,17 @@ const Multiples = () => {
     <Container>
       <Row className="align-items-center">
         <Col md={12} className="d-flex justify-content-end">
-          <DropdownButton id="dropdown-pedidos" title="Pedidos multiples" variant="light">
+          <DropdownButton
+            id="dropdown-pedidos"
+            title="Pedidos multiples"
+            variant="light"
+          >
             {pedidos.length > 0 ? (
               pedidos.map((pedido) => (
-                <Dropdown.Item key={pedido.id} onClick={() => handleNavigateToPedido(pedido)}>
+                <Dropdown.Item
+                  key={pedido.id}
+                  onClick={() => handleNavigateToPedido(pedido)}
+                >
                   Pedido {pedido.id} - {pedido.estado}
                 </Dropdown.Item>
               ))
@@ -68,5 +87,3 @@ const Multiples = () => {
 };
 
 export default Multiples;
-
-

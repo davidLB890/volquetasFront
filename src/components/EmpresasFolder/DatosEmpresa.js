@@ -1,8 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { getEmpresaId } from "../../api";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import {Card,Spinner,Alert,Button,Collapse,Modal,Container,} from "react-bootstrap";
+import {
+  Card,
+  Spinner,
+  Alert,
+  Button,
+  Container,
+  Collapse,
+  Modal,
+} from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
+import { getEmpresaId } from "../../api";
+import {
+  fetchEmpresaStart,
+  fetchEmpresaSuccess,
+  fetchEmpresaFailure,
+  createContactoSuccess,
+  createObraSuccess,
+  createPermisoEmpresaSuccess,
+} from "../../features/empresaSlice";
 import ContactosEmpresa from "./ContactosEmpresa";
 import AgregarContactoEmpresa from "./AgregarContactoEmpresa";
 import ModificarEmpresa from "./ModificarEmpresa";
@@ -10,19 +27,19 @@ import ListaObras from "../ObrasFolder/ListaObras";
 import ListaPermisos from "../PermisosFolder/ListaPermisos";
 import ListaPedidosEmpresaOParticular from "../PedidosFolder/ListaPedidosEmpresaOParticular";
 import AgregarObra from "../ObrasFolder/AgregarObra";
-import AgregarPermiso from "../PermisosFolder/AgregarPermiso"; // Ajusta la ruta según sea necesario
+import AgregarPermiso from "../PermisosFolder/AgregarPermiso";
 
 const DatosEmpresa = () => {
-  const [empresa, setEmpresa] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { empresa, loading, error, permisos } = useSelector(
+    (state) => state.empresa
+  );
   const [showContactos, setShowContactos] = useState(false);
   const [showAgregarContacto, setShowAgregarContacto] = useState(false);
   const [showModificarEmpresa, setShowModificarEmpresa] = useState(false);
   const [showAgregarObra, setShowAgregarObra] = useState(false);
-  const [showAgregarPermiso, setShowAgregarPermiso] = useState(false); // Estado para manejar el modal de agregar permiso
-  const [actualizarPermisos, setActualizarPermisos] = useState(false); // Estado para manejar la actualización de permisos
+  const [showAgregarPermiso, setShowAgregarPermiso] = useState(false);
 
+  const dispatch = useDispatch();
   const getToken = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -31,52 +48,32 @@ const DatosEmpresa = () => {
   useEffect(() => {
     const fetchEmpresa = async () => {
       const usuarioToken = getToken();
+      dispatch(fetchEmpresaStart());
       try {
         const response = await getEmpresaId(empresaId, usuarioToken);
-        setEmpresa({
-          ...response.data,
-          permisos: response.data.permisos || [], // Asegurarse de que permisos sea un arreglo
-        });
-        setLoading(false);
+        dispatch(fetchEmpresaSuccess(response.data));
       } catch (error) {
-        console.error(
-          "Error al obtener la empresa:",
-          error.response?.data?.error || error.message
+        dispatch(
+          fetchEmpresaFailure(error.response?.data?.error || error.message)
         );
-        setError("Error al obtener la empresa");
-        setLoading(false);
       }
     };
 
     fetchEmpresa();
-  }, [empresaId, getToken]);
-
-  const handleEmpresaModificada = (empresaModificada) => {
-    setEmpresa(empresaModificada);
-  };
+  }, [empresaId, getToken, dispatch]);
 
   const handleContactoAgregado = (nuevoContacto) => {
-    setEmpresa((prevEmpresa) => ({
-      ...prevEmpresa,
-      contactos: [...prevEmpresa.contactos, nuevoContacto],
-    }));
+    dispatch(createContactoSuccess(nuevoContacto));
   };
 
   const handleObraAgregada = (nuevaObra) => {
-    setEmpresa((prevEmpresa) => ({
-      ...prevEmpresa,
-      obras: [...(prevEmpresa.obras || []), nuevaObra],
-    }));
+    dispatch(createObraSuccess(nuevaObra));
     setShowAgregarObra(false);
   };
 
   const handlePermisoAgregado = (nuevoPermiso) => {
-    setEmpresa((prevEmpresa) => ({
-      ...prevEmpresa,
-      permisos: [...(prevEmpresa.permisos || []), nuevoPermiso],
-    }));
+    dispatch(createPermisoEmpresaSuccess(nuevoPermiso));
     setShowAgregarPermiso(false);
-    setActualizarPermisos(!actualizarPermisos); // Cambia la bandera para actualizar ListaPermisos
   };
 
   const handleSeleccionarPedido = (pedido) => {
@@ -104,17 +101,17 @@ const DatosEmpresa = () => {
       )}
       <Card className="mt-3">
         <Card.Header>
-          <h2>{empresa.nombre}</h2>
+          <h2>{empresa?.nombre}</h2>
         </Card.Header>
         <Card.Body>
           <Card.Text>
-            <strong>Razón Social:</strong> {empresa.razonSocial}
+            <strong>Razón Social:</strong> {empresa?.razonSocial}
           </Card.Text>
           <Card.Text>
-            <strong>RUT:</strong> {empresa.rut}
+            <strong>RUT:</strong> {empresa?.rut}
           </Card.Text>
           <Card.Text>
-            <strong>Descripción:</strong> {empresa.descripcion}
+            <strong>Descripción:</strong> {empresa?.descripcion}
           </Card.Text>
           <Button
             onClick={() => setShowContactos(!showContactos)}
@@ -174,7 +171,7 @@ const DatosEmpresa = () => {
           </Button>
           <Collapse in={showContactos}>
             <div id="contactos-collapse">
-              <ContactosEmpresa contactos={empresa.contactos || []} />
+              <ContactosEmpresa contactos={empresa?.contactos || []} />
             </div>
           </Collapse>
         </Card.Body>
@@ -183,17 +180,16 @@ const DatosEmpresa = () => {
         show={showModificarEmpresa}
         onHide={() => setShowModificarEmpresa(false)}
         empresa={empresa}
-        onEmpresaModificada={handleEmpresaModificada}
       />
       <AgregarContactoEmpresa
         show={showAgregarContacto}
         onHide={handleCerrarAgregarContacto}
         empresaId={empresaId}
-        obras={empresa.obras || []}
+        obras={empresa?.obras || []}
         onContactoAgregado={handleContactoAgregado}
       />
-      <ListaObras obras={empresa.obras || []} />
-      <ListaPermisos empresaId={empresaId} actualizar={actualizarPermisos} />
+      <ListaObras obras={empresa?.obras || []} />
+      <ListaPermisos empresaId={empresaId} />
       <ListaPedidosEmpresaOParticular empresaId={empresaId} />
 
       <AgregarObra
@@ -202,22 +198,12 @@ const DatosEmpresa = () => {
         empresaId={empresaId}
         onObraAgregada={handleObraAgregada}
       />
-      <Modal
-        size="lg"
-        show={showAgregarPermiso}
+
+      <AgregarPermiso
+        empresaId={empresaId}
         onHide={() => setShowAgregarPermiso(false)}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Agregar Permiso</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <AgregarPermiso
-            empresaId={empresaId}
-            onHide={() => setShowAgregarPermiso(false)}
-            onPermisoAgregado={handlePermisoAgregado}
-          />
-        </Modal.Body>
-      </Modal>
+        show={showAgregarPermiso}
+      />
     </Container>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import { postPedidoRecambio, postPermiso } from "../../api"; // Asegúrate de tener estas funciones en api.js
@@ -8,8 +8,8 @@ import SelectPermiso from "../PermisosFolder/selectPermiso";
 
 const Recambio = ({ show, onHide, pedido }) => {
   const [descripcion, setDescripcion] = useState("");
-  const [precio, setPrecio] = useState(pedido.pagoPedido.precio);
-  const [tipoPago, setTipoPago] = useState(pedido.pagoPedido.tipoPago);
+  const [precio, setPrecio] = useState(pedido.pagoPedido?.precio);
+  const [tipoPago, setTipoPago] = useState(pedido.pagoPedido?.tipoPago);
   const [permisoSeleccionado, setPermisoSeleccionado] = useState(
     pedido.permisoId || ""
   );
@@ -35,6 +35,28 @@ const Recambio = ({ show, onHide, pedido }) => {
     (empleado) => empleado.rol === "chofer" && empleado.habilitado
   );
 
+  useEffect(() => {
+    // Resetea el state cuando el pedido cambia
+    setDescripcion("");
+    setPrecio(pedido?.pagoPedido?.precio || 0);
+    setTipoPago(pedido?.pagoPedido?.tipoPago || "efectivo");
+    setPermisoSeleccionado(pedido.permisoId || "");
+    setUseNuevoPermiso(false);
+    setUseOtroPermiso(false);
+    setNuevoPermiso({
+      fechaCreacion: "",
+      fechaVencimiento: "",
+      empresaId: pedido.Obra?.empresa?.id || null,
+      particularId: pedido.Obra?.particular?.id || null,
+      id: "",
+    });
+    setPagado(false);
+    setHorarioSugerido("");
+    setChoferSugeridoId("");
+    setError("");
+    setLoading(false);
+  }, [pedido]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -46,7 +68,9 @@ const Recambio = ({ show, onHide, pedido }) => {
         const responsePermiso = await postPermiso(nuevoPermiso, usuarioToken);
         permisoId = responsePermiso.data.id;
       } catch (error) {
-        setError("Error al crear el nuevo permiso");
+        setError(
+          "Error al crear el permiso" + " - " + error.response.data.detalle
+        );
         setLoading(false);
         return;
       }
@@ -61,16 +85,20 @@ const Recambio = ({ show, onHide, pedido }) => {
       tipoPago,
       horarioSugerido: horarioSugerido || null,
       choferSugeridoId: choferSugeridoId || null,
-      permisoId: permisoSeleccionado || null,
+      permisoId: permisoId || null,
     };
 
     try {
       const response = await postPedidoRecambio(recambioData, usuarioToken);
+      onHide();
       navigate(`/pedidos/datos`, {
         state: { pedidoId: response.data.nuevoPedido.id },
       });
     } catch (error) {
-      setError("Error al crear el pedido de recambio");
+      setError(
+        error.response?.data?.error + " - " + error.response?.data?.detalle ||
+          "Error al crear el recambio"
+      );
       setLoading(false);
     }
   };

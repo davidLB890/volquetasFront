@@ -58,8 +58,11 @@ const ModificarMovimiento = ({ show, onHide, movimiento, choferes }) => {
         }, 2000);
       }
     } catch (error) {
-      console.error("Error al modificar el movimiento:", error);
-      setError(error.response?.data?.detalle || "Error al modificar el movimiento");
+      setError(error.response?.data?.error || "Error al modificar el movimiento");
+      setTimeout(() => {
+        setError("");
+        onHide();
+      }, 2000);
       setSuccess("");
     }
   };

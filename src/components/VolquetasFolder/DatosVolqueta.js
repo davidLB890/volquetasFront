@@ -130,7 +130,6 @@ const DatosVolqueta = () => {
           </Form>
           <Movimientos
             movimientos={volqueta.Movimientos}
-            choferes={volqueta.choferes}
             volquetaId={volquetaId}
           />
         </Card.Body>

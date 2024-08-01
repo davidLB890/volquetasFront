@@ -358,7 +358,7 @@ const ListaPedido = () => {
             {pedidos.map((pedido) => {
               const esEmpresa = !!pedido.Obra.empresa;
               const colorFondoCliente = esEmpresa ? "lightblue" : "lavender";
-              const colorFondoPago = pedido.pagoPedido.pagado
+              const colorFondoPago = pedido.pagoPedido?.pagado
                 ? "#d4edda"
                 : "#f8d7da"; // Verde claro o rojo claro para el pago
 
@@ -422,12 +422,12 @@ const ListaPedido = () => {
                     {pedido.Obra.esquina ? pedido.Obra.esquina : ""}{" "}
                     {pedido.Obra.numeroPuerta ? pedido.Obra.numeroPuerta : ""}
                   </td>
-                  <td className="column-precio">${pedido.pagoPedido.precio}</td>
+                  <td className="column-precio">${pedido.pagoPedido?.precio}</td>
                   <td
                     className="column-pagado"
                     style={{ backgroundColor: colorFondoPago }}
                   >
-                    {pedido.pagoPedido.pagado ? "Sí" : "No"}
+                    {pedido.pagoPedido?.pagado ? "Sí" : "No"}
                   </td>
                   <td className="column-chofer">
                     {pedido.Sugerencias[0]?.tipoSugerido || "N/A"}

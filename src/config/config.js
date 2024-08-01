@@ -15,10 +15,10 @@ export const ESTADOS_PEDIDO = [
 
 export const ESTADOS_VOLQUETA = [
   { value: "ok", label: "Ok" },
-  { value: "para pintar", label: "Arreglandose" },
-  { value: "perdida", label: "Perdida" },
+  { value: "para pintar", label: "Para pintar" },
   { value: "inutilizable", label: "Inutilizable" },
   { value: "quemada", label: "Quemada" },
+  { value: "perdida", label: "Perdida" },
 ];
 
 export const TAMANOS_VOLQUETA = [

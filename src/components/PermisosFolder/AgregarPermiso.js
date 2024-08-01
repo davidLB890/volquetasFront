@@ -1,88 +1,107 @@
 import React, { useState } from "react";
-import { Form, Button, Modal, Alert } from "react-bootstrap";
-import { postPermiso } from "../../api"; // Ajusta la ruta según sea necesario
+import { Modal, Button, Form } from "react-bootstrap";
+import AlertMessage from "../AlertMessage";
+import { postPermiso } from "../../api";
 import useAuth from "../../hooks/useAuth";
+import { useDispatch } from "react-redux";
+import { createPermisoParticularSuccess } from "../../features/particularSlice";
+import { createPermisoEmpresaSuccess } from "../../features/empresaSlice";
 
-const AgregarPermiso = ({ empresaId, particularId, onHide, onPermisoAgregado }) => {
-  const getToken = useAuth();
-  const [permiso, setPermiso] = useState({
-    fechaCreacion: "",
-    fechaVencimiento: "",
-    empresaId: empresaId || null,
-    particularId: particularId || null,
-    id: "",
-  });
+const AgregarPermiso = ({ show, onHide, empresaId, particularId }) => {
+  const [fechaCreacion, setFechaCreacion] = useState("");
+  const [fechaVencimiento, setFechaVencimiento] = useState("");
+  const [numeroPermiso, setNumeroPermiso] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setPermiso({ ...permiso, [name]: value });
-  };
+  const getToken = useAuth();
+  const dispatch = useDispatch();
 
-  const handleSubmit = async (e) => {
+  const handleAgregarPermiso = async (e) => {
     e.preventDefault();
     const usuarioToken = getToken();
 
-    try {
-      const response = await postPermiso(permiso, usuarioToken);
-      onPermisoAgregado(response.data);
-      setSuccess("Permiso agregado correctamente");
-      setError("");
-      setTimeout(() => {
-        setSuccess("");
-        onHide();
-      }, 2000);
-    } catch (error) {
-      console.error("Error al agregar el permiso:", error.response?.data?.error || error.message);
-      setError(error.response?.data?.error || "Error al agregar el permiso");
+    if (!fechaCreacion || !fechaVencimiento || !numeroPermiso) {
+      setError("Todos los campos son obligatorios");
       setTimeout(() => setError(""), 5000);
+      return;
+    }
+
+    if (numeroPermiso.length < 3) {
+      setError("El número de permiso debe tener al menos 3 caracteres");
+      setTimeout(() => setError(""), 5000);
+      return;
+    }
+
+    try {
+      const requestBody = {
+        fechaCreacion,
+        fechaVencimiento,
+        id: numeroPermiso,
+        ...(empresaId ? { empresaId } : { particularId }),
+      };
+      console.log("requestBody", requestBody);
+      const response = await postPermiso(requestBody, usuarioToken);
+
+      setSuccess("Permiso agregado correctamente");
+      setFechaCreacion("");
+      setFechaVencimiento("");
+      setNumeroPermiso("");
+      setTimeout(() => setSuccess(""), 7000);
+      if(empresaId) {
+        dispatch(createPermisoEmpresaSuccess(response.data));
+      } else {
+        dispatch(createPermisoParticularSuccess(response.data));
+      }
+    } catch (error) {
+      console.error("Error al agregar el permiso:", error); // Log detallado del error
+      setError(error.response?.data?.error || "Error al agregar el permiso");
+      setTimeout(() => setError(""), 7000);
     }
   };
 
   return (
-    <>
-      {error && <Alert variant="danger">{error}</Alert>}
-      {success && <Alert variant="success">{success}</Alert>}
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="formFechaCreacion">
-          <Form.Label>Fecha de Creación</Form.Label>
-          <Form.Control
-            type="date"
-            name="fechaCreacion"
-            value={permiso.fechaCreacion}
-            onChange={handleInputChange}
-            required
-          />
-        </Form.Group>
-        <Form.Group controlId="formFechaVencimiento">
-          <Form.Label>Fecha de Vencimiento</Form.Label>
-          <Form.Control
-            type="date"
-            name="fechaVencimiento"
-            value={permiso.fechaVencimiento}
-            onChange={handleInputChange}
-            required
-          />
-        </Form.Group>
-        <Form.Group controlId="formNumero">
-          <Form.Label>Número</Form.Label>
-          <Form.Control
-            type="text"
-            name="id"
-            value={permiso.id}
-            onChange={handleInputChange}
-            required
-          />
-        </Form.Group>
-        <Button variant="secondary" onClick={onHide} className="mr-2">
-          Cancelar
-        </Button>
-        <Button variant="primary" type="submit">
-          Agregar Permiso
-        </Button>
-      </Form>
-    </>
+    <Modal show={show} onHide={onHide}>
+      <Modal.Header closeButton>
+        <Modal.Title>Agregar Permiso</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={handleAgregarPermiso}>
+          {error && <AlertMessage type="error" message={error} />}
+          {success && <AlertMessage type="success" message={success} />}
+          <Form.Group controlId="fechaCreacion">
+            <Form.Label>Fecha de Creación</Form.Label>
+            <Form.Control
+              type="date"
+              value={fechaCreacion}
+              onChange={(e) => setFechaCreacion(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="fechaVencimiento">
+            <Form.Label>Fecha de Vencimiento</Form.Label>
+            <Form.Control
+              type="date"
+              value={fechaVencimiento}
+              onChange={(e) => setFechaVencimiento(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="numeroPermiso">
+            <Form.Label>Número de Permiso</Form.Label>
+            <Form.Control
+              type="text"
+              value={numeroPermiso}
+              onChange={(e) => setNumeroPermiso(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <Button className="mt-3" variant="primary" type="submit">
+            Agregar Permiso
+          </Button>
+        </Form>
+      </Modal.Body>
+    </Modal>
   );
 };
 

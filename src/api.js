@@ -672,6 +672,15 @@ export const putPedidoPermiso = (pedidoId, permisoId, usuarioToken) => {
     },
   });
 }
+export const deletePedidoId = (pedidoId, body, usuarioToken) => {
+  return axios.delete(`${API_URL}pedidos/${pedidoId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+    data: body,
+  });
+}
 
 
 

@@ -8,7 +8,7 @@ const ModificarPermiso = ({ permiso, onHide, onPermisoModificado }) => {
   const [updatedPermiso, setUpdatedPermiso] = useState({
     fechaCreacion: permiso.fechaCreacion,
     fechaVencimiento: permiso.fechaVencimiento,
-    id: permiso.id,
+    //id: permiso.id,
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -17,7 +17,7 @@ const ModificarPermiso = ({ permiso, onHide, onPermisoModificado }) => {
     setUpdatedPermiso({
       fechaCreacion: permiso.fechaCreacion,
       fechaVencimiento: permiso.fechaVencimiento,
-      id: permiso.id,
+      //id: permiso.id,
     });
   }, [permiso]);
 
@@ -70,7 +70,7 @@ const ModificarPermiso = ({ permiso, onHide, onPermisoModificado }) => {
           required
         />
       </Form.Group>
-      <Form.Group controlId="formNumero">
+{/*       <Form.Group controlId="formNumero">
         <Form.Label>Número</Form.Label>
         <Form.Control
           type="text"
@@ -79,7 +79,7 @@ const ModificarPermiso = ({ permiso, onHide, onPermisoModificado }) => {
           onChange={handleInputChange}
           required
         />
-      </Form.Group>
+      </Form.Group> */}
       <Button variant="secondary" onClick={onHide}>
         Cancelar
       </Button>

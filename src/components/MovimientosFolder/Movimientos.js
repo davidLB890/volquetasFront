@@ -1,15 +1,18 @@
-
+//implementado por volquetas y datos de clientes
 import React, { useState } from "react";
 import { Table, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Movimientos = ({
   movimientos = [],
-  choferes = [],
   volquetaId
 }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const empleados = useSelector((state) => state.empleados.empleados || []);
+  const choferes = empleados.filter((empleado) => empleado.rol === "chofer" && empleado.habilitado);
 
   const handleVerPedido = (pedidoId, volquetaId) => {
     navigate("/pedidos/datos", { state: { pedidoId: pedidoId, volquetaId: volquetaId } });
@@ -26,7 +29,7 @@ const Movimientos = ({
               <tr>
                 <th>Número de Volqueta</th>
                 <th>Horario</th>
-                <th>Tipo</th>
+                <th>Último movimiento</th>
                 <th>Chofer</th>
                 <th>Acciones</th>
               </tr>

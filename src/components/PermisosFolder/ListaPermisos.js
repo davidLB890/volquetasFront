@@ -9,90 +9,96 @@ import {
   Container,
   Modal,
 } from "react-bootstrap";
-import { getPermisoIdEmpresa, getPermisoIdParticular, deletePermiso } from "../../api"; // Ajusta la ruta según sea necesario
+import { getPermisoIdEmpresa, getPermisoIdParticular, deletePermiso } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
-import ModificarPermiso from "./ModificarPermiso"; 
-import DatosPermiso from "./DatosPermiso"; 
-import PermisosVencimientoProximo from "./PermisosVencimientoProximo"; 
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchPermisosStart as fetchPermisosStartParticular,
+  fetchPermisosSuccess as fetchPermisosSuccessParticular,
+  fetchPermisosFailure as fetchPermisosFailureParticular,
+} from "../../features/particularSlice";
+import {
+  fetchPermisosStart as fetchPermisosStartEmpresa,
+  fetchPermisosSuccess as fetchPermisosSuccessEmpresa,
+  fetchPermisosFailure as fetchPermisosFailureEmpresa,
+} from "../../features/empresaSlice";
+import ModificarPermiso from "./ModificarPermiso";
+import DatosPermiso from "./DatosPermiso";
 
-const ListaPermisos = ({ empresaId, particularId, actualizar }) => {
-  const [permisos, setPermisos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [open, setOpen] = useState(false); // Estado para manejar el despliegue
-  const [showModificarPermiso, setShowModificarPermiso] = useState(false); // Estado para manejar el modal de modificar permiso
+const ListaPermisos = ({ empresaId, particularId }) => {
+  const particularState = useSelector((state) => state.particular);
+  const empresaState = useSelector((state) => state.empresa);
+
+  const [open, setOpen] = useState(false);
+  const [showModificarPermiso, setShowModificarPermiso] = useState(false);
   const [permisoSeleccionado, setPermisoSeleccionado] = useState(null);
-  const [showConfirmDelete, setShowConfirmDelete] = useState(false); // Estado para manejar el modal de confirmación de eliminación
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [permisoAEliminar, setPermisoAEliminar] = useState(null);
   const [mostrarDatosPermiso, setMostrarDatosPermiso] = useState(false);
+
   const getToken = useAuth();
+  const dispatch = useDispatch();
+
+  const isEmpresa = !!empresaId;
+  const { permisos, permisosLoading, permisosError } = isEmpresa ? empresaState : particularState;
 
   useEffect(() => {
     const fetchPermisos = async () => {
       const usuarioToken = getToken();
+      if (isEmpresa) {
+        dispatch(fetchPermisosStartEmpresa());
+      } else {
+        dispatch(fetchPermisosStartParticular());
+      }
+
       try {
         let response;
         if (empresaId) {
-          response = await getPermisoIdEmpresa(empresaId, usuarioToken); // Agrega 'true' para el parámetro 'activo'
+          response = await getPermisoIdEmpresa(empresaId, usuarioToken);
         } else if (particularId) {
-          response = await getPermisoIdParticular(particularId, usuarioToken); // Agrega 'true' para el parámetro 'activo'
+          response = await getPermisoIdParticular(particularId, usuarioToken);
         } else {
-          setError("No se ha proporcionado un ID de empresa o particular.");
-          setLoading(false);
+          if (isEmpresa) {
+            dispatch(fetchPermisosFailureEmpresa("No se ha proporcionado un ID de empresa o particular."));
+          } else {
+            dispatch(fetchPermisosFailureParticular("No se ha proporcionado un ID de empresa o particular."));
+          }
           return;
         }
-        setPermisos(response.data);
-        setLoading(false);
+
+        if (isEmpresa) {
+          dispatch(fetchPermisosSuccessEmpresa(response.data));
+        } else {
+          dispatch(fetchPermisosSuccessParticular(response.data));
+        }
       } catch (error) {
-        console.error(
-          "Error al obtener los permisos:",
-          error.response?.data?.error || error.message
-        );
-        setError("Error al obtener los permisos");
-        setLoading(false);
+        if (isEmpresa) {
+          dispatch(fetchPermisosFailureEmpresa(error.response?.data?.error || error.message));
+        } else {
+          dispatch(fetchPermisosFailureParticular(error.response?.data?.error || error.message));
+        }
       }
     };
 
     fetchPermisos();
-  }, [empresaId, particularId, getToken, actualizar]);
-
-  useEffect(() => {
-    const fetchPermisosConFiltros = async () => {
-      const usuarioToken = getToken();
-      try {
-        let response;
-        if (empresaId) {
-          response = await getPermisoIdEmpresa(empresaId, usuarioToken); // Agrega 'true' para el parámetro 'activo'
-        } else if (particularId) {
-          response = await getPermisoIdParticular(particularId, usuarioToken); // Agrega 'true' para el parámetro 'activo'
-        } else {
-          setError("No se ha proporcionado un ID de empresa o particular.");
-          setLoading(false);
-          return;
-        }
-        setPermisos(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error(
-          "Error al obtener los permisos:",
-          error.response?.data?.error || error.message
-        );
-        setError("Error al obtener los permisos");
-        setLoading(false);
-      }
-    };
-
-    fetchPermisosConFiltros();
-  }, [/* List the state variables you want to track here */]);
+  }, [empresaId, particularId, getToken, dispatch, isEmpresa]);
 
   const handlePermisoModificado = (permisoModificado) => {
-    setPermisos((prevPermisos) =>
-      prevPermisos.map((permiso) =>
-        permiso.id === permisoModificado.id ? permisoModificado : permiso
-      )
-    );
-    setShowModificarPermiso(false); // Cierra el modal después de modificar
+    if (isEmpresa) {
+      dispatch(fetchPermisosSuccessEmpresa(
+        permisos.map((permiso) =>
+          permiso.id === permisoModificado.id ? permisoModificado : permiso
+        )
+      ));
+    } else {
+      dispatch(fetchPermisosSuccessParticular(
+        permisos.map((permiso) =>
+          permiso.id === permisoModificado.id ? permisoModificado : permiso
+        )
+      ));
+    }
+    setShowModificarPermiso(false);
   };
 
   const handleModificarPermiso = (permiso) => {
@@ -109,16 +115,26 @@ const ListaPermisos = ({ empresaId, particularId, actualizar }) => {
     const usuarioToken = getToken();
     try {
       await deletePermiso(permisoAEliminar.id, usuarioToken);
-      setPermisos((prevPermisos) =>
-        prevPermisos.filter((permiso) => permiso.id !== permisoAEliminar.id)
-      );
+      if (isEmpresa) {
+        dispatch(fetchPermisosSuccessEmpresa(
+          permisos.filter((permiso) => permiso.id !== permisoAEliminar.id)
+        ));
+      } else {
+        dispatch(fetchPermisosSuccessParticular(
+          permisos.filter((permiso) => permiso.id !== permisoAEliminar.id)
+        ));
+      }
       setShowConfirmDelete(false);
     } catch (error) {
       console.error(
         "Error al eliminar el permiso:",
         error.response?.data?.error || error.message
       );
-      setError("Error al eliminar el permiso");
+      if (isEmpresa) {
+        dispatch(fetchPermisosFailureEmpresa("Error al eliminar el permiso"));
+      } else {
+        dispatch(fetchPermisosFailureParticular("Error al eliminar el permiso"));
+      }
     }
   };
 
@@ -132,12 +148,12 @@ const ListaPermisos = ({ empresaId, particularId, actualizar }) => {
     setPermisoSeleccionado(null);
   };
 
-  if (loading) {
+  if (permisosLoading) {
     return <Spinner animation="border" />;
   }
 
-  if (error) {
-    return <Alert variant="danger">{error}</Alert>;
+  if (permisosError) {
+    return <Alert variant="danger">{permisosError}</Alert>;
   }
 
   return (

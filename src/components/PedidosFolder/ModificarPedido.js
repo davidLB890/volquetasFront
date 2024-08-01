@@ -132,8 +132,13 @@ const ModificarPedido = ({ show, onHide }) => {
       let permisoSeleccionadoId = permisoId ? permisoId : null;
 
       if (useNewPermiso) {
-        const responsePermiso = await postPermiso(nuevoPermiso, usuarioToken);
-        permisoSeleccionadoId = responsePermiso.data.id;
+        try {
+          const responsePermiso = await postPermiso(nuevoPermiso, usuarioToken);
+          permisoSeleccionadoId = responsePermiso.data.id;
+        } catch (error) {
+          setError("Error al crear el permiso" + " - " + error.response.data.detalle);
+          return;
+        }
       }
 
       // Modifico nuevamente el pedido con el permiso seleccionado o nuevo

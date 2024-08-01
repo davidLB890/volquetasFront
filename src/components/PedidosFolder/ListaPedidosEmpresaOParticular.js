@@ -9,8 +9,8 @@ const ListaPedidosEmpresaOParticular = ({ empresaId, particularId }) => {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [fechaInicio, setFechaInicio] = useState(moment().format("YYYY-MM-DD"));
-  const [fechaFin, setFechaFin] = useState(moment().format("YYYY-MM-DD"));
+  const [fechaInicio, setFechaInicio] = useState(moment().startOf("day").add(1, "hours").format("YYYY-MM-DDTHH:mm"));
+  const [fechaFin, setFechaFin] = useState(moment().endOf("day").format("YYYY-MM-DDTHH:mm"));
   const [estado, setEstado] = useState("");
   const [tipoHorario, setTipoHorario] = useState("creacion");
   const [openFilters, setOpenFilters] = useState(false); // Estado para manejar el despliegue de filtros
@@ -176,7 +176,6 @@ const ListaPedidosEmpresaOParticular = ({ empresaId, particularId }) => {
                 <th>Dirección</th>
                 <th>Precio</th>
                 <th>Pagado</th>
-                <th>Tipo Sugerido</th>
               </tr>
             </thead>
             <tbody>
@@ -190,7 +189,6 @@ const ListaPedidosEmpresaOParticular = ({ empresaId, particularId }) => {
                   <td>{pedido.Obra.calle}</td>
                   <td>{pedido.pagoPedido.precio}</td>
                   <td>{pedido.pagoPedido.pagado ? "Sí" : "No"}</td>
-                  <td>{pedido.Sugerencias[0]?.tipoSugerido || "N/A"}</td>
                 </tr>
               ))}
             </tbody>

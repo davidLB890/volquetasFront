@@ -7,14 +7,14 @@ import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 const AgregarObra = ({ show, onHide, onObraAgregada, empresaId, particularId }) => {
-  const calleRef = useRef("");
-  const esquinaRef = useRef("");
-  const barrioRef = useRef("");
-  const coordenadasRef = useRef("");
-  const numeroPuertaRef = useRef("");
-  const descripcionRef = useRef("");
-  const empresaIdRef = useRef("");
-  const particularIdRef = useRef("");
+  const calleRef = useRef(null);
+  const esquinaRef = useRef(null);
+  const barrioRef = useRef(null);
+  const coordenadasRef = useRef(null);
+  const numeroPuertaRef = useRef(null);
+  const descripcionRef = useRef(null);
+  const empresaIdRef = useRef(null);
+  const particularIdRef = useRef(null);
 
   const [detalleResiduos, setDetalleResiduos] = useState("");
   const [residuosMezclados, setResiduosMezclados] = useState(false);
@@ -28,7 +28,7 @@ const AgregarObra = ({ show, onHide, onObraAgregada, empresaId, particularId }) 
   const [success, setSuccess] = useState("");
 
   const refs = [calleRef];
-  if (!empresaId) {
+  if (empresaId) {
     refs.push(empresaIdRef);
   }
   const botonHabilitado = useHabilitarBoton(refs);
@@ -47,14 +47,14 @@ const AgregarObra = ({ show, onHide, onObraAgregada, empresaId, particularId }) 
     const usuarioToken = getToken();
 
     const obra = {
-      calle: calleRef.current.value,
-      esquina: esquinaRef.current.value,
-      barrio: barrioRef.current.value,
-      coordenadas: coordenadasRef.current.value,
-      numeroPuerta: numeroPuertaRef.current.value,
-      descripcion: descripcionRef.current.value,
-      empresaId: empresaId || empresaIdRef.current.value,
-      particularId: particularId || particularIdRef.current.value,
+      calle: calleRef.current?.value || "",
+      esquina: esquinaRef.current?.value || "",
+      barrio: barrioRef.current?.value || "",
+      coordenadas: coordenadasRef.current?.value || "",
+      numeroPuerta: numeroPuertaRef.current?.value || "",
+      descripcion: descripcionRef.current?.value || "",
+      empresaId: empresaId || empresaIdRef.current?.value || "",
+      particularId: particularId || particularIdRef.current?.value || "",
       detalleResiduos,
       residuosMezclados,
       residuosReciclados,
@@ -79,7 +79,14 @@ const AgregarObra = ({ show, onHide, onObraAgregada, empresaId, particularId }) 
         onObraAgregada(datos);
 
         // Limpiar los campos del formulario
-        refs.forEach(ref => ref.current.value = "");
+        if (calleRef.current) calleRef.current.value = "";
+        if (esquinaRef.current) esquinaRef.current.value = "";
+        if (barrioRef.current) barrioRef.current.value = "";
+        if (coordenadasRef.current) coordenadasRef.current.value = "";
+        if (numeroPuertaRef.current) numeroPuertaRef.current.value = "";
+        if (descripcionRef.current) descripcionRef.current.value = "";
+        if (empresaIdRef.current) empresaIdRef.current.value = "";
+        if (particularIdRef.current) particularIdRef.current.value = "";
         setDetalleResiduos("");
         setResiduosMezclados(false);
         setResiduosReciclados(false);
@@ -94,7 +101,6 @@ const AgregarObra = ({ show, onHide, onObraAgregada, empresaId, particularId }) 
       }
     } catch (error) {
       console.error(
-        "Error al conectar con el servidor:",
         error.response?.data || error.message
       );
 

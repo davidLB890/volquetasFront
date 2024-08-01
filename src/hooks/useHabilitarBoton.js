@@ -1,45 +1,38 @@
 // hooks/useHabilitarBoton.js
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 const useHabilitarBoton = (refs) => {
-  const [botonCrear, setBotonCrear] = useState(false);
+  const [habilitado, setHabilitado] = useState(false);
 
   useEffect(() => {
-    const habilitarBoton = () => {
-      let val = 0;
-
-      refs.forEach(ref => {
-        if (ref.current.value !== "") {
-          val++;
-        }
-      });
-
-      if (val === refs.length) {
-        setBotonCrear(true);
+    const checkRefs = () => {
+      if (refs.every(ref => ref.current && ref.current.value.trim() !== "")) {
+        setHabilitado(true);
       } else {
-        setBotonCrear(false);
+        setHabilitado(false);
       }
     };
 
-    // Agregar evento de entrada a cada ref
+    checkRefs(); // Initial check
+
     refs.forEach(ref => {
-      if (ref.current) {
-        ref.current.addEventListener('input', habilitarBoton);
+      const input = ref.current;
+      if (input) {
+        input.addEventListener("input", checkRefs);
       }
     });
 
-    // Limpiar evento de entrada al desmontar el componente
     return () => {
       refs.forEach(ref => {
-        if (ref.current) {
-          ref.current.removeEventListener('input', habilitarBoton);
+        const input = ref.current;
+        if (input) {
+          input.removeEventListener("input", checkRefs);
         }
       });
     };
   }, [refs]);
 
-  return botonCrear;
+  return habilitado;
 };
 
 export default useHabilitarBoton;
-

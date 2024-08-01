@@ -10,9 +10,7 @@ import {
   Modal,
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchVolquetas,
-} from "../../features/volquetasSlice";
+import { fetchVolquetas } from "../../features/volquetasSlice";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import ModificarVolqueta from "./ModificarVolqueta";
@@ -162,12 +160,18 @@ const ListaVolquetas = () => {
               <td>{volqueta.tipo}</td>
               <td>{volqueta.ocupada ? "Sí" : "No"}</td>
               <td>
-                {volqueta.Movimientos.length > 0
-                  ? volqueta.Movimientos[0].tipo === "entrega"
-                    ? `Entregada en ${volqueta.Movimientos[0]?.Pedido?.Obra?.calle}`
-                    : `Levantada ${volqueta.Movimientos[1] ? `en ${volqueta.Movimientos[1]?.Pedido?.Obra?.calle}` : ""}`
-                  : ""}
+                {volqueta.Movimientos.length > 0 &&
+                  volqueta.Movimientos.map((movimiento, index) => (
+                    <div key={index}>
+                      {movimiento.tipo === "entrega"
+                        ? `Entregada en ${movimiento?.Pedido?.Obra?.calle}`
+                        : movimiento.tipo === "levante"
+                        ? `Levantada en ${movimiento?.Pedido?.Obra?.calle}`
+                        : ""}
+                    </div>
+                  ))}
               </td>
+
               <td>
                 <Button
                   variant="danger"
