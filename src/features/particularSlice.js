@@ -85,12 +85,18 @@ const particularSlice = createSlice({
       state.permisosError = action.payload;
     },
     createPermisoParticularSuccess(state, action) {
-      console.log("en slice",action.payload)
+      console.log("en slice", action.payload)
       state.permisos = [...state.permisos, action.payload];
       state.success = 'Permiso agregado correctamente';
     },
     createPermisoFailure(state, action) {
       state.error = action.payload;
+    },
+    deleteObraSuccess(state, action) {
+      if (state.particular) {
+        state.particular.obras = state.particular.obras.filter((obra) => obra.id !== action.payload);
+      }
+      state.success = 'Obra eliminada correctamente';
     },
     clearSuccess(state) {
       state.success = null;
@@ -121,10 +127,9 @@ export const {
   createPermisoParticularSuccess,
   createPermisoSuccess,
   createPermisoFailure,
+  deleteObraSuccess,
   clearSuccess,
   clearError,
 } = particularSlice.actions;
 
 export default particularSlice.reducer;
-
-

@@ -8,7 +8,6 @@ import {
   Button,
   Container,
   Collapse,
-  Modal,
 } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import { getEmpresaId } from "../../api";
@@ -19,6 +18,7 @@ import {
   createContactoSuccess,
   createObraSuccess,
   createPermisoEmpresaSuccess,
+  deleteObraSuccess, // Importa la acción para eliminar una obra
 } from "../../features/empresaSlice";
 import ContactosEmpresa from "./ContactosEmpresa";
 import AgregarContactoEmpresa from "./AgregarContactoEmpresa";
@@ -30,9 +30,7 @@ import AgregarObra from "../ObrasFolder/AgregarObra";
 import AgregarPermiso from "../PermisosFolder/AgregarPermiso";
 
 const DatosEmpresa = () => {
-  const { empresa, loading, error, permisos } = useSelector(
-    (state) => state.empresa
-  );
+  const { empresa, obras, contactos, loading, error, permisos } = useSelector((state) => state.empresa);
   const [showContactos, setShowContactos] = useState(false);
   const [showAgregarContacto, setShowAgregarContacto] = useState(false);
   const [showModificarEmpresa, setShowModificarEmpresa] = useState(false);
@@ -53,22 +51,28 @@ const DatosEmpresa = () => {
         const response = await getEmpresaId(empresaId, usuarioToken);
         dispatch(fetchEmpresaSuccess(response.data));
       } catch (error) {
-        dispatch(
-          fetchEmpresaFailure(error.response?.data?.error || error.message)
-        );
+        dispatch(fetchEmpresaFailure(error.response?.data?.error || error.message));
       }
     };
 
     fetchEmpresa();
   }, [empresaId, getToken, dispatch]);
 
-  const handleContactoAgregado = (nuevoContacto) => {
-    dispatch(createContactoSuccess(nuevoContacto));
+  const handleObraAgregada = (nuevaObra) => {
+    const obra = {
+      id: nuevaObra?.id,
+      calle: nuevaObra?.calle,
+      esquina: nuevaObra?.esquina,
+      numeroPuerta: nuevaObra?.numeroPuerta,
+      activa: nuevaObra?.activa,
+    };
+    console.log("obra", obra);
+    dispatch(createObraSuccess(obra));
+    setShowAgregarObra(false);
   };
 
-  const handleObraAgregada = (nuevaObra) => {
-    dispatch(createObraSuccess(nuevaObra));
-    setShowAgregarObra(false);
+  const handleObraEliminada = (obraId) => {
+    dispatch(deleteObraSuccess(obraId)); // Despacha la acción para eliminar la obra del estado de Redux
   };
 
   const handlePermisoAgregado = (nuevoPermiso) => {
@@ -171,7 +175,7 @@ const DatosEmpresa = () => {
           </Button>
           <Collapse in={showContactos}>
             <div id="contactos-collapse">
-              <ContactosEmpresa contactos={empresa?.contactos || []} />
+              <ContactosEmpresa contactos={contactos || []} />
             </div>
           </Collapse>
         </Card.Body>
@@ -186,9 +190,8 @@ const DatosEmpresa = () => {
         onHide={handleCerrarAgregarContacto}
         empresaId={empresaId}
         obras={empresa?.obras || []}
-        onContactoAgregado={handleContactoAgregado}
       />
-      <ListaObras obras={empresa?.obras || []} />
+      <ListaObras obras={obras || []} onObraEliminada={handleObraEliminada} />
       <ListaPermisos empresaId={empresaId} />
       <ListaPedidosEmpresaOParticular empresaId={empresaId} />
 
@@ -203,6 +206,7 @@ const DatosEmpresa = () => {
         empresaId={empresaId}
         onHide={() => setShowAgregarPermiso(false)}
         show={showAgregarPermiso}
+        onPermisoAgregado={handlePermisoAgregado}
       />
     </Container>
   );

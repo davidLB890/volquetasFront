@@ -457,6 +457,14 @@ export const asignarContactoEmpresa = (contactoId, obraId, usuarioToken) => {
     },
   });
 };
+export const deleteContactoEmpresa = (contactoId, usuarioToken) => {
+  return axios.delete(`${API_URL}contacto-empresas/${contactoId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
 
 
 

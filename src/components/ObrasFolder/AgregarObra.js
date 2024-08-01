@@ -2,11 +2,17 @@ import React, { useRef, useState, useEffect } from "react";
 import { Modal, Form, Button, Alert, Row, Col } from "react-bootstrap";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
 import AlertMessage from "../AlertMessage";
-import { postObra } from "../../api"; 
+import { postObra } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
-const AgregarObra = ({ show, onHide, onObraAgregada, empresaId, particularId }) => {
+const AgregarObra = ({
+  show,
+  onHide,
+  onObraAgregada,
+  empresaId,
+  particularId,
+}) => {
   const calleRef = useRef(null);
   const esquinaRef = useRef(null);
   const barrioRef = useRef(null);
@@ -28,9 +34,6 @@ const AgregarObra = ({ show, onHide, onObraAgregada, empresaId, particularId }) 
   const [success, setSuccess] = useState("");
 
   const refs = [calleRef];
-  if (empresaId) {
-    refs.push(empresaIdRef);
-  }
   const botonHabilitado = useHabilitarBoton(refs);
 
   const navigate = useNavigate();
@@ -100,9 +103,7 @@ const AgregarObra = ({ show, onHide, onObraAgregada, empresaId, particularId }) 
         }, 10000);
       }
     } catch (error) {
-      console.error(
-        error.response?.data || error.message
-      );
+      console.error(error.response?.data || error.message);
 
       let errorMessage = "Error inesperado. Inténtelo más tarde.";
       if (error.response?.data) {
@@ -228,7 +229,10 @@ const AgregarObra = ({ show, onHide, onObraAgregada, empresaId, particularId }) 
 
           <Row>
             <Col md={4}>
-              <Form.Group controlId="formFrecuenciaSemanalMinima" className="mb-2">
+              <Form.Group
+                controlId="formFrecuenciaSemanalMinima"
+                className="mb-2"
+              >
                 <Form.Label>Frecuencia Semanal Mínima</Form.Label>
                 <Form.Control
                   type="text"
@@ -243,7 +247,10 @@ const AgregarObra = ({ show, onHide, onObraAgregada, empresaId, particularId }) 
               </Form.Group>
             </Col>
             <Col md={4}>
-              <Form.Group controlId="formFrecuenciaSemanalMaxima" className="mb-2">
+              <Form.Group
+                controlId="formFrecuenciaSemanalMaxima"
+                className="mb-2"
+              >
                 <Form.Label>Frecuencia Semanal Máxima</Form.Label>
                 <Form.Control
                   type="text"

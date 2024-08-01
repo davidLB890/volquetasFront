@@ -42,6 +42,7 @@ const AgregarPermiso = ({ show, onHide, empresaId, particularId }) => {
       };
       console.log("requestBody", requestBody);
       const response = await postPermiso(requestBody, usuarioToken);
+      console.log("response", response);
 
       setSuccess("Permiso agregado correctamente");
       setFechaCreacion("");

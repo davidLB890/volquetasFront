@@ -5,19 +5,19 @@ import {
   Form,
   Container,
   Modal,
-  Collapse,
-  Card,
+  Collapse
 } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import DatosObra from "./DatosObra";
 
-const ListaObras = ({ obras = [] }) => {
+const ListaObras = ({ obras = [], onObraEliminada }) => {
   const [cambios, setCambios] = useState(true);
   const [filtroTipo, setFiltroTipo] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [obraSeleccionada, setObraSeleccionada] = useState(null);
   const [mostrarDatosObra, setMostrarDatosObra] = useState(false);
   const [open, setOpen] = useState(false); // Estado para manejar el despliegue
+  const [error, setError] = useState("");
 
   const rolUsuario = localStorage.getItem("userRol");
 
@@ -29,11 +29,12 @@ const ListaObras = ({ obras = [] }) => {
     try {
       await deleteObra(obraId, usuarioToken);
       setCambios(true);
+      setShowConfirmModal(false);
+      if (onObraEliminada) {
+        onObraEliminada(obraId); // Notifica al componente padre que una obra ha sido eliminada
+      }
     } catch (error) {
-      console.error(
-        "Error al conectar con el servidor:",
-        error.response?.data?.error || error.message
-      );
+      setError(error.response?.data?.error);
     }
   };
 
@@ -44,7 +45,6 @@ const ListaObras = ({ obras = [] }) => {
 
   const handleConfirmEliminar = () => {
     handleEliminar(obraSeleccionada.id);
-    setShowConfirmModal(false);
   };
 
   const handleMostrarDatosObra = (obra) => {
@@ -113,16 +113,16 @@ const ListaObras = ({ obras = [] }) => {
                         <td>{obra.calle}</td>
                         <td>{obra.esquina}</td>
                         <td>
-                                <Button
-                                  variant="info"
-                                  style={{
-                                    padding: "0.5rem 1rem",
-                                    marginRight: "0.5rem",
-                                  }}
-                                  onClick={() => handleMostrarDatosObra(obra)}
-                                >
-                                  Datos
-                                </Button>
+                          <Button
+                            variant="info"
+                            style={{
+                              padding: "0.5rem 1rem",
+                              marginRight: "0.5rem",
+                            }}
+                            onClick={() => handleMostrarDatosObra(obra)}
+                          >
+                            Datos
+                          </Button>
                           {rolUsuario === "admin" && (
                             <>
                               <Button
@@ -151,6 +151,7 @@ const ListaObras = ({ obras = [] }) => {
                   <Modal.Title>Confirmar Eliminación</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                  {error && <p>{error}</p>}
                   ¿Estás seguro de que deseas eliminar la obra ubicada en{" "}
                   {obraSeleccionada?.calle}?
                 </Modal.Body>

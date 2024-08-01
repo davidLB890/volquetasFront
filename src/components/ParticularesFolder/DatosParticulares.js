@@ -10,6 +10,7 @@ import {
   fetchParticularFailure,
   createTelefonoSuccess,
   createObraSuccess,
+  deleteObraSuccess,
 } from "../../features/particularSlice";
 import ModificarParticular from "./ModificarParticular";
 import TelefonosParticular from "./TelefonosParticular";
@@ -18,7 +19,7 @@ import AgregarObra from "../ObrasFolder/AgregarObra";
 import AgregarTelefono from "../TelefonosFolder/AgregarTelefono";
 import ListaPermisos from "../PermisosFolder/ListaPermisos";
 import ListaPedidosEmpresaOParticular from "../PedidosFolder/ListaPedidosEmpresaOParticular";
-import AgregarPermiso from "../PermisosFolder/AgregarPermiso"; // Asegúrate de tener este componente
+import AgregarPermiso from "../PermisosFolder/AgregarPermiso";
 
 const DatosParticular = () => {
   const { particular, loading, error } = useSelector((state) => state.particular);
@@ -67,6 +68,10 @@ const DatosParticular = () => {
       activa: nuevaObra?.activa,
     };
     dispatch(createObraSuccess(obra));
+  };
+
+  const handleObraEliminada = (obraId) => {
+    dispatch(deleteObraSuccess(obraId)); // Despacha la acción para eliminar la obra del estado de Redux
   };
 
   if (loading) {
@@ -162,7 +167,7 @@ const DatosParticular = () => {
         onHide={() => setShowModificarParticular(false)}
         particular={particular}
       />
-      <ListaObras obras={particular?.obras || []} />
+      <ListaObras obras={particular?.obras || []} onObraEliminada={handleObraEliminada} />
       <ListaPermisos particularId={particular.id} />
       <ListaPedidosEmpresaOParticular particularId={particular.id} />
 
