@@ -157,6 +157,40 @@ const ListaPedido = () => {
     navigate("/pedidos/datos", { state: { pedidoId: idPedido } });
   };
 
+  const renderSugerencia = (pedido) => {
+    if (pedido.Movimientos.length === 0) {
+      const sugerenciaEntrega = pedido.Sugerencias.find(s => s.tipoSugerido === "entrega");
+      if (sugerenciaEntrega) {
+        const chofer = choferes.find(c => c.id === sugerenciaEntrega.choferSugeridoId);
+        return chofer ? `Entrega - ${chofer.nombre} - ${new Date(sugerenciaEntrega.horarioSugerido).toLocaleString()}` : "Chofer no encontrado";
+      }
+      return "-";
+    } else if (pedido.Movimientos.length === 1) {
+      const sugerenciaLevante = pedido.Sugerencias.find(s => s.tipoSugerido === "levante");
+      if (sugerenciaLevante) {
+        const chofer = choferes.find(c => c.id === sugerenciaLevante.choferSugeridoId);
+        return chofer ? `Levante - ${chofer.nombre} - ${new Date(sugerenciaLevante.horarioSugerido).toLocaleString()}` : "Chofer no encontrado";
+      }
+      return "-";
+    } else if (pedido.Movimientos.length === 2) {
+      return "Completo";
+    }
+  };
+
+  const renderMovimiento = (pedido) => {
+    if (pedido.Movimientos.length === 0) {
+      return "-";
+    } else if (pedido.Movimientos.length === 1) {
+      const movimiento = pedido.Movimientos[0];
+      const chofer = choferes.find(c => c.id === movimiento.choferId);
+      return chofer ? `Entregado - ${chofer.nombre} - ${new Date(movimiento.horario).toLocaleString()}` : "Chofer no encontrado";
+    } else if (pedido.Movimientos.length === 2) {
+      const movimiento = pedido.Movimientos[1];
+      const chofer = choferes.find(c => c.id === movimiento.choferId);
+      return chofer ? `Levantado - ${chofer.nombre} - ${new Date(movimiento.horario).toLocaleString()}` : "Chofer no encontrado";
+    }
+  };
+
   return (
     <Container>
       <Button
@@ -343,15 +377,15 @@ const ListaPedido = () => {
               <th className="column-direccion">Dirección</th>
               <th className="column-precio">Precio</th>
               <th className="column-pagado">Pagado</th>
-              <th className="column-tipo-sugerido">Tipo Sugerido</th>
-              <th className="column-estado">Estado</th>
-              <th className="column-chofer">
+              <th className="column-tipo-sugerido">Sugerencia</th>
+              <th className="column-movimiento">Último movimiento</th>
+              {/*<th className="column-chofer">
                 {tipoHorario === "creacion" && "Chofer"}
                 {tipoHorario === "sugerenciaEntrega" && "Chofer Sug. ent."}
                 {tipoHorario === "sugerenciaLevante" && "Chofer Sug. lev."}
                 {tipoHorario === "movimientoEntrega" && "Chofer Entrega"}
                 {tipoHorario === "movimientoLevante" && "Chofer Levante"}
-              </th>
+              </th>*/}
             </tr>
           </thead>
           <tbody>
@@ -429,11 +463,21 @@ const ListaPedido = () => {
                   >
                     {pedido.pagoPedido?.pagado ? "Sí" : "No"}
                   </td>
-                  <td className="column-chofer">
-                    {pedido.Sugerencias[0]?.tipoSugerido || "N/A"}
+
+
+
+                  <td className="column-tipo-sugerido">
+                    {renderSugerencia(pedido)}
                   </td>
-                  <td className="column-tipo-sugerido">{pedido.estado}</td>
-                  <td className="column-chofer">
+
+
+
+                  <td className="column-movimiento">
+                    {renderMovimiento(pedido)}
+                  </td>
+
+
+                  {/* <td className="column-chofer">
                     {tipoHorario === "creacion" && pedido.Movimientos.length > 0
                       ? choferes.find(
                           (chofer) =>
@@ -472,7 +516,7 @@ const ListaPedido = () => {
                               ?.choferId
                         )?.nombre || "-"
                       : "-"}
-                  </td>
+                  </td> */}
                 </tr>
               );
             })}

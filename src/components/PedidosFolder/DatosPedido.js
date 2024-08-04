@@ -1,23 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Spinner,
-  Alert,
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-} from "react-bootstrap";
-import {
-  fetchPedido,
-  fetchObra,
-  fetchPermisos,
-} from "../../features/pedidoSlice";
+import {Spinner,Alert,Container,Row,Col,Card,Button,Modal,} from "react-bootstrap";
+import {fetchPedido,fetchObra,fetchPermisos,} from "../../features/pedidoSlice";
 import useAuth from "../../hooks/useAuth";
-import MovimientosYSugerencias from "../MovimientosFolder/MovimientosYSugerencias"; 
-import DetallesPedido from "./DetallesPedido"; 
+import MovimientosYSugerencias from "../MovimientosFolder/MovimientosYSugerencias";
+import DetallesPedido from "./DetallesPedido";
 import ContactosObraPedido from "../ObrasFolder/ContactosObraPedido";
 import PagoPedido from "../PagosPedidoFolder/PagosPedido";
 import Multiples from "./Multiples";
@@ -37,6 +25,8 @@ const DatosPedido = () => {
   const navigate = useNavigate();
 
   const [showRecambioModal, setShowRecambioModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
 
   useEffect(() => {
     const usuarioToken = getToken();
@@ -59,20 +49,31 @@ const DatosPedido = () => {
     }
   }, [dispatch, getToken, pedido]);
 
-  const handleEmliminar = () => {
+  const handleShowConfirmModal = () => {
+    setShowConfirmModal(true);
+  };
+
+  const handleHideConfirmModal = () => {
+    setShowConfirmModal(false);
+  };
+
+  const handleConfirmEliminar = async () => {
     const usuarioToken = getToken();
     const body = {
       obraId: pedido.Obra.id,
-      descripcion: pedido.descripcion? pedido.descripcion: "",
-      permisoId: pedido.permisoId? pedido.permisoId: null,
-      nroPesada: pedido.nroPesada? pedido.nroPesada: null,
-    }
+      descripcion: pedido.descripcion ? pedido.descripcion : "",
+      permisoId: pedido.permisoId ? pedido.permisoId : null,
+      nroPesada: pedido.nroPesada ? pedido.nroPesada : null,
+    };
     try {
-      deletePedidoId(pedidoId, body, usuarioToken);
+      await deletePedidoId(pedidoId, body, usuarioToken);
       navigate("/");
     } catch (error) {
+      setDeleteError(error.response?.data?.error || "Error al eliminar el pedido");
+    } finally {
+      setShowConfirmModal(false);
     }
-  }
+  };
 
   if (loading) {
     return <Spinner animation="border" />;
@@ -125,8 +126,13 @@ const DatosPedido = () => {
       <Card className="mt-3">
         <Card.Header>
           <Row>
+            {pedido.estado === "cancelado" && (
+              <div className="alert alert-warning" role="alert">
+                <strong>Pedido Cancelado!</strong> Este pedido fue cancelado.
+              </div>
+            )}
             <Col md={6}>
-            {pedido.creadoComo==="recambio"&& <Referencia />}
+              {pedido.creadoComo === "recambio" && <Referencia />}
               <h2>
                 Detalles del pedido{" "}
                 {pedido.creadoComo === "multiple"
@@ -163,16 +169,29 @@ const DatosPedido = () => {
             onHide={() => setShowRecambioModal(false)}
             pedido={pedido}
           />
-          <Button
-            variant="danger"
-            className="mt-3"
-            onClick={handleEmliminar}
-          >
+          <Button variant="danger" className="mt-3" onClick={handleShowConfirmModal}>
             Eliminar
           </Button>
-          
+          {deleteError && <Alert variant="danger" className="mt-3">{deleteError}</Alert>}
         </Card.Body>
       </Card>
+
+      <Modal show={showConfirmModal} onHide={handleHideConfirmModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Eliminación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Estás seguro de que deseas eliminar este pedido?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleHideConfirmModal}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleConfirmEliminar}>
+            Eliminar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

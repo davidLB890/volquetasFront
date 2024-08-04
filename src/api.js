@@ -800,3 +800,73 @@ export const deleteSugerenciaAPI = (sugerenciaId, usuarioToken) => {
     },
   });
 }
+
+//ESTADISTICAS
+export const getDeudoresEstadisticas = (fechaInicio, fechaFin, tipo, deudores, usuarioToken) => {
+  return axios.get(`${API_URL}estadisticas-deudores`, {
+    params: {
+      fechaInicio,
+      fechaFin,
+      tipo,
+      deudores,
+    },
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
+export const getClienteEstadisticas = (fechaInicio, fechaFin, empresaId, particularId, estado, usuarioToken) => {
+  return axios.get(`${API_URL}estadisticas-cliente`, {
+    params: {
+      fechaInicio,
+      fechaFin,
+      empresaId,
+      particularId,
+      estado,
+    },
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const getClientesEstadisticas = (fechaInicio, fechaFin, estado, usuarioToken) => {
+  return axios.get(`${API_URL}estadisticas-cliente`, {
+    params: {
+      fechaInicio,
+      fechaFin,
+      estado,
+    },
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const getChoferEstadisticas = (choferId, fechaInicio, fechaFin, valorJornal, valorExtra, usuarioToken) => {
+  return axios.get(`${API_URL}estadisticas-chofer/${choferId}`, {
+    params: {
+      fechaInicio,
+      fechaFin,
+      valorJornal,
+      valorExtra,
+    },
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
+export const getEstadisticasPedidos = (fechaInicio, fechaFin, usuarioToken) => {
+  return axios.get(`${API_URL}estadisticas-pedidos`, {
+    params: {
+      fechaInicio,
+      fechaFin,
+    },
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}

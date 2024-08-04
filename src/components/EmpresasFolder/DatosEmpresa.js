@@ -130,24 +130,13 @@ const DatosEmpresa = () => {
             {showContactos ? "Ocultar Contactos" : "Mostrar Contactos"}
           </Button>
           <Button
-            onClick={() => setShowAgregarContacto(true)}
-            className="ml-2"
-            variant="primary"
-            style={{
-              padding: "0.5rem 1rem",
-              marginRight: "0.5rem",
-            }}
-          >
-            Agregar Contacto
-          </Button>
-          <Button
             onClick={() => setShowModificarEmpresa(true)}
             className="ml-2"
             variant="warning"
             style={{
               padding: "0.5rem 1rem",
               marginRight: "0.5rem",
-            }}
+              }}
           >
             Modificar Empresa
           </Button>
@@ -158,7 +147,7 @@ const DatosEmpresa = () => {
             style={{
               padding: "0.5rem 1rem",
               marginRight: "0.5rem",
-            }}
+              }}
           >
             Agregar Obra
           </Button>
@@ -169,12 +158,23 @@ const DatosEmpresa = () => {
             style={{
               padding: "0.5rem 1rem",
               marginRight: "0.5rem",
-            }}
+              }}
           >
             Agregar Permiso
           </Button>
           <Collapse in={showContactos}>
             <div id="contactos-collapse">
+              <Button
+                onClick={() => setShowAgregarContacto(true)}
+                className="ml-2"
+                variant="primary"
+                style={{
+                  padding: "0.5rem 1rem",
+                  marginRight: "0.5rem",
+                }}
+              >
+                Agregar Contacto
+              </Button>
               <ContactosEmpresa contactos={contactos || []} />
             </div>
           </Collapse>

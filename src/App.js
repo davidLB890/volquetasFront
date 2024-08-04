@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { useNavigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import Login from './components/UsuariosFolder/Login';
 import Singin from './components/UsuariosFolder/Singin';
@@ -36,6 +35,7 @@ import AgregarVolqueta from './components/VolquetasFolder/AgregarVolqueta';
 import DatosVolqueta from './components/VolquetasFolder/DatosVolqueta';
 import DatosPedido from './components/PedidosFolder/DatosPedido';
 import DatosPermiso from './components/PermisosFolder/DatosPermiso';
+import NotFound from './components/NotFound';
 
 function App() {
   const location = useLocation();
@@ -61,11 +61,14 @@ function App() {
   const isLoginPage = location.pathname === '/login';
   const isSinginPage = location.pathname === '/singin';
 
+  // Verifica si la ruta actual no coincide con ninguna de las rutas definidas
+  const isNotFoundPage = !['/', '/login', '/singin', '/usuarios/confirmar', '/empleados/crear', '/empleados/telefonos', '/empleados', '/empleados/jornales', '/lj', '/camiones', '/camiones/crear', '/camiones/historial', '/obras', '/obras/crear', '/empresas', '/empresas/datos', '/empresas/crear', '/particulares', '/particulares/datos', '/particulares/crear', '/pedidos/crear', '/pedidos/datos', '/volquetas', '/volquetas/crear', '/volquetas/datos'].includes(location.pathname);
+
   return (
-    <div className={`app-container ${isLoginPage || isSinginPage ? 'login-page' : 'with-sidebar'}`}>
-      {!isLoginPage && !isSinginPage && <CustomNavbar userRole={userRole} />}
+    <div className={`app-container ${isNotFoundPage || isLoginPage || isSinginPage ? 'login-page' : 'with-sidebar'}`}>
+      {!isLoginPage && !isSinginPage && !isNotFoundPage && <CustomNavbar userRole={userRole} />}
       <div className="main-content">
-        {!isLoginPage && !isSinginPage && <CustomSidebar userRole={userRole} />}
+        {!isLoginPage && !isSinginPage && !isNotFoundPage && <CustomSidebar userRole={userRole} />}
         <div className="content">
           <Routes>
             <Route path="/" element={<Dashboard />} />
@@ -103,6 +106,7 @@ function App() {
             <Route path="/volquetas/datos" element={<DatosVolqueta />} />
             {/* PERMISOS */}
             {/* <Route path="/permiso/datos/:permisoId" element={<DatosPermiso />} /> */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </div>
