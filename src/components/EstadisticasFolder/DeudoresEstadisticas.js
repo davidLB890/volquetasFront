@@ -202,7 +202,7 @@ const Deudores = () => {
 
   return (
     <Container>
-      <Button variant="link" onClick={handleShowModal} class="btn bg-gradient-default">
+      <Button variant="link" onClick={handleShowModal} className="btn bg-gradient-default">
         <h5>Deudores</h5>
       </Button>
       {loading && <Spinner animation="border" />}

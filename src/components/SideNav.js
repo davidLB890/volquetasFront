@@ -96,6 +96,7 @@ const CustomSidebar = ({ userRole }) => {
               </div>
             </Nav.Item>
           </div>
+
           <div
             onMouseEnter={() => handleMouseEnter("camiones")}
             onMouseLeave={handleMouseLeave}
@@ -121,6 +122,31 @@ const CustomSidebar = ({ userRole }) => {
               </div>
             </Nav.Item>
           </div>
+
+          <div
+            onMouseEnter={() => handleMouseEnter("facturas")}
+            onMouseLeave={handleMouseLeave}
+            className="nav-item-container"
+          >
+            <Nav.Item className="nav-item">
+              <div
+                onClick={() => toggleExpand("facturas")}
+                className="nav-link cursor-pointer nav-item-title"
+              >
+                <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                  <i className="ni ni-delivery-fast text-info text-sm opacity-10"></i>
+                </div>
+                <span className="nav-link-text ms-1">Facturas</span>
+              </div>
+              <div className={`nav-submenu ms-5 collapse ${expanded === "facturas" ? "show" : ""}`}>
+                <Nav.Link as={Link} to="/facturas" onClick={handleMouseLeave}>
+                  Lista de facturas
+                </Nav.Link>
+              </div>
+            </Nav.Item>
+          </div>
+
+
           <div
             onMouseEnter={() => handleMouseEnter("volquetas")}
             onMouseLeave={handleMouseLeave}

@@ -18,13 +18,13 @@ api.interceptors.response.use(
       return Promise.reject(error.response.data); // Devolvemos el error específico de la respuesta
     } else if (error.request) {
       // Errores de solicitud (sin respuesta del servidor)
-      console.error("Error de solicitud", error.request);
+      //console.error("Error de solicitud", error.request);
       return Promise.reject({
         error: "No se pudo conectar con el servidor. Inténtelo más tarde.",
       });
     } else {
       // Otros errores
-      console.error("Error", error.message);
+      //console.error("Error", error.message);
       return Promise.reject({
         error: "Ocurrió un error inesperado. Inténtelo más tarde.",
       });
@@ -870,3 +870,75 @@ export const getEstadisticasPedidos = (fechaInicio, fechaFin, usuarioToken) => {
     },
   });
 }
+
+
+//FACTURAS
+export const postFactura = (factura, usuarioToken) => {
+  return axios.post(`${API_URL}facturas`, factura, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+export const getFacturas = (fechaInicio, fechaFin, ultimo, empresaId, particularId, estado, usuarioToken) => { 
+  return axios.get(`${API_URL}facturas`, {
+    params: {
+      fechaInicio,
+      fechaFin,
+      ultimo,
+      empresaId,
+      particularId,
+      estado
+    },
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+export const getFacturaId = (facturaId, usuarioToken) => {
+  return axios.get(`${API_URL}facturas/${facturaId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+export const putFacturaRecalcular = (facturaId, fechaPago, usuarioToken) => {
+  return axios.put(`${API_URL}facturas-recalcular/${facturaId}`, { fechaPago }, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+export const putFactura = (facturaId, factura, usuarioToken) => {
+  return axios.put(`${API_URL}facturas/${facturaId}`, factura, {
+    headers: {
+      Authorization: usuarioToken,
+    },
+  });
+}
+
+export const putFacturaEstado = (facturaId, estado, usuarioToken) => {
+  return axios.put(`${API_URL}facturas-estado/${facturaId}`, estado, {
+    headers: {
+      Authorization: usuarioToken,
+    },
+  });
+}
+
+export const deleteFactura = (facturaId, usuarioToken) => {
+  return axios.delete(`${API_URL}facturas/${facturaId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
+

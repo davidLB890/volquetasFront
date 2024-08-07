@@ -42,6 +42,7 @@ const DatosEmpresa = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { empresaId, fromPedido } = location.state;
+  const { facturaId, fromFactura } = location.state;
 
   useEffect(() => {
     const fetchEmpresa = async () => {
@@ -101,6 +102,11 @@ const DatosEmpresa = () => {
       {fromPedido && (
         <Button variant="secondary" onClick={() => navigate(-1)}>
           &larr; Volver al Pedido
+        </Button>
+      )}
+      {fromFactura && (
+        <Button variant="secondary" onClick={() => navigate(-1)}>
+          &larr; Volver a la Factura
         </Button>
       )}
       <Card className="mt-3">

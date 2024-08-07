@@ -22,6 +22,7 @@ const Breadcrumbs = () => {
     'datos': 'Datos',
     'pedidos': 'Pedidos',
     'volquetas': 'Volquetas',
+    'facturas': 'Facturas',
   };
 
   const handleClick = (to) => {

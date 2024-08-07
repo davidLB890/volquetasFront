@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Card, Spinner, Alert, Button, Container, Modal } from "react-bootstrap";
+import {
+  Card,
+  Spinner,
+  Alert,
+  Button,
+  Container,
+  Modal,
+} from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import { getParticularId } from "../../api";
 import {
@@ -22,7 +29,9 @@ import ListaPedidosEmpresaOParticular from "../PedidosFolder/ListaPedidosEmpresa
 import AgregarPermiso from "../PermisosFolder/AgregarPermiso";
 
 const DatosParticular = () => {
-  const { particular, loading, error } = useSelector((state) => state.particular);
+  const { particular, loading, error } = useSelector(
+    (state) => state.particular
+  );
   const [showModificarParticular, setShowModificarParticular] = useState(false);
   const [showAgregarObra, setShowAgregarObra] = useState(false);
   const [showAgregarTelefono, setShowAgregarTelefono] = useState(false);
@@ -33,6 +42,7 @@ const DatosParticular = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { particularId, fromPedido } = location.state;
+  const { facturaId, fromFactura } = location.state;
 
   useEffect(() => {
     const fetchParticular = async () => {
@@ -42,7 +52,9 @@ const DatosParticular = () => {
         const response = await getParticularId(particularId, usuarioToken);
         dispatch(fetchParticularSuccess(response.data));
       } catch (error) {
-        dispatch(fetchParticularFailure(error.response?.data?.error || error.message));
+        dispatch(
+          fetchParticularFailure(error.response?.data?.error || error.message)
+        );
       }
     };
 
@@ -91,6 +103,11 @@ const DatosParticular = () => {
       {fromPedido && (
         <Button variant="secondary" onClick={() => navigate(-1)}>
           &larr; Volver al Pedido
+        </Button>
+      )}
+      {fromFactura && (
+        <Button variant="secondary" onClick={() => navigate(-1)}>
+          &larr; Volver a la Factura
         </Button>
       )}
       <Card className="mt-3">
@@ -167,7 +184,10 @@ const DatosParticular = () => {
         onHide={() => setShowModificarParticular(false)}
         particular={particular}
       />
-      <ListaObras obras={particular?.obras || []} onObraEliminada={handleObraEliminada} />
+      <ListaObras
+        obras={particular?.obras || []}
+        onObraEliminada={handleObraEliminada}
+      />
       <ListaPermisos particularId={particular.id} />
       <ListaPedidosEmpresaOParticular particularId={particular.id} />
 
@@ -195,13 +215,6 @@ const DatosParticular = () => {
 };
 
 export default DatosParticular;
-
-
-
-
-
-
-
 
 /* import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

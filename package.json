@@ -12,7 +12,10 @@
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.3",
+    "css-select": "^5.1.0",
     "dayjs": "^1.11.11",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
     "jwt-decode": "^4.0.0",
     "moment": "^2.30.1",
     "postcss": "^8.4.40",
@@ -29,7 +32,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts --openssl-legacy-provider start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -52,7 +55,19 @@
       "last 1 safari version"
     ]
   },
+  "babel": {
+    "presets": [
+      "react-app"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties",
+      "@babel/plugin-proposal-private-methods",
+      "@babel/plugin-transform-private-property-in-object"
+    ]
+  },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-private-methods": "^7.18.6",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@babel/plugin-transform-private-property-in-object": "^7.24.7"
   }

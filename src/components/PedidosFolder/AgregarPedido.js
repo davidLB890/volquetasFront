@@ -129,6 +129,18 @@ const AgregarPedido = () => {
       cantidadMultiple: cantidad,
     };
 
+
+    if (!obraSeleccionada) {
+      setError("Debe seleccionar una obra");
+      setTimeout(() => setError(''), 3000); 
+      return;
+    } else if (!tipoPedido) {
+      setError("Debe seleccionar un tipo de pedido");
+      setTimeout(() => setError(''), 3000);
+      return;
+    }
+    
+
     try {
       let response;
       if (tipoPedido === "simple") {
@@ -188,7 +200,7 @@ const AgregarPedido = () => {
       console.error(
         "Error al enviar el pedido:",
         error.response?.data?.error,
-        error.response?.data?.detalle || error.message
+        error.response?.data?.detalle || error
       );
       setError(
         error.response?.data?.error + " - " + error.response?.data?.detalle

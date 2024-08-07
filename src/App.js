@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -36,6 +37,9 @@ import DatosVolqueta from './components/VolquetasFolder/DatosVolqueta';
 import DatosPedido from './components/PedidosFolder/DatosPedido';
 import DatosPermiso from './components/PermisosFolder/DatosPermiso';
 import NotFound from './components/NotFound';
+import Facturas from './components/FacturasFolder/Facturas';
+import AgregarFactura from './components/FacturasFolder/AgregarFactura';
+import DatosFactura from './components/FacturasFolder/DatosFactura';
 
 function App() {
   const location = useLocation();
@@ -62,7 +66,7 @@ function App() {
   const isSinginPage = location.pathname === '/singin';
 
   // Verifica si la ruta actual no coincide con ninguna de las rutas definidas
-  const isNotFoundPage = !['/', '/login', '/singin', '/usuarios/confirmar', '/empleados/crear', '/empleados/telefonos', '/empleados', '/empleados/jornales', '/lj', '/camiones', '/camiones/crear', '/camiones/historial', '/obras', '/obras/crear', '/empresas', '/empresas/datos', '/empresas/crear', '/particulares', '/particulares/datos', '/particulares/crear', '/pedidos/crear', '/pedidos/datos', '/volquetas', '/volquetas/crear', '/volquetas/datos'].includes(location.pathname);
+  const isNotFoundPage = !['/', '/login', '/singin', '/usuarios/confirmar', '/empleados/crear', '/empleados/telefonos', '/empleados', '/empleados/jornales', '/lj', '/camiones', '/camiones/crear', '/camiones/historial', '/obras', '/obras/crear', '/empresas', '/empresas/datos', '/empresas/crear', '/particulares', '/particulares/datos', '/particulares/crear', '/pedidos/crear', '/pedidos/datos', '/volquetas', '/volquetas/crear', '/volquetas/datos', '/facturas', '/facturas/crear', '/facturas/datos'].includes(location.pathname);
 
   return (
     <div className={`app-container ${isNotFoundPage || isLoginPage || isSinginPage ? 'login-page' : 'with-sidebar'}`}>
@@ -107,6 +111,11 @@ function App() {
             {/* PERMISOS */}
             {/* <Route path="/permiso/datos/:permisoId" element={<DatosPermiso />} /> */}
             <Route path="*" element={<NotFound />} />
+
+            {/* FACTURAS */}
+            <Route path="/facturas" element={<Facturas />} />
+            <Route path="/facturas/crear" element={<AgregarFactura />} />
+            <Route path="/facturas/datos" element={<DatosFactura />} />
           </Routes>
         </div>
       </div>

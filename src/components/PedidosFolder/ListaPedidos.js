@@ -191,16 +191,28 @@ const ListaPedido = () => {
     }
   };
 
+  const handleAgregarPedido = () => {
+    navigate("/pedidos/crear");
+  };
+
   return (
     <Container>
-      <Button
-        onClick={() => setOpenFilters(!openFilters)}
-        aria-controls="filtros-collapse"
-        aria-expanded={openFilters}
-        className="mb-3"
-      >
-        Filtros
-      </Button>
+      <Row className="mb-3">
+        <Col>
+          <Button
+            onClick={() => setOpenFilters(!openFilters)}
+            aria-controls="filtros-collapse"
+            aria-expanded={openFilters}
+          >
+            Filtros
+          </Button>
+        </Col>
+        <Col className="d-flex justify-content-end">
+          <Button variant="primary" onClick={handleAgregarPedido}>
+            Agregar Nuevo Pedido
+          </Button>
+        </Col>
+      </Row>
       <Collapse in={openFilters}>
         <div id="filtros-collapse">
           <Form onSubmit={handleFilterChange}>

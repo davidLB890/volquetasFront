@@ -65,30 +65,34 @@ const ClientesEstadisticas = () => {
     particularId,
     estado
   ) => {
-    const usuarioToken = getToken();
-    try {
-      const response = await getClienteEstadisticas(
-        fechaInicio,
-        fechaFin,
-        empresaId,
-        particularId,
-        estado,
-        usuarioToken
-      );
-      if (empresaId) {
-        buscarCliente(empresaId, "empresa");
-      }
-      if (particularId) {
-        buscarCliente(particularId, "particular");
-      }
+    if (!empresaId && !particularId) {
+      setError("Debe seleccionar una empresa o particular");
+      setTimeout(() => setError(""), 5000);
+      return;
+    } else {
+      const usuarioToken = getToken();
+      try {
+        const response = await getClienteEstadisticas(
+          fechaInicio,
+          fechaFin,
+          empresaId,
+          particularId,
+          estado,
+          usuarioToken
+        );
+        if (empresaId) {
+          buscarCliente(empresaId, "empresa");
+        }
+        if (particularId) {
+          buscarCliente(particularId, "particular");
+        }
 
-      setEstadisticas(response.data);
-      console.log("Estadisticas:", response.data);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setError("Error al obtener las estadísticas de clientes");
-      setLoading(false);
+        setEstadisticas(response.data);
+        setLoading(false);
+      } catch (error) {
+        setError("Error al obtener las estadísticas de clientes");
+        setLoading(false);
+      }
     }
   };
 
@@ -162,9 +166,15 @@ const ClientesEstadisticas = () => {
     return obra ? obra.calle : `Obra ID ${id}`;
   };
 
+  const tieneEstadisticas = Object.keys(estadisticas).length > 0;
+
   return (
     <Container>
-      <Button variant="link" onClick={handleShowModal} className="btn bg-gradient-default" >
+      <Button
+        variant="link"
+        onClick={handleShowModal}
+        className="btn bg-gradient-default"
+      >
         <h5>Cliente</h5>
       </Button>
       {loading && <Spinner animation="border" />}
@@ -288,7 +298,7 @@ const ClientesEstadisticas = () => {
               </Col>
             </Row>
           </Form>
-          {!loading && !error && estadisticas && (
+          {!loading && !error && tieneEstadisticas && (
             <>
               <ul style={{ listStyleType: "none", padding: 0 }}>
                 <li style={{ marginBottom: "2px" }}>
@@ -380,7 +390,7 @@ const ClientesEstadisticas = () => {
                             style={{ display: "flex", alignItems: "center" }}
                           >
                             <strong>Levantado:</strong>{" "}
-                            {estadisticas.estado.levantado.cantidad}
+                            {`Cantidad: ${estadisticas.estado.levantado.cantidad}`}
                             <Button
                               variant="link"
                               className="mt-2"
@@ -420,7 +430,7 @@ const ClientesEstadisticas = () => {
                             style={{ display: "flex", alignItems: "center" }}
                           >
                             <strong>Entregado:</strong>{" "}
-                            {estadisticas.estado.entregado.cantidad}
+                            {`Cantidad: ${estadisticas.estado.entregado.cantidad}`}
                             <Button
                               variant="link"
                               className="mt-2"
@@ -460,7 +470,7 @@ const ClientesEstadisticas = () => {
                             style={{ display: "flex", alignItems: "center" }}
                           >
                             <strong>Iniciado:</strong>{" "}
-                            {estadisticas.estado.iniciado.cantidad}
+                            {`Cantidad: ${estadisticas.estado.iniciado.cantidad}`}
                             <Button
                               variant="link"
                               className="mt-2"
@@ -500,7 +510,7 @@ const ClientesEstadisticas = () => {
                             style={{ display: "flex", alignItems: "center" }}
                           >
                             <strong>Cancelado:</strong>{" "}
-                            {estadisticas.estado.cancelado.cantidad}
+                            {`Cantidad: ${estadisticas.estado.cancelado.cantidad}`}
                             <Button
                               variant="link"
                               className="mt-2"
@@ -545,7 +555,7 @@ const ClientesEstadisticas = () => {
                       >
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <strong>{getObraCalle(key)}:</strong>{" "}
-                          {estadisticas.obras[key].cantidad || 0}
+                          {`Cantidad: ${estadisticas.obras[key].cantidad || 0}`}
                           {estadisticas.obras[key].ids.length > 0 && (
                             <Button
                               variant="link"

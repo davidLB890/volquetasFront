@@ -28,11 +28,8 @@ const Dashboard = () => {
 
   return (
     <Container>
-      <div className="header">
+      <div className="text-center">
         <h1>Inicio</h1>
-        <Button variant="primary" onClick={handleAgregarPedido}>
-          Agregar Nuevo Pedido
-        </Button>
       </div>
       <div>
         <h3>Estadísticas:</h3>
@@ -51,8 +48,9 @@ const Dashboard = () => {
           </Col>
         </Row>
       </div>
-      <h3>Lista de Pedidos:</h3>
-      <ListaPedido />
+        <h3>Pedidos:</h3>
+        <ListaPedido />
+      
     </Container>
   );
 };

@@ -1,8 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {Spinner,Alert,Container,Row,Col,Card,Button,Modal,} from "react-bootstrap";
-import {fetchPedido,fetchObra,fetchPermisos,} from "../../features/pedidoSlice";
+import {
+  Spinner,
+  Alert,
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Modal,
+} from "react-bootstrap";
+import {
+  fetchPedido,
+  fetchObra,
+  fetchPermisos,
+} from "../../features/pedidoSlice";
 import useAuth from "../../hooks/useAuth";
 import MovimientosYSugerencias from "../MovimientosFolder/MovimientosYSugerencias";
 import DetallesPedido from "./DetallesPedido";
@@ -27,6 +40,8 @@ const DatosPedido = () => {
   const [showRecambioModal, setShowRecambioModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
+
+  const { fromFactura } = location.state;
 
   useEffect(() => {
     const usuarioToken = getToken();
@@ -69,7 +84,9 @@ const DatosPedido = () => {
       await deletePedidoId(pedidoId, body, usuarioToken);
       navigate("/");
     } catch (error) {
-      setDeleteError(error.response?.data?.error || "Error al eliminar el pedido");
+      setDeleteError(
+        error.response?.data?.error || "Error al eliminar el pedido"
+      );
     } finally {
       setShowConfirmModal(false);
     }
@@ -122,6 +139,11 @@ const DatosPedido = () => {
           Volver a Particular
         </Button>
       )}
+      {fromFactura && (
+        <Button variant="secondary" onClick={() => navigate(-1)}>
+          &larr; Volver a la Factura
+        </Button>
+      )}
 
       <Card className="mt-3">
         <Card.Header>
@@ -161,6 +183,10 @@ const DatosPedido = () => {
             variant="warning"
             className="mt-3"
             onClick={() => setShowRecambioModal(true)}
+            style={{
+              padding: "0.5rem 1rem",
+              marginRight: "0.5rem",
+              }}
           >
             Recambio
           </Button>
@@ -169,10 +195,22 @@ const DatosPedido = () => {
             onHide={() => setShowRecambioModal(false)}
             pedido={pedido}
           />
-          <Button variant="danger" className="mt-3" onClick={handleShowConfirmModal}>
+          <Button
+            variant="danger"
+            className="mt-3"
+            onClick={handleShowConfirmModal}
+            style={{
+              padding: "0.5rem 1rem",
+              marginRight: "0.5rem",
+              }}
+          >
             Eliminar
           </Button>
-          {deleteError && <Alert variant="danger" className="mt-3">{deleteError}</Alert>}
+          {deleteError && (
+            <Alert variant="danger" className="mt-3">
+              {deleteError}
+            </Alert>
+          )}
         </Card.Body>
       </Card>
 
