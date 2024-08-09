@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { getEmpresasLetra, getEmpresasNombre } from "../../api";
-import { useNavigate } from "react-router-dom";
 import { Container, Table, Button, Spinner, Alert, Nav, Card, Form, Row, Col } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import { getEmpresasLetra, getEmpresasNombre } from "../../api"; // Importa la función para obtener las empresas por letra y por nombre
 import ListaResultadosNombre from "../ListaResultadosNombre"; // Ajusta la ruta según sea necesario
+import '../../assets/css/ListaEmpresas.css'; // Archivo CSS adicional para los estilos personalizados
 
 const ListaEmpresas = () => {
   const [empresas, setEmpresas] = useState([]);
@@ -128,35 +129,60 @@ const ListaEmpresas = () => {
           {showSearchResults ? (
             <ListaResultadosNombre resultados={searchResults} onSeleccionar={handleNavigateToEmpresa} />
           ) : (
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
+            <>
+              {/* Vista para pantallas grandes */}
+              <div className="d-none d-md-block">
+                <Table striped bordered hover>
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {empresas.length === 0 ? (
+                      <tr>
+                        <td colSpan="2">No hay empresas que comiencen con la letra "{selectedLetter}".</td>
+                      </tr>
+                    ) : (
+                      empresas.map((empresa) => (
+                        <tr key={empresa.id}>
+                          <td>{empresa.nombre}</td>
+                          <td>
+                            <Button
+                              variant="primary"
+                              onClick={() => handleNavigateToEmpresa(empresa.id)}
+                            >
+                              Ver Datos
+                            </Button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </Table>
+              </div>
+              
+              {/* Vista para pantallas pequeñas */}
+              <div className="d-md-none">
                 {empresas.length === 0 ? (
-                  <tr>
-                    <td colSpan="2">No hay empresas que comiencen con la letra "{selectedLetter}".</td>
-                  </tr>
+                  <p>No hay empresas que comiencen con la letra "{selectedLetter}".</p>
                 ) : (
                   empresas.map((empresa) => (
-                    <tr key={empresa.id}>
-                      <td>{empresa.nombre}</td>
-                      <td>
-                        <Button
-                          variant="primary"
-                          onClick={() => handleNavigateToEmpresa(empresa.id)}
-                        >
-                          Ver Datos
-                        </Button>
-                      </td>
-                    </tr>
+                    <div key={empresa.id} className="empresa-item mb-3">
+                      <div className="nombre">{empresa.nombre}</div>
+                      <Button
+                        variant="primary"
+                        onClick={() => handleNavigateToEmpresa(empresa.id)}
+                        className="mt-2"
+                      >
+                        Ver Datos
+                      </Button>
+                    </div>
                   ))
                 )}
-              </tbody>
-            </Table>
+              </div>
+            </>
           )}
         </Card.Body>
       </Card>

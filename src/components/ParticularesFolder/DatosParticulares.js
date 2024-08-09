@@ -7,7 +7,8 @@ import {
   Alert,
   Button,
   Container,
-  Modal,
+  Row,
+  Col,
 } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import { getParticularId } from "../../api";
@@ -124,53 +125,54 @@ const DatosParticular = () => {
           <Card.Text>
             <strong>Descripción:</strong> {particular?.descripcion}
           </Card.Text>
-          <Button
-            onClick={() => setShowModificarParticular(true)}
-            className="ml-2"
-            variant="warning"
-            style={{
-              padding: "0.5rem 1rem",
-              marginRight: "0.5rem",
-            }}
-          >
-            Modificar Particular
-          </Button>
-
-          <Button
-            variant="primary"
-            className="ml-2"
-            style={{
-              padding: "0.5rem 1rem",
-              marginRight: "0.5rem",
-            }}
-            onClick={() => setShowAgregarTelefono(true)}
-          >
-            Agregar Teléfono
-          </Button>
-
-          <Button
-            onClick={() => setShowAgregarObra(true)}
-            className="ml-2"
-            variant="success"
-            style={{
-              padding: "0.5rem 1rem",
-              marginRight: "0.5rem",
-            }}
-          >
-            Agregar Obra
-          </Button>
-
-          <Button
-            onClick={() => setShowAgregarPermiso(true)}
-            className="ml-2"
-            variant="info"
-            style={{
-              padding: "0.5rem 1rem",
-              marginRight: "0.5rem",
-            }}
-          >
-            Agregar Permiso
-          </Button>
+          
+          {/* Grupo de botones con disposición vertical en pantallas pequeñas */}
+          <Row>
+            <Col xs={12} md={8} className="d-flex flex-column flex-md-row">
+              <Button
+                onClick={() => setShowModificarParticular(true)}
+                className="mb-2 mb-md-0 me-md-2"
+                variant="warning"
+                style={{
+                  padding: "0.5rem 1rem",
+                }}
+              >
+                Modificar Particular
+              </Button>
+              <Button
+                variant="primary"
+                className="mb-2 mb-md-0 me-md-2"
+                style={{
+                  padding: "0.5rem 1rem",
+                }}
+                onClick={() => setShowAgregarTelefono(true)}
+              >
+                Agregar Teléfono
+              </Button>
+              <Button
+                onClick={() => setShowAgregarObra(true)}
+                className="mb-2 mb-md-0 me-md-2"
+                variant="success"
+                style={{
+                  padding: "0.5rem 1rem",
+                }}
+              >
+                Agregar Obra
+              </Button>
+            </Col>
+            <Col xs={12} md={4}>
+              <Button
+                onClick={() => setShowAgregarPermiso(true)}
+                className="w-100"
+                variant="info"
+                style={{
+                  padding: "0.5rem 1rem",
+                }}
+              >
+                Agregar Permiso
+              </Button>
+            </Col>
+          </Row>
 
           <TelefonosParticular
             telefonos={particular?.Telefonos || []}
@@ -215,6 +217,7 @@ const DatosParticular = () => {
 };
 
 export default DatosParticular;
+
 
 /* import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

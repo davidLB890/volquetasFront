@@ -31,26 +31,23 @@ const Dashboard = () => {
       <div className="text-center">
         <h1>Inicio</h1>
       </div>
-      <div>
-        <h3>Estadísticas:</h3>
+      <div className="custom-background">
         <Row>
-          <Col md={3}>
+          <Col xs={6} md={3}>
             <PedidosEstadisticas />
           </Col>
-          <Col md={3}>
+          <Col xs={6} md={3}>
             <ClientesEstadisticas />
           </Col>
-          <Col md={3}>
+          <Col xs={6} md={3}>
             <ChoferEstadisticas />
           </Col>
-          <Col md={3}>
+          <Col xs={6} md={3}>
             <Deudores />
           </Col>
         </Row>
       </div>
-        <h3>Pedidos:</h3>
-        <ListaPedido />
-      
+      <ListaPedido />
     </Container>
   );
 };

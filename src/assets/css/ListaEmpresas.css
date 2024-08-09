@@ -1,0 +1,18 @@
+/* ListaEmpresas.css */
+
+.empresa-item {
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: #fff;
+  }
+  
+  .empresa-item .nombre {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .empresa-item .btn {
+    width: 100%; /* El botón ocupa todo el ancho en pantallas pequeñas */
+  }
+  

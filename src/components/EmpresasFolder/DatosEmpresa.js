@@ -8,6 +8,8 @@ import {
   Button,
   Container,
   Collapse,
+  Row,
+  Col,
 } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import { getEmpresaId } from "../../api";
@@ -123,60 +125,63 @@ const DatosEmpresa = () => {
           <Card.Text>
             <strong>Descripción:</strong> {empresa?.descripcion}
           </Card.Text>
-          <Button
-            onClick={() => setShowContactos(!showContactos)}
-            aria-controls="contactos-collapse"
-            aria-expanded={showContactos}
-            style={{
-              padding: "0.5rem 1rem",
-              marginRight: "0.5rem",
-            }}
-            variant="info"
-          >
-            {showContactos ? "Ocultar Contactos" : "Mostrar Contactos"}
-          </Button>
-          <Button
-            onClick={() => setShowModificarEmpresa(true)}
-            className="ml-2"
-            variant="warning"
-            style={{
-              padding: "0.5rem 1rem",
-              marginRight: "0.5rem",
-              }}
-          >
-            Modificar Empresa
-          </Button>
-          <Button
-            onClick={() => setShowAgregarObra(true)}
-            className="ml-2"
-            variant="success"
-            style={{
-              padding: "0.5rem 1rem",
-              marginRight: "0.5rem",
-              }}
-          >
-            Agregar Obra
-          </Button>
-          <Button
-            onClick={() => setShowAgregarPermiso(true)}
-            className="ml-2"
-            variant="primary"
-            style={{
-              padding: "0.5rem 1rem",
-              marginRight: "0.5rem",
-              }}
-          >
-            Agregar Permiso
-          </Button>
-          <Collapse in={showContactos}>
-            <div id="contactos-collapse">
+          
+          {/* Grupo de botones con disposición vertical en pantallas pequeñas */}
+          <Row>
+            <Col xs={12} md={8} className="d-flex flex-column flex-md-row">
               <Button
-                onClick={() => setShowAgregarContacto(true)}
-                className="ml-2"
+                onClick={() => setShowModificarEmpresa(true)}
+                className="mb-2 mb-md-0 me-md-2"
+                variant="warning"
+                style={{
+                  padding: "0.5rem 1rem",
+                }}
+              >
+                Modificar Empresa
+              </Button>
+              <Button
+                onClick={() => setShowAgregarObra(true)}
+                className="mb-2 mb-md-0 me-md-2"
+                variant="success"
+                style={{
+                  padding: "0.5rem 1rem",
+                }}
+              >
+                Agregar Obra
+              </Button>
+              <Button
+                onClick={() => setShowAgregarPermiso(true)}
+                className="mb-2 mb-md-0 me-md-2"
                 variant="primary"
                 style={{
                   padding: "0.5rem 1rem",
-                  marginRight: "0.5rem",
+                }}
+              >
+                Agregar Permiso
+              </Button>
+              <Button
+                onClick={() => setShowContactos(!showContactos)}
+                aria-controls="contactos-collapse"
+                aria-expanded={showContactos}
+                variant="info"
+                className="mb-2 mb-md-0 me-md-2"
+                style={{
+                  padding: "0.5rem 1rem",
+                }}
+              >
+                {showContactos ? "Ocultar Contactos" : "Mostrar Contactos"}
+              </Button>
+            </Col>
+          </Row>
+          
+          <Collapse in={showContactos}>
+            <div id="contactos-collapse" className="mt-3">
+              <Button
+                onClick={() => setShowAgregarContacto(true)}
+                variant="primary"
+                className="mb-3"
+                style={{
+                  padding: "0.5rem 1rem",
                 }}
               >
                 Agregar Contacto

@@ -209,7 +209,7 @@ const ListaPedido = () => {
         </Col>
         <Col className="d-flex justify-content-end">
           <Button variant="primary" onClick={handleAgregarPedido}>
-            Agregar Nuevo Pedido
+            Nuevo Pedido
           </Button>
         </Col>
       </Row>

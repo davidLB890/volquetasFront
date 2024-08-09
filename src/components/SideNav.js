@@ -3,7 +3,7 @@ import { Nav } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import '../assets/css/CustomSidebar.css';
 
-const CustomSidebar = ({ userRole }) => {
+const CustomSidebar = ({ userRole}) => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState("");
 
@@ -124,28 +124,33 @@ const CustomSidebar = ({ userRole }) => {
           </div>
 
           <div
-            onMouseEnter={() => handleMouseEnter("facturas")}
+            onMouseEnter={() => handleMouseEnter("listas")}
             onMouseLeave={handleMouseLeave}
             className="nav-item-container"
           >
             <Nav.Item className="nav-item">
               <div
-                onClick={() => toggleExpand("facturas")}
+                onClick={() => toggleExpand("listas")}
                 className="nav-link cursor-pointer nav-item-title"
               >
                 <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                   <i className="ni ni-delivery-fast text-info text-sm opacity-10"></i>
                 </div>
-                <span className="nav-link-text ms-1">Facturas</span>
+                <span className="nav-link-text ms-1">Listas</span>
               </div>
-              <div className={`nav-submenu ms-5 collapse ${expanded === "facturas" ? "show" : ""}`}>
+              <div className={`nav-submenu ms-5 collapse ${expanded === "listas" ? "show" : ""}`}>
+                <Nav.Link as={Link} to="/permisos" onClick={handleMouseLeave}>
+                  Lista de permisos
+                </Nav.Link> 
                 <Nav.Link as={Link} to="/facturas" onClick={handleMouseLeave}>
                   Lista de facturas
+                </Nav.Link>
+                <Nav.Link as={Link} to="/imm" onClick={handleMouseLeave}>
+                  Lista para la IMM
                 </Nav.Link>
               </div>
             </Nav.Item>
           </div>
-
 
           <div
             onMouseEnter={() => handleMouseEnter("volquetas")}
@@ -200,6 +205,7 @@ const CustomSidebar = ({ userRole }) => {
 };
 
 export default CustomSidebar;
+
 
 
 

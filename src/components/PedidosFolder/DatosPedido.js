@@ -148,12 +148,14 @@ const DatosPedido = () => {
       <Card className="mt-3">
         <Card.Header>
           <Row>
-            {pedido.estado === "cancelado" && (
-              <div className="alert alert-warning" role="alert">
-                <strong>Pedido Cancelado!</strong> Este pedido fue cancelado.
-              </div>
-            )}
-            <Col md={6}>
+            <Col md={12}>
+              {pedido.estado === "cancelado" && (
+                <div className="alert alert-warning" role="alert">
+                  <strong>Pedido Cancelado!</strong> Este pedido fue cancelado.
+                </div>
+              )}
+            </Col>
+            <Col xs={12} md={6}>
               {pedido.creadoComo === "recambio" && <Referencia />}
               <h2>
                 Detalles del pedido{" "}
@@ -163,18 +165,22 @@ const DatosPedido = () => {
                 en {obra?.calle}
               </h2>
             </Col>
-            <Col md={6}>
+            <Col
+              xs={12}
+              md={6}
+              className="d-flex flex-column align-items-start"
+            >
               {obra && <ContactosObraPedido />}
               {pedido.creadoComo === "multiple" && <Multiples />}
             </Col>
           </Row>
         </Card.Header>
         <Card.Body>
-          <MovimientosYSugerencias />
-          <Row>
-            <Col md={6}>
-              <DetallesPedido />
-            </Col>
+  <MovimientosYSugerencias />
+  <Row>
+    <Col md={6} xs={12}>
+      <DetallesPedido />
+    </Col>
             <Col md={6}>
               <PagoPedido />
             </Col>
@@ -186,7 +192,7 @@ const DatosPedido = () => {
             style={{
               padding: "0.5rem 1rem",
               marginRight: "0.5rem",
-              }}
+            }}
           >
             Recambio
           </Button>
@@ -202,7 +208,7 @@ const DatosPedido = () => {
             style={{
               padding: "0.5rem 1rem",
               marginRight: "0.5rem",
-              }}
+            }}
           >
             Eliminar
           </Button>

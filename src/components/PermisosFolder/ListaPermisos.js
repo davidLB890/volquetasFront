@@ -36,12 +36,22 @@ const ListaPermisos = ({ empresaId, particularId }) => {
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [permisoAEliminar, setPermisoAEliminar] = useState(null);
   const [mostrarDatosPermiso, setMostrarDatosPermiso] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
 
   const getToken = useAuth();
   const dispatch = useDispatch();
 
   const isEmpresa = !!empresaId;
   const { permisos, permisosLoading, permisosError } = isEmpresa ? empresaState : particularState;
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchPermisos = async () => {
@@ -177,80 +187,115 @@ const ListaPermisos = ({ empresaId, particularId }) => {
             </div>
           ) : (
             <div>
-              <Card>
-                <Card.Body>
-                  <Table striped bordered hover>
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Fecha de Creación</th>
-                        <th>Fecha de Vencimiento</th>
-                        <th>Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {permisos.map((permiso) => (
-                        <tr
-                          key={permiso.id}
-                          style={{
-                            backgroundColor: moment().isAfter(
-                              moment(permiso.fechaVencimiento)
-                            )
-                              ? "red"
-                              : "white",
-                            color: moment().isAfter(
-                              moment(permiso.fechaVencimiento)
-                            )
-                              ? "white"
-                              : "black",
-                          }}
-                        >
-                          <td>{permiso.id}</td>
-                          <td>
-                            {moment(permiso.fechaCreacion).format("YYYY-MM-DD")}
-                          </td>
-                          <td>
-                            {moment(permiso.fechaVencimiento).format("YYYY-MM-DD")}
-                          </td>
-                          <td>
-                            <Button
-                              variant="info"
-                              onClick={() => handleMostrarDatosPermiso(permiso)}
-                              style={{
-                                padding: "0.5rem 1rem",
-                                marginRight: "0.5rem",
-                              }}
-                            >
-                              Datos
-                            </Button>
-                            <Button
-                              variant="warning"
-                              onClick={() => handleModificarPermiso(permiso)}
-                              style={{
-                                padding: "0.5rem 1rem",
-                                marginRight: "0.5rem",
-                              }}
-                            >
-                              Modificar
-                            </Button>
-                            <Button
-                              variant="danger"
-                              onClick={() => handleConfirmarEliminar(permiso)}
-                              className="ml-2"
-                              style={{
-                                padding: "0.5rem 1rem",
-                                marginRight: "0.5rem",
-                              }}
-                            >
-                              Eliminar
-                            </Button>
-                          </td>
+              {isSmallScreen ? (
+                permisos.map((permiso) => (
+                  <div key={permiso.id} className="p-3 mb-3 border bg-light">
+                    <h5>ID: {permiso.id}</h5>
+                    <p>Fecha de Creación: {moment(permiso.fechaCreacion).format("YYYY-MM-DD")}</p>
+                    <p>Fecha de Vencimiento: {moment(permiso.fechaVencimiento).format("YYYY-MM-DD")}</p>
+                    <div className="d-flex flex-column flex-md-row">
+                      <Button
+                        variant="info"
+                        onClick={() => handleMostrarDatosPermiso(permiso)}
+                        className="mb-2 mb-md-0 me-md-2"
+                        style={{ padding: "0.5rem 1rem" }}
+                      >
+                        Datos
+                      </Button>
+                      <Button
+                        variant="warning"
+                        onClick={() => handleModificarPermiso(permiso)}
+                        className="mb-2 mb-md-0 me-md-2"
+                        style={{ padding: "0.5rem 1rem" }}
+                      >
+                        Modificar
+                      </Button>
+                      <Button
+                        variant="danger"
+                        onClick={() => handleConfirmarEliminar(permiso)}
+                        style={{ padding: "0.5rem 1rem" }}
+                      >
+                        Eliminar
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <Card>
+                  <Card.Body>
+                    <Table striped bordered hover>
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Fecha de Creación</th>
+                          <th>Fecha de Vencimiento</th>
+                          <th>Acciones</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                </Card.Body>
-              </Card>
+                      </thead>
+                      <tbody>
+                        {permisos.map((permiso) => (
+                          <tr
+                            key={permiso.id}
+                            style={{
+                              backgroundColor: moment().isAfter(
+                                moment(permiso.fechaVencimiento)
+                              )
+                                ? "red"
+                                : "white",
+                              color: moment().isAfter(
+                                moment(permiso.fechaVencimiento)
+                              )
+                                ? "white"
+                                : "black",
+                            }}
+                          >
+                            <td>{permiso.id}</td>
+                            <td>
+                              {moment(permiso.fechaCreacion).format("YYYY-MM-DD")}
+                            </td>
+                            <td>
+                              {moment(permiso.fechaVencimiento).format("YYYY-MM-DD")}
+                            </td>
+                            <td>
+                              <Button
+                                variant="info"
+                                onClick={() => handleMostrarDatosPermiso(permiso)}
+                                style={{
+                                  padding: "0.5rem 1rem",
+                                  marginRight: "0.5rem",
+                                }}
+                              >
+                                Datos
+                              </Button>
+                              <Button
+                                variant="warning"
+                                onClick={() => handleModificarPermiso(permiso)}
+                                style={{
+                                  padding: "0.5rem 1rem",
+                                  marginRight: "0.5rem",
+                                }}
+                              >
+                                Modificar
+                              </Button>
+                              <Button
+                                variant="danger"
+                                onClick={() => handleConfirmarEliminar(permiso)}
+                                className="ml-2"
+                                style={{
+                                  padding: "0.5rem 1rem",
+                                  marginRight: "0.5rem",
+                                }}
+                              >
+                                Eliminar
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  </Card.Body>
+                </Card>
+              )}
             </div>
           )}
         </div>
@@ -303,3 +348,4 @@ const ListaPermisos = ({ empresaId, particularId }) => {
 };
 
 export default ListaPermisos;
+

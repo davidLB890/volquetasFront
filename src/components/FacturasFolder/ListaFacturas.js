@@ -75,13 +75,22 @@ const ListaFacturas = () => {
           return { ...factura, nombre };
         })
       );
-      setFacturas(facturasConNombre);
+  
+      // Ordenar las facturas alfabéticamente por el nombre del cliente
+      const facturasOrdenadas = facturasConNombre.sort((a, b) => {
+        if (a.nombre < b.nombre) return -1;
+        if (a.nombre > b.nombre) return 1;
+        return 0;
+      });
+  
+      setFacturas(facturasOrdenadas);
     } catch (error) {
       console.error("Error al obtener las facturas:", error);
       setError("Error al obtener las facturas");
     }
     setLoading(false);
   };
+  
 
   const handleFormSubmit = (e) => {
     e.preventDefault();

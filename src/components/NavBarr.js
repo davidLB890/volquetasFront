@@ -1,9 +1,10 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Nav, Navbar, Container, Button } from 'react-bootstrap';
 import Breadcrumbs from './Breadcrumbs';
+import '../assets/css/navbar.css';
 
-const CustomNavbar = () => {
+const CustomNavbar = ({ toggleSidebar }) => {
   const navigate = useNavigate();
 
   const cerrarSesion = () => {
@@ -12,25 +13,21 @@ const CustomNavbar = () => {
   };
 
   const nombreUsuario = localStorage.getItem('userNombre');
-  // Eliminar comillas adicionales si las hay
-  // const cleanedNombreUsuario = nombreUsuario.replace(/^"|"$/g, "");
 
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" className="navbar py-3">
-      <Container>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto d-flex align-items-center w-100 justify-content-between">
-            <div className="breadcrumbs-container">
-              <Breadcrumbs />
-            </div>
-            <div className="d-flex align-items-center">
-              <h5 className="text-white mb-0 me-3">{nombreUsuario}</h5>
-              <Button variant="secondary" onClick={cerrarSesion}>
-                Cerrar Sesión
-              </Button>
-            </div>
-          </Nav>
+    <Navbar bg="dark" variant="dark" expand="lg" className="navbar-custom py-3">
+      <Container style={{ position: 'relative' }}>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={toggleSidebar} />
+        <Navbar.Collapse id="basic-navbar-nav" className="d-flex align-items-center">
+          <div className="breadcrumbs-container">
+            <Breadcrumbs />
+          </div>
+          <div className="user-info d-flex align-items-center ms-auto">
+            <h5 className="text-white mb-0 me-3">{nombreUsuario}</h5>
+            <Button variant="secondary" onClick={cerrarSesion}>
+              Cerrar Sesión
+            </Button>
+          </div>
         </Navbar.Collapse>
       </Container>
     </Navbar>
@@ -38,3 +35,4 @@ const CustomNavbar = () => {
 };
 
 export default CustomNavbar;
+  /* import '../assets/css/navbar.css'; // Importa el archivo CSS */

@@ -5,10 +5,12 @@ import {
   Form,
   Container,
   Modal,
-  Collapse
+  Collapse,
+  Card
 } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import DatosObra from "./DatosObra";
+import { useMediaQuery } from "react-responsive";
 
 const ListaObras = ({ obras = [], onObraEliminada }) => {
   const [cambios, setCambios] = useState(true);
@@ -16,12 +18,14 @@ const ListaObras = ({ obras = [], onObraEliminada }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [obraSeleccionada, setObraSeleccionada] = useState(null);
   const [mostrarDatosObra, setMostrarDatosObra] = useState(false);
-  const [open, setOpen] = useState(false); // Estado para manejar el despliegue
+  const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
 
   const rolUsuario = localStorage.getItem("userRol");
 
   const getToken = useAuth();
+
+  const isSmallScreen = useMediaQuery({ query: "(max-width: 768px)" });
 
   const handleEliminar = async (obraId) => {
     const usuarioToken = getToken();
@@ -31,7 +35,7 @@ const ListaObras = ({ obras = [], onObraEliminada }) => {
       setCambios(true);
       setShowConfirmModal(false);
       if (onObraEliminada) {
-        onObraEliminada(obraId); // Notifica al componente padre que una obra ha sido eliminada
+        onObraEliminada(obraId);
       }
     } catch (error) {
       setError(error.response?.data?.error);
@@ -82,67 +86,103 @@ const ListaObras = ({ obras = [], onObraEliminada }) => {
             </div>
           ) : (
             <div>
-              <table className="table table-striped">
-                <thead>
-                  <tr>
-                    <th
-                      scope="col"
-                      style={{ width: "150px", padding: "0.5rem" }}
-                    >
-                      <Form.Control
-                        as="select"
-                        value={filtroTipo}
-                        onChange={(e) => setFiltroTipo(e.target.value)}
-                        style={{ width: "100%" }}
-                      >
-                        <option value="">Filtrar por activas</option>
-                        <option value="1">Activas</option>
-                        <option value="0">No activas</option>
-                      </Form.Control>
-                    </th>
-                    <th scope="col">Calle</th>
-                    <th scope="col">Esquina</th>
-                    <th scope="col">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {obrasFiltradas.map((obra, index) => (
-                    <React.Fragment key={obra.id}>
-                      <tr>
-                        <th scope="row">{index + 1}</th>
-                        <td>{obra.calle}</td>
-                        <td>{obra.esquina}</td>
-                        <td>
+              {isSmallScreen ? (
+                obrasFiltradas.map((obra, index) => (
+                  <Card key={obra.id} className="mb-3">
+                    <Card.Body>
+                      <h5>{index + 1}. {obra.calle}</h5>
+                      <p><strong>Esquina:</strong> {obra.esquina}</p>
+                      <p><strong>Estado:</strong> {obra.activa ? "Activa" : "No activa"}</p>
+                      <div className="d-flex justify-content-start">
+                        <Button
+                          variant="info"
+                          style={{
+                            padding: "0.5rem 1rem",
+                            marginRight: "0.5rem",
+                          }}
+                          onClick={() => handleMostrarDatosObra(obra)}
+                        >
+                          Datos
+                        </Button>
+                        {rolUsuario === "admin" && (
                           <Button
-                            variant="info"
+                            variant="danger"
                             style={{
                               padding: "0.5rem 1rem",
                               marginRight: "0.5rem",
                             }}
-                            onClick={() => handleMostrarDatosObra(obra)}
+                            onClick={() => confirmarEliminar(obra)}
                           >
-                            Datos
+                            Eliminar
                           </Button>
-                          {rolUsuario === "admin" && (
-                            <>
-                              <Button
-                                variant="danger"
-                                style={{
-                                  padding: "0.5rem 1rem",
-                                  marginRight: "0.5rem",
-                                }}
-                                onClick={() => confirmarEliminar(obra)}
-                              >
-                                Eliminar
-                              </Button>
-                            </>
-                          )}
-                        </td>
-                      </tr>
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
+                        )}
+                      </div>
+                    </Card.Body>
+                  </Card>
+                ))
+              ) : (
+                <table className="table table-striped">
+                  <thead>
+                    <tr>
+                      <th
+                        scope="col"
+                        style={{ width: "150px", padding: "0.5rem" }}
+                      >
+                        <Form.Control
+                          as="select"
+                          value={filtroTipo}
+                          onChange={(e) => setFiltroTipo(e.target.value)}
+                          style={{ width: "100%" }}
+                        >
+                          <option value="">Filtrar por estado</option>
+                          <option value="1">Activas</option>
+                          <option value="0">No activas</option>
+                        </Form.Control>
+                      </th>
+                      <th scope="col">Calle</th>
+                      <th scope="col">Esquina</th>
+                      <th scope="col">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {obrasFiltradas.map((obra, index) => (
+                      <React.Fragment key={obra.id}>
+                        <tr>
+                          <th scope="row">{index + 1}</th>
+                          <td>{obra.calle}</td>
+                          <td>{obra.esquina}</td>
+                          <td>
+                            <Button
+                              variant="info"
+                              style={{
+                                padding: "0.5rem 1rem",
+                                marginRight: "0.5rem",
+                              }}
+                              onClick={() => handleMostrarDatosObra(obra)}
+                            >
+                              Datos
+                            </Button>
+                            {rolUsuario === "admin" && (
+                              <>
+                                <Button
+                                  variant="danger"
+                                  style={{
+                                    padding: "0.5rem 1rem",
+                                    marginRight: "0.5rem",
+                                  }}
+                                  onClick={() => confirmarEliminar(obra)}
+                                >
+                                  Eliminar
+                                </Button>
+                              </>
+                            )}
+                          </td>
+                        </tr>
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              )}
               <Modal
                 show={showConfirmModal}
                 onHide={() => setShowConfirmModal(false)}

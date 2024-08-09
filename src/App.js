@@ -1,12 +1,10 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import Login from './components/UsuariosFolder/Login';
 import Singin from './components/UsuariosFolder/Singin';
 import Dashboard from './components/Dashboard';
-import CustomSidebar from './components/SideNav';
-import CustomNavbar from './components/NavBarr';
+import Navigation from './components/Navigation';
 import AgregarEmpleado from './components/EmpleadosFolder/AgregarEmpleado';
 import AgregarCamion from './components/CamionesFolder/AgregarCamion';
 import AgregarObra from './components/ObrasFolder/AgregarObra';
@@ -35,11 +33,12 @@ import Volquetas from './components/VolquetasFolder/Volquetas';
 import AgregarVolqueta from './components/VolquetasFolder/AgregarVolqueta';
 import DatosVolqueta from './components/VolquetasFolder/DatosVolqueta';
 import DatosPedido from './components/PedidosFolder/DatosPedido';
-import DatosPermiso from './components/PermisosFolder/DatosPermiso';
 import NotFound from './components/NotFound';
 import Facturas from './components/FacturasFolder/Facturas';
 import AgregarFactura from './components/FacturasFolder/AgregarFactura';
 import DatosFactura from './components/FacturasFolder/DatosFactura';
+import ListaPermisosGeneral from './components/PermisosFolder/ListaPermisosGeneral';
+import ListaIMM from './components/ObrasFolder/ListaIMM';
 
 function App() {
   const location = useLocation();
@@ -64,15 +63,20 @@ function App() {
 
   const isLoginPage = location.pathname === '/login';
   const isSinginPage = location.pathname === '/singin';
+  const isNotFoundPage = !['/', '/login', '/singin', '/usuarios/confirmar', 
+    '/empleados/crear', '/empleados/telefonos', '/empleados', '/empleados/jornales', 
+    '/lj', '/camiones', '/camiones/crear', '/camiones/historial', '/obras', 
+    '/obras/crear', '/empresas', '/empresas/datos', '/empresas/crear', '/particulares', 
+    '/particulares/datos', '/particulares/crear', '/pedidos/crear', '/pedidos/datos', 
+    '/volquetas', '/volquetas/crear', '/volquetas/datos', '/facturas', '/facturas/crear',
+    '/facturas/datos', '/permisos', '/imm'].includes(location.pathname);
 
-  // Verifica si la ruta actual no coincide con ninguna de las rutas definidas
-  const isNotFoundPage = !['/', '/login', '/singin', '/usuarios/confirmar', '/empleados/crear', '/empleados/telefonos', '/empleados', '/empleados/jornales', '/lj', '/camiones', '/camiones/crear', '/camiones/historial', '/obras', '/obras/crear', '/empresas', '/empresas/datos', '/empresas/crear', '/particulares', '/particulares/datos', '/particulares/crear', '/pedidos/crear', '/pedidos/datos', '/volquetas', '/volquetas/crear', '/volquetas/datos', '/facturas', '/facturas/crear', '/facturas/datos'].includes(location.pathname);
+  const showSidebarAndNavbar = !isLoginPage && !isSinginPage && !isNotFoundPage;
 
   return (
     <div className={`app-container ${isNotFoundPage || isLoginPage || isSinginPage ? 'login-page' : 'with-sidebar'}`}>
-      {!isLoginPage && !isSinginPage && !isNotFoundPage && <CustomNavbar userRole={userRole} />}
+      {showSidebarAndNavbar && <Navigation userRole={userRole} />}
       <div className="main-content">
-        {!isLoginPage && !isSinginPage && !isNotFoundPage && <CustomSidebar userRole={userRole} />}
         <div className="content">
           <Routes>
             <Route path="/" element={<Dashboard />} />
@@ -108,14 +112,14 @@ function App() {
             <Route path="/volquetas" element={<Volquetas />} />
             <Route path="/volquetas/crear" element={<AgregarVolqueta />} />
             <Route path="/volquetas/datos" element={<DatosVolqueta />} />
-            {/* PERMISOS */}
-            {/* <Route path="/permiso/datos/:permisoId" element={<DatosPermiso />} /> */}
-            <Route path="*" element={<NotFound />} />
-
             {/* FACTURAS */}
             <Route path="/facturas" element={<Facturas />} />
             <Route path="/facturas/crear" element={<AgregarFactura />} />
             <Route path="/facturas/datos" element={<DatosFactura />} />
+            {/* PERMISOS */}
+            <Route path="/permisos" element={<ListaPermisosGeneral />} />
+            <Route path="/imm" element={<ListaIMM />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </div>

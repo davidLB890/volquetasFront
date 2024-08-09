@@ -1,0 +1,19 @@
+/* ListaResultadosNombre.css */
+
+/* Estilo para la vista en pantallas pequeñas */
+.resultado-item {
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: #fff;
+  }
+  
+  .resultado-item .nombre {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .resultado-item .btn {
+    width: 100%; /* El botón ocupa todo el ancho en pantallas pequeñas */
+  }
+  

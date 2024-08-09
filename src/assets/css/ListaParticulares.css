@@ -1,0 +1,30 @@
+.particular-item {
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: #fff;
+    margin-bottom: 15px;
+  }
+  
+  .particular-item h5 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px; /* Espacio entre el nombre y el botón */
+  }
+  
+  .particular-item .btn {
+    width: 100%; /* El botón ocupa todo el ancho en pantallas pequeñas */
+  }
+  
+  @media (min-width: 768px) {
+    .particular-item {
+      display: none; /* Ocultar la vista de elementos en pantallas medianas y más grandes */
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .table-responsive {
+      display: none; /* Ocultar la tabla en pantallas pequeñas */
+    }
+  }
+  

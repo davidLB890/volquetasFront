@@ -89,64 +89,109 @@ const Sugerencias = () => {
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center">
-        <h4 className="mb-0">Sugerencias</h4>
-        {renderAgregarButton()}
-      </div>
-      <div>
-        {sugerencias.length === 0 ? (
-          <p>No hay sugerencias para este pedido.</p>
-        ) : (
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Horario</th>
-                <th>Tipo</th>
-                <th>Chofer</th>
-                <th>Acciones</th>
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+  <h4 className="mb-2 mb-md-0">Sugerencias</h4>
+  {renderAgregarButton()}
+</div>
+<div>
+  {sugerencias.length === 0 ? (
+    <p>No hay sugerencias para este pedido.</p>
+  ) : (
+    <>
+      {/* Renderiza tabla para pantallas medianas y mayores */}
+      <div className="d-none d-md-block">
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Horario</th>
+              <th>Tipo</th>
+              <th>Chofer</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sugerencias.map((sugerencia) => (
+              <tr key={sugerencia?.id}>
+                <td>{sugerencia?.horarioSugerido ? new Date(sugerencia.horarioSugerido).toLocaleString() : "-"}</td>
+                <td>{sugerencia?.tipoSugerido || "-"}</td>
+                <td>{choferes.find(chofer => chofer.id === sugerencia?.choferSugeridoId)?.nombre || "-"}</td>
+                <td>
+                  <>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleDeleteSugerencia(sugerencia?.id)}
+                      className="mr-2"
+                      style={{
+                        padding: "0.5rem 1rem",
+                        marginRight: "0.5rem",
+                      }}
+                    >
+                      Eliminar
+                    </Button>
+                    <Button
+                      variant="warning"
+                      size="sm"
+                      onClick={() => handleModificarMovimiento(sugerencia)}
+                      className="mr-2"
+                      style={{
+                        padding: "0.5rem 1rem",
+                        marginRight: "0.5rem",
+                      }}
+                    >
+                      Modificar
+                    </Button>
+                  </>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {sugerencias.map((sugerencia) => (
-                <tr key={sugerencia?.id}>
-                  <td>{sugerencia?.horarioSugerido ? new Date(sugerencia.horarioSugerido).toLocaleString() : "-"}</td>
-                  <td>{sugerencia?.tipoSugerido || "-"}</td>
-                  <td>{choferes.find(chofer => chofer.id === sugerencia?.choferSugeridoId)?.nombre || "-"}</td>
-                  <td>
-                    <>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => handleDeleteSugerencia(sugerencia?.id)}
-                        className="mr-2"
-                        style={{
-                          padding: "0.5rem 1rem",
-                          marginRight: "0.5rem",
-                        }}
-                      >
-                        Eliminar
-                      </Button>
-                      <Button
-                        variant="warning"
-                        size="sm"
-                        onClick={() => handleModificarMovimiento(sugerencia)}
-                        className="mr-2"
-                        style={{
-                          padding: "0.5rem 1rem",
-                          marginRight: "0.5rem",
-                        }}
-                      >
-                        Modificar
-                      </Button>
-                    </>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        )}
-        {error && <Alert variant="danger">{error}</Alert>}
+            ))}
+          </tbody>
+        </Table>
       </div>
+
+      {/* Renderiza un formato alternativo para pantallas pequeñas */}
+      <div className="d-block d-md-none">
+        {sugerencias.map((sugerencia) => (
+          <div key={sugerencia?.id} className="mb-3 p-2 border rounded">
+            <div><strong>Horario:</strong> {sugerencia?.horarioSugerido ? new Date(sugerencia.horarioSugerido).toLocaleString() : "-"}</div>
+            <div><strong>Tipo:</strong> {sugerencia?.tipoSugerido || "-"}</div>
+            <div><strong>Chofer:</strong> {choferes.find(chofer => chofer.id === sugerencia?.choferSugeridoId)?.nombre || "-"}</div>
+            <div className="mt-2">
+              <>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={() => handleDeleteSugerencia(sugerencia?.id)}
+                  className="mr-2"
+                  style={{
+                    padding: "0.5rem 1rem",
+                    marginRight: "0.5rem",
+                  }}
+                >
+                  Eliminar
+                </Button>
+                <Button
+                  variant="warning"
+                  size="sm"
+                  onClick={() => handleModificarMovimiento(sugerencia)}
+                  className="mr-2"
+                  style={{
+                    padding: "0.5rem 1rem",
+                    marginRight: "0.5rem",
+                  }}
+                >
+                  Modificar
+                </Button>
+              </>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  )}
+  {error && <Alert variant="danger">{error}</Alert>}
+</div>
+
 
       <AgregarSugerencia
         show={showAgregarSugerencia}

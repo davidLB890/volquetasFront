@@ -1,0 +1,42 @@
+/* Empleados.css */
+
+/* Estilo para la vista en tarjetas */
+.empleado-item {
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: #fff;
+    margin-bottom: 15px;
+  }
+  
+  .empleado-item h5 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  
+  .empleado-item .empleado-actions {
+    margin-top: 10px;
+  }
+  
+  /* Ocultar la tabla y mostrar tarjetas en pantallas pequeñas */
+  @media (min-width: 768px) {
+    .empleado-item {
+      display: none;
+    }
+    .filtro-small {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .table-responsive {
+      display: none;
+    }
+    .filtro-small {
+      display: block;
+      margin-bottom: 15px;
+    }
+  }
+  
+  

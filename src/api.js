@@ -478,8 +478,22 @@ export const getObras = (usuarioToken) => {
     },
   });
 };
+export const getObrasMeses = (cantidadMeses, usuarioToken) => {
+  return axios.get(`${API_URL}obras-ultimos-meses`, {
+    params: {
+      cantidadMeses: cantidadMeses, 
+    },
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
 export const getObraId = (obraId, usuarioToken) => {
   return axios.get(`${API_URL}obras/${obraId}`, {
+    params: {
+      detalle: "si",
+    },
     headers: {
       Authorization: usuarioToken,
       "Content-Type": "application/json",
@@ -502,6 +516,7 @@ export const putObra = (obraId, obra, usuarioToken) => {
   });
 };
 export const putObraDetalle = (obraId, obra, usuarioToken) => {
+  console.log(obraId, obra)
   return axios.put(`${API_URL}obras-detalle/${obraId}`, obra, {
     headers: {
       Authorization: usuarioToken,

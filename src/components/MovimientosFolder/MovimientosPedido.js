@@ -19,11 +19,13 @@ const MovimientosPedido = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const { pedido } = useSelector((state) => state.pedido);
   const movimientos = pedido?.Movimientos || [];
   const empleados = useSelector((state) => state.empleados.empleados || []);
-  const choferes = empleados.filter((empleado) => empleado.rol === "chofer" && empleado.habilitado);
+  const choferes = empleados.filter(
+    (empleado) => empleado.rol === "chofer" && empleado.habilitado
+  );
   const pedidoId = useSelector((state) => state.pedido.pedido?.id);
 
   const handleHideModal = () => setShowAgregarMovimiento(false);
@@ -35,7 +37,9 @@ const MovimientosPedido = () => {
   const handleShowModal = (tipo) => {
     setTipoMovimiento(tipo);
     if (tipo === "levante") {
-      const entregaMovimiento = movimientos.find((movimiento) => movimiento.tipo === "entrega");
+      const entregaMovimiento = movimientos.find(
+        (movimiento) => movimiento.tipo === "entrega"
+      );
       if (entregaMovimiento) {
         setNumeroVolqueta(entregaMovimiento.numeroVolqueta || "");
       }
@@ -80,77 +84,153 @@ const MovimientosPedido = () => {
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center">
-        <h4 className="mb-0">Movimientos</h4>
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <h4 className="mb-2 mb-md-0">Movimientos</h4>
         {location.pathname.includes("/pedidos/datos") && renderAgregarButton()}
       </div>
       <div>
         {movimientos.length === 0 ? (
           <p>No hay movimientos para este pedido.</p>
         ) : (
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Número de Volqueta</th>
-                <th>Horario</th>
-                <th>Tipo</th>
-                <th>Chofer</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {movimientos.map((movimiento) => (
-                <tr key={movimiento?.id}>
-                  <td>{movimiento?.numeroVolqueta || "-"}</td>
-                  <td>{movimiento?.horario ? new Date(movimiento.horario).toLocaleString() : "-"}</td>
-                  <td>{movimiento?.tipo || "-"}</td>
-                  <td>{choferes.find(chofer => chofer.id === movimiento?.choferId)?.nombre || "Sin chofer asignado"}</td>
-                  <td>
-                    {location.pathname.includes("/pedidos/datos") ? (
-                      <>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={() => handleDeleteMovimiento(movimiento?.id)}
-                          className="mr-2"
-                          style={{
-                            padding: "0.5rem 1rem",
-                            marginRight: "0.5rem",
-                          }}
-                        >
-                          Eliminar
-                        </Button>
-                        <Button
-                          variant="warning"
-                          size="sm"
-                          onClick={() => handleModificarMovimiento(movimiento)}
-                          className="mr-2"
-                          style={{
-                            padding: "0.5rem 1rem",
-                            marginRight: "0.5rem",
-                          }}
-                        >
-                          Modificar
-                        </Button>
-                      </>
-                    ) : (
+          <>
+                 {/* Renderiza tabla para pantallas medianas y mayores */}
+        <div className="d-none d-md-block">
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Número de Volqueta</th>
+              <th>Horario</th>
+              <th>Tipo</th>
+              <th>Chofer</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {movimientos.map((movimiento) => (
+              <tr key={movimiento?.id}>
+                <td>{movimiento?.numeroVolqueta || "-"}</td>
+                <td>
+                  {movimiento?.horario
+                    ? new Date(movimiento.horario).toLocaleString()
+                    : "-"}
+                </td>
+                <td>{movimiento?.tipo || "-"}</td>
+                <td>
+                  {choferes.find(
+                    (chofer) => chofer.id === movimiento?.choferId
+                  )?.nombre || "Sin chofer asignado"}
+                </td>
+                <td>
+                  {location.pathname.includes("/pedidos/datos") ? (
+                    <>
                       <Button
-                        variant="info"
+                        variant="danger"
                         size="sm"
-                        onClick={() => handleVerPedido(movimiento?.pedidoId, movimiento?.numeroVolqueta)}
+                        onClick={() =>
+                          handleDeleteMovimiento(movimiento?.id)
+                        }
                         className="mr-2"
+                        style={{
+                          padding: "0.5rem 1rem",
+                          marginRight: "0.5rem",
+                        }}
                       >
-                        Ver Pedido
+                        Eliminar
                       </Button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        )}
-        {error && <Alert variant="danger">{error}</Alert>}
+                      <Button
+                        variant="warning"
+                        size="sm"
+                        onClick={() => handleModificarMovimiento(movimiento)}
+                        className="mr-2"
+                        style={{
+                          padding: "0.5rem 1rem",
+                          marginRight: "0.5rem",
+                        }}
+                      >
+                        Modificar
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      variant="info"
+                      size="sm"
+                      onClick={() =>
+                        handleVerPedido(
+                          movimiento?.pedidoId,
+                          movimiento?.numeroVolqueta
+                        )
+                      }
+                      className="mr-2"
+                    >
+                      Ver Pedido
+                    </Button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
       </div>
+
+      {/* Renderiza un formato alternativo para pantallas pequeñas */}
+      <div className="d-block d-md-none">
+        {movimientos.map((movimiento) => (
+          <div key={movimiento?.id} className="mb-3 p-2 border rounded">
+            <div><strong>Número de Volqueta:</strong> {movimiento?.numeroVolqueta || "-"}</div>
+            <div><strong>Horario:</strong> {movimiento?.horario ? new Date(movimiento.horario).toLocaleString() : "-"}</div>
+            <div><strong>Tipo:</strong> {movimiento?.tipo || "-"}</div>
+            <div><strong>Chofer:</strong> {choferes.find(chofer => chofer.id === movimiento?.choferId)?.nombre || "Sin chofer asignado"}</div>
+            <div className="mt-2">
+              {location.pathname.includes("/pedidos/datos") ? (
+                <>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleDeleteMovimiento(movimiento?.id)}
+                    className="mr-2"
+                    style={{
+                      padding: "0.5rem 1rem",
+                      marginRight: "0.5rem",
+                    }}
+                  >
+                    Eliminar
+                  </Button>
+                  <Button
+                    variant="warning"
+                    size="sm"
+                    onClick={() => handleModificarMovimiento(movimiento)}
+                    className="mr-2"
+                    style={{
+                      padding: "0.5rem 1rem",
+                      marginRight: "0.5rem",
+                    }}
+                  >
+                    Modificar
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="info"
+                  size="sm"
+                  onClick={() =>
+                    handleVerPedido(
+                      movimiento?.pedidoId,
+                      movimiento?.numeroVolqueta
+                    )
+                  }
+                  className="mr-2"
+                >
+                  Ver Pedido
+                </Button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  )}
+  {error && <Alert variant="danger">{error}</Alert>}
+</div>
 
       <AgregarMovimiento
         show={showAgregarMovimiento}

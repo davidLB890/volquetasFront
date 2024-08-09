@@ -1,46 +1,170 @@
+/* CustomSidebar.css */
 .sidenav {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidenav.collapsed {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.nav-submenu {
+  padding-left: 1rem;
+}
+
+.sidenav-footer {
+  margin-top: auto;
+}
+
+.nav-item-title {
+  color: #333;
+  font-weight: bold;
+}
+
+.nav-item-title:hover {
+  background-color: #f8f9fa;
+}
+
+.nav-submenu .nav-link {
+  color: #555;
+}
+
+.nav-submenu .nav-link:hover {
+  background-color: #e9ecef;
+}
+
+.user-info-sidenav {
+  display: none;
+}
+
+@media (max-width: 1150px) {
+  .user-info-sidenav {
     display: flex;
+  }
+
+  .sidenav {
+    transform: translateX(-100%);
+  }
+
+  .sidenav.show {
+    transform: translateX(0);
+  }
+}
+
+/* app.css */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+}
+
+.with-sidebar .content {
+  margin-left: 250px;
+}
+
+.no-sidebar .content {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-page .content {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.collapsed .sidenav {
+  transform: translateX(-100%);
+}
+
+.collapsed .main-content {
+  margin-left: 0;
+}
+
+.collapsed .content {
+  width: 100%;
+}
+
+.navbar-custom .navbar-toggler {
+  margin-left: 0;
+}
+
+.breadcrumbs-container {
+  margin-right: auto;
+  position: relative;
+  left: 40px;
+}
+
+@media (max-width: 1200px) {
+  .with-sidebar .content {
+    margin-left: 0;
+  }
+  .main-content {
     flex-direction: column;
-    height: 100vh;
   }
-  
-  .nav-submenu {
-    padding-left: 1rem;
+  .content {
+    margin: 0;
+    width: 100%;
   }
-  
-  .sidenav-footer {
-    margin-top: auto;
-    
+  .breadcrumbs-container {
+    display: flex;
+    margin-left: 20px;
+    /* Otras reglas de estilo adicionales si es necesario */
   }
-  
-  .nav-item-title {
-    color: #333; /* Títulos más oscuros */
-    font-weight: bold;
+}
+
+.table-container {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.table-responsive-scroll {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  overflow-x: auto;
+  background-color: white;
+  z-index: 1000;
+}
+
+.breadcrumbs-container {
+  margin-left: 200px;
+}
+
+@media (max-width: 1150px) {
+  .user-info {
+    display: none;
   }
-  
-  .nav-item-title:hover {
-    background-color: #f8f9fa; /* Efecto de color al pasar el mouse */
-  }
-  
-  .nav-submenu .nav-link {
-    color: #555;
-  }
-  
-  .nav-submenu .nav-link:hover {
-    background-color: #e9ecef; /* Efecto de color al pasar el mouse sobre los elementos del submenú */
+
+  .navbar-custom .d-flex.align-items-center {
+    display: flex;
+    align-items: center;
+    flex: 1;
   }
 
   .breadcrumbs-container {
-    margin-right: auto; /* Esto empuja los breadcrumbs hacia la derecha */
-    padding-left: 180px; /* Añade espacio adicional si es necesario */
+    display: flex;
+    margin-left: 20px;
+    /* Otras reglas de estilo adicionales si es necesario */
   }
-  
-  .navbar-nav .d-flex.align-items-center {
-    flex-wrap: nowrap; /* Asegura que los elementos no se envuelvan */
-  }
-  
-  .navbar-nav .d-flex.align-items-center h5 {
-    margin-bottom: 0; /* Asegura que el título no tenga margen inferior */
-    margin-right: 15px; /* Añade espacio entre el título y el botón */
-  }
-  
+}

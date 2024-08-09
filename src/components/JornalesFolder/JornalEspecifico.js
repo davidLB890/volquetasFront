@@ -81,7 +81,7 @@ const JornalEspecifico = ({ empleadoId, empleadoRol, fechaInicio, fechaFin, hand
                 <td>{jornal.salida}</td>
                 <td>{jornal.horasExtra}</td>
                 <td>{jornal.tipo}</td>
-                {empleadoRol === 'chofer' && <td>{jornal.tareasRealizadas}</td>}
+                {empleadoRol === 'chofer' && <td>-viajes: {jornal.viajes} -entregas: {jornal.entregas} -levantes: {jornal.levantes}</td>}
                 {rolUsuario === 'admin' && (
                   <td>
                     <Button

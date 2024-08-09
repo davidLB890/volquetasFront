@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { getParticularLetra, getParticularNombre } from "../../api";
-import { useNavigate } from "react-router-dom";
 import { Container, Table, Button, Spinner, Alert, Nav, Card, Form, Row, Col } from "react-bootstrap";
+import { getParticularLetra, getParticularNombre } from "../../api"; 
+import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import ListaResultadosNombre from "../ListaResultadosNombre"; // Ajusta la ruta según sea necesario
+import "../../assets/css/ListaParticulares.css"; 
 
 const ListaParticulares = () => {
   const [particulares, setParticulares] = useState([]);
@@ -139,38 +140,58 @@ const ListaParticulares = () => {
               onSeleccionar={handleNavigateToParticular}
             />
           ) : (
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {particulares.length === 0 ? (
+            <div className="table-responsive d-none d-md-block">
+              <Table striped bordered hover>
+                <thead>
                   <tr>
-                    <td colSpan="2">
-                      No hay particulares que comiencen con la letra "{selectedLetter}".
-                    </td>
+                    <th>Nombre</th>
+                    <th></th>
                   </tr>
-                ) : (
-                  particulares.map((particular) => (
-                    <tr key={particular.id}>
-                      <td>{particular.nombre}</td>
-                      <td>
-                        <Button
-                          variant="primary"
-                          onClick={() => handleNavigateToParticular(particular.id)}
-                        >
-                          Ver Datos
-                        </Button>
+                </thead>
+                <tbody>
+                  {particulares.length === 0 ? (
+                    <tr>
+                      <td colSpan="2">
+                        No hay particulares que comiencen con la letra "{selectedLetter}".
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </Table>
+                  ) : (
+                    particulares.map((particular) => (
+                      <tr key={particular.id}>
+                        <td>{particular.nombre}</td>
+                        <td>
+                          <Button
+                            variant="primary"
+                            onClick={() => handleNavigateToParticular(particular.id)}
+                          >
+                            Ver Datos
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </Table>
+            </div>
           )}
+          {/* Versión en columnas para pantallas pequeñas */}
+          <div className="d-md-none">
+            {particulares.length === 0 ? (
+              <p>No hay particulares que comiencen con la letra "{selectedLetter}".</p>
+            ) : (
+              particulares.map((particular) => (
+                <div key={particular.id} className="particular-item">
+                  <h5>{particular.nombre}</h5>
+                  <Button
+                    variant="primary"
+                    onClick={() => handleNavigateToParticular(particular.id)}
+                  >
+                    Ver Datos
+                  </Button>
+                </div>
+              ))
+            )}
+          </div>
         </Card.Body>
       </Card>
     </Container>
@@ -178,3 +199,4 @@ const ListaParticulares = () => {
 };
 
 export default ListaParticulares;
+

@@ -131,7 +131,7 @@ const ListaJornalesDatos = ({
           </tbody>
         </Table>
       ) : (
-        <Alert variant="info">No se encontraron datos del empleado.</Alert>
+        <Alert variant="info">No se encontraron datos del empleado en ese rango de fechas.</Alert>
       )}
 
       <Button variant="primary" onClick={() => toggleJornales(empleadoId)}>

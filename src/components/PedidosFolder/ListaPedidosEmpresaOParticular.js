@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import {Container,Table,Spinner,Alert,Form,Button,Row,Col,Collapse,} from "react-bootstrap";
+import {
+  Container,
+  Table,
+  Spinner,
+  Alert,
+  Form,
+  Button,
+  Row,
+  Col,
+  Collapse,
+} from "react-bootstrap";
 import { getPedidosFiltro } from "../../api"; // Asegúrate de tener esta función en api.js
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
@@ -9,12 +19,17 @@ const ListaPedidosEmpresaOParticular = ({ empresaId, particularId }) => {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [fechaInicio, setFechaInicio] = useState(moment().startOf("day").add(1, "hours").format("YYYY-MM-DDTHH:mm"));
-  const [fechaFin, setFechaFin] = useState(moment().endOf("day").format("YYYY-MM-DDTHH:mm"));
+  const [fechaInicio, setFechaInicio] = useState(
+    moment().startOf("day").add(1, "hours").format("YYYY-MM-DDTHH:mm")
+  );
+  const [fechaFin, setFechaFin] = useState(
+    moment().endOf("day").format("YYYY-MM-DDTHH:mm")
+  );
   const [estado, setEstado] = useState("");
   const [tipoHorario, setTipoHorario] = useState("creacion");
   const [openFilters, setOpenFilters] = useState(false); // Estado para manejar el despliegue de filtros
   const [open, setOpen] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
   const getToken = useAuth();
   const navigate = useNavigate();
 
@@ -33,6 +48,15 @@ const ListaPedidosEmpresaOParticular = ({ empresaId, particularId }) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const defaultParams = {
@@ -62,7 +86,9 @@ const ListaPedidosEmpresaOParticular = ({ empresaId, particularId }) => {
 
   const handleRowClick = (pedido) => {
     console.log("Pedido:", pedido);
-    navigate("/pedidos/datos", { state: { pedidoId: pedido.id, empresaId: empresaId, particularId: particularId } });
+    navigate("/pedidos/datos", {
+      state: { pedidoId: pedido.id, empresaId: empresaId, particularId: particularId },
+    });
   };
 
   if (loading) {
@@ -77,7 +103,7 @@ const ListaPedidosEmpresaOParticular = ({ empresaId, particularId }) => {
     <Container className="card">
       <Button
         onClick={() => setOpen(!open)}
-        aria-controls="lista-obras-collapse"
+        aria-controls="lista-pedidos-collapse"
         aria-expanded={open}
         className="mb-3 boton-personalizado"
       >
@@ -132,7 +158,6 @@ const ListaPedidosEmpresaOParticular = ({ empresaId, particularId }) => {
                         <option value="iniciado">Iniciado</option>
                         <option value="cancelado">Cancelado</option>
                         <option value="levantado">Levantado</option>
-                        {/* Añade más estados si es necesario */}
                       </Form.Control>
                     </Form.Group>
                   </Col>
@@ -145,19 +170,10 @@ const ListaPedidosEmpresaOParticular = ({ empresaId, particularId }) => {
                         onChange={(e) => setTipoHorario(e.target.value)}
                       >
                         <option value="creacion">Creación</option>
-                        <option value="sugerenciaLevante">
-                          Sugerencia Entrega
-                        </option>
-                        <option value="sugerenciaEntrega">
-                          Sugerencia Levante
-                        </option>
-                        <option value="movimientoLevante">
-                          Movimiento Levante
-                        </option>
-                        <option value="movimientoEntrega">
-                          Movimiento Entrega
-                        </option>
-                        {/* Añade más tipos de horario si es necesario */}
+                        <option value="sugerenciaLevante">Sugerencia Entrega</option>
+                        <option value="sugerenciaEntrega">Sugerencia Levante</option>
+                        <option value="movimientoLevante">Movimiento Levante</option>
+                        <option value="movimientoEntrega">Movimiento Entrega</option>
                       </Form.Control>
                     </Form.Group>
                   </Col>
@@ -169,30 +185,47 @@ const ListaPedidosEmpresaOParticular = ({ empresaId, particularId }) => {
             </div>
           </Collapse>
 
-          <Table striped bordered hover className="mt-3">
-            <thead>
-              <tr>
-                <th>Fecha creación</th>
-                <th>Dirección</th>
-                <th>Precio</th>
-                <th>Pagado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pedidos.map((pedido) => (
-                <tr
-                  key={pedido.id}
-                  style={{ cursor: "pointer" }}
+          {isSmallScreen ? (
+            pedidos.map((pedido) => (
+              <div key={pedido.id} className="p-3 mb-3 border bg-light">
+                <h5>Fecha de Creación: {pedido.createdAt ? new Date(pedido.createdAt).toLocaleDateString() : "N/A"}</h5>
+                <p>Dirección: {pedido.Obra.calle}</p>
+                <p>Precio: {pedido.pagoPedido.precio}</p>
+                <p>Pagado: {pedido.pagoPedido.pagado ? "Sí" : "No"}</p>
+                <Button
+                  variant="primary"
                   onClick={() => handleRowClick(pedido)}
                 >
-                  <td>{pedido.createdAt ? new Date(pedido.createdAt).toLocaleDateString() : "N/A"}</td>
-                  <td>{pedido.Obra.calle}</td>
-                  <td>{pedido.pagoPedido.precio}</td>
-                  <td>{pedido.pagoPedido.pagado ? "Sí" : "No"}</td>
+                  Ver Detalles
+                </Button>
+              </div>
+            ))
+          ) : (
+            <Table striped bordered hover className="mt-3">
+              <thead>
+                <tr>
+                  <th>Fecha creación</th>
+                  <th>Dirección</th>
+                  <th>Precio</th>
+                  <th>Pagado</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {pedidos.map((pedido) => (
+                  <tr
+                    key={pedido.id}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => handleRowClick(pedido)}
+                  >
+                    <td>{pedido.createdAt ? new Date(pedido.createdAt).toLocaleDateString() : "N/A"}</td>
+                    <td>{pedido.Obra.calle}</td>
+                    <td>{pedido.pagoPedido.precio}</td>
+                    <td>{pedido.pagoPedido.pagado ? "Sí" : "No"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
         </div>
       </Collapse>
     </Container>

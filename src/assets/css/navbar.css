@@ -1,0 +1,91 @@
+/* navbar */
+@media (max-width: 1150px) {
+    .user-info {
+      display: none;
+    }
+  }
+  
+  /* Asegurarse de que el breadcrumb y el botón hamburguesa estén en el mismo renglón */
+  .navbar-custom .d-flex.align-items-center {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+  
+  /* Ajustar el margin-left del breadcrumb */
+  .breadcrumbs-container {
+    margin-left: 20px;
+  }
+  
+  /* Mostrar el botón hamburguesa solo en pantallas pequeñas */
+  @media (max-width: 1200px) {
+    .navbar-toggler {
+      display: block;
+    }
+  }
+  
+  /* Ocultar el botón hamburguesa en pantallas grandes */
+  @media (min-width: 1200px) {
+    .navbar-toggler {
+      display: none;
+    }
+  }
+
+  
+  
+
+
+/* Estilo base para la navbar */
+/* .navbar-custom {
+    padding: 15px;
+  } */
+  
+  /* Estilo base para el contenedor de breadcrumbs */
+/*   .breadcrumbs-container {
+    position: relative; 
+  } */
+  
+  /* Estilo base para la información del usuario */
+/*   .user-info {
+    display: flex;
+    align-items: center;
+  } */
+  
+  /* Media query para pantallas de 1500px o menos */
+
+  
+  
+  
+
+/* /* styles.css
+.navbar-custom {
+    padding: 15px;
+  }
+  
+  .breadcrumbs-container {
+    flex-grow: 0;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  @media (max-width: 1100px) {
+    .navbar-custom .navbar-collapse {
+      flex-direction: column;
+      align-items: flex-end;
+    }
+  
+    .breadcrumbs-container {
+      order: 2;
+      width: 50%; 
+      text-align: right;
+    }
+  
+    .user-info {
+      order: 1;
+      margin-bottom: 10px;
+    }
+  } */
+  

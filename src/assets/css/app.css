@@ -1,6 +1,4 @@
 /* app.css */
-/* app.css */
-
 .app-container {
   display: flex;
   flex-direction: column;
@@ -39,8 +37,31 @@
   height: 100vh;
 }
 
+.collapsed .sidenav {
+  transform: translateX(-100%);
+}
+
+.collapsed .main-content {
+  margin-left: 0;
+}
+
+.collapsed .content {
+  width: 100%;
+}
+
+.navbar-custom .navbar-toggler {
+  margin-left: 0;
+}
+
+.breadcrumbs-container {
+  margin-right: auto;
+  position: relative;
+  left: 40px; /* Ajusta esta distancia según sea necesario */
+}
+
+
 /* Asegurarse que el sidebar no tape el contenido en pantallas pequeñas */
-@media (max-width: 768px) {
+@media (max-width: 1150px) {
   .with-sidebar .content {
     margin-left: 0;
   }
@@ -66,6 +87,130 @@
   background-color: white; /* Optional: To ensure it stands out from the content */
   z-index: 1000; /* Optional: To ensure it is above other content */
 }
+
+/* custom sidenav css */
+.sidenav {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  transition: transform 0.3s ease-in-out;
+}
+
+.nav-submenu {
+  padding-left: 1rem;
+}
+
+.sidenav-footer {
+  margin-top: auto;
+}
+
+.nav-item-title {
+  color: #333; /* Títulos más oscuros */
+  font-weight: bold;
+}
+
+.nav-item-title:hover {
+  background-color: #f8f9fa; /* Efecto de color al pasar el mouse */
+}
+
+.nav-submenu .nav-link {
+  color: #555;
+}
+
+.nav-submenu .nav-link:hover {
+  background-color: #e9ecef; /* Efecto de color al pasar el mouse sobre los elementos del submenú */
+}
+
+.app-container.collapsed .sidenav {
+  transform: translateX(-100%);
+}
+
+
+/* .app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+}
+
+.with-sidebar .content {
+  margin-left: 250px; /* Ajusta esto según el ancho de tu sidebar 
+}
+
+.no-sidebar .content {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-page .content {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Asegurarse que el sidebar no tape el contenido en pantallas pequeñas 
+@media (max-width: 768px) {
+  .with-sidebar .content {
+    margin-left: 0;
+  }
+  .main-content {
+    flex-direction: column;
+  }
+  .content {
+    margin: 0;
+    width: 100%;
+  }
+}
+
+.table-container {
+  max-height: 70vh; /* Adjust this value as needed 
+  overflow-y: auto;
+}
+
+.table-responsive-scroll {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  overflow-x: auto;
+  background-color: white; /* Optional: To ensure it stands out from the content
+  z-index: 1000; /* Optional: To ensure it is above other content 
+}
+
+
+
+
+
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
