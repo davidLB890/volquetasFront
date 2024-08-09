@@ -9,6 +9,8 @@ import JornalEspecifico from './JornalEspecifico'; // Importa el nuevo component
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import localeData from 'dayjs/plugin/localeData';
+import '../../assets/css/ListaJornalesDatos.css'; // Importa los estilos
+
 dayjs.extend(localeData);
 dayjs.locale('es');
 
@@ -105,38 +107,61 @@ const ListaJornalesDatos = ({
 
   return (
     <>
-      {datos.registros ? (
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Registros</th>
-              <th>Días de Trabajo</th>
-              <th>Días de Licencia</th>
-              <th>Días de Enfermedad</th>
-              <th>Faltas</th>
-              <th>Horas trabajadas</th>
-              <th>Horas extra</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{datos.registros}</td>
-              <td>{datos.diasTrabajo}</td>
-              <td>{datos.diasLicencia}</td>
-              <td>{datos.diasEnfermedad}</td>
-              <td>{datos.diasFalta}</td>
-              <td>{parseFloat(datos.horasTrabajadas).toFixed(2)}</td>{/* para mostrar solo 2 lugares después de la coma */}
-              <td>{datos.horasExtra}</td>
-            </tr>
-          </tbody>
-        </Table>
-      ) : (
-        <Alert variant="info">No se encontraron datos del empleado en ese rango de fechas.</Alert>
-      )}
+      {/* Tabla para pantallas medianas y grandes */}
+      <div className="table-responsive d-none d-md-block">
+        {datos.registros ? (
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Registros</th>
+                <th>Días de Trabajo</th>
+                <th>Días de Licencia</th>
+                <th>Días de Enfermedad</th>
+                <th>Faltas</th>
+                <th>Horas trabajadas</th>
+                <th>Horas extra</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{datos.registros}</td>
+                <td>{datos.diasTrabajo}</td>
+                <td>{datos.diasLicencia}</td>
+                <td>{datos.diasEnfermedad}</td>
+                <td>{datos.diasFalta}</td>
+                <td>{parseFloat(datos.horasTrabajadas).toFixed(2)}</td>
+                <td>{datos.horasExtra}</td>
+              </tr>
+            </tbody>
+          </Table>
+        ) : (
+          <Alert variant="info">No se encontraron datos del empleado en ese rango de fechas.</Alert>
+        )}
+      </div>
 
-      <Button variant="primary" onClick={() => toggleJornales(empleadoId)}>
-        {visibleJornales[empleadoId] ? 'Ocultar Jornales' : 'Ver Jornales'}
-      </Button>
+      {/* Tarjetas para pantallas pequeñas */}
+      <div className="d-md-none">
+        {datos.registros ? (
+          <div className="jornal-item">
+            <p><strong>Registros:</strong> {datos.registros}</p>
+            <p><strong>Días de Trabajo:</strong> {datos.diasTrabajo}</p>
+            <p><strong>Días de Licencia:</strong> {datos.diasLicencia}</p>
+            <p><strong>Días de Enfermedad:</strong> {datos.diasEnfermedad}</p>
+            <p><strong>Faltas:</strong> {datos.diasFalta}</p>
+            <p><strong>Horas trabajadas:</strong> {parseFloat(datos.horasTrabajadas).toFixed(2)}</p>
+            <p><strong>Horas extra:</strong> {datos.horasExtra}</p>
+          </div>
+        ) : (
+          <Alert variant="info">No se encontraron datos del empleado en ese rango de fechas.</Alert>
+        )}
+      </div>
+      {datos && parseInt(datos.registros) > 0 && (
+  <Button variant="primary" onClick={() => toggleJornales(empleadoId)}>
+    {visibleJornales[empleadoId] ? 'Ocultar Jornales' : 'Ver Jornales'}
+  </Button>
+)}
+
+
 
       <Collapse in={visibleJornales[empleadoId]}>
         <div>

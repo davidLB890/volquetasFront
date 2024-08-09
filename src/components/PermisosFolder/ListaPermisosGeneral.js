@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Spinner, Alert, Container, Form } from 'react-bootstrap';
+import { Table, Spinner, Alert, Container, Form, Card, Button } from 'react-bootstrap';
 import { getPermisos, getEmpresaId, getParticularId } from '../../api'; // Asegúrate de ajustar las rutas según sea necesario
 import useAuth from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -10,12 +10,25 @@ const ListaPermisosGeneral = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: 'fechaVencimiento', direction: 'asc' });
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
   const getToken = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
     const fetchPermisos = async () => {
       const usuarioToken = getToken();
+      if (!usuarioToken) {
+        navigate('/');
+      }
       try {
         const response = await getPermisos(usuarioToken);
         const permisosConNombre = await fetchClientes(response.data, usuarioToken);
@@ -97,31 +110,64 @@ const ListaPermisosGeneral = () => {
               <option value="nombreCliente-desc">Cliente (Descendente)</option>
             </Form.Control>
           </Form.Group>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Fecha Creación</th>
-                <th>Fecha Vencimiento</th>
-                <th>Cliente</th>
-              </tr>
-            </thead>
-            <tbody>
+          
+          {isSmallScreen ? (
+            // Vista de tarjetas para pantallas pequeñas
+            <div>
               {sortedPermisos.map((permiso) => (
-                <tr key={permiso.id}>
-                  <td>{permiso.id}</td>
-                  <td>{moment(permiso.fechaCreacion).format('YYYY-MM-DD')}</td>
-                  <td style={getCellStyle(permiso.fechaVencimiento)}>{moment(permiso.fechaVencimiento).format('YYYY-MM-DD')}</td>
-                  <td
-                    style={{ cursor: 'pointer', color: 'blue' }}
-                    onClick={() => handleClienteClick(permiso)}
-                  >
-                    {permiso.nombreCliente || 'Desconocido'}
-                  </td>
-                </tr>
+                <Card key={permiso.id} className="mb-3">
+                  <Card.Body>
+                    <Card.Title>ID: {permiso.id}</Card.Title>
+                    <Card.Text>
+                      <strong>Fecha Creación:</strong> {moment(permiso.fechaCreacion).format('YYYY-MM-DD')}<br />
+                      <strong>Fecha Vencimiento:</strong>
+                      <span style={getCellStyle(permiso.fechaVencimiento)}> {moment(permiso.fechaVencimiento).format('YYYY-MM-DD')}</span><br />
+                      <strong>Cliente:</strong> 
+                      <span
+                        style={{ cursor: 'pointer', color: 'blue' }}
+                        onClick={() => handleClienteClick(permiso)}
+                      >
+                        {permiso.nombreCliente || 'Desconocido'}
+                      </span>
+                    </Card.Text>
+                    <Button
+                      variant="primary"
+                      onClick={() => handleClienteClick(permiso)}
+                    >
+                      Ver detalles del cliente
+                    </Button>
+                  </Card.Body>
+                </Card>
               ))}
-            </tbody>
-          </Table>
+            </div>
+          ) : (
+            // Vista de tabla para pantallas grandes
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Fecha Creación</th>
+                  <th>Fecha Vencimiento</th>
+                  <th>Cliente</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedPermisos.map((permiso) => (
+                  <tr key={permiso.id}>
+                    <td>{permiso.id}</td>
+                    <td>{moment(permiso.fechaCreacion).format('YYYY-MM-DD')}</td>
+                    <td style={getCellStyle(permiso.fechaVencimiento)}>{moment(permiso.fechaVencimiento).format('YYYY-MM-DD')}</td>
+                    <td
+                      style={{ cursor: 'pointer', color: 'blue' }}
+                      onClick={() => handleClienteClick(permiso)}
+                    >
+                      {permiso.nombreCliente || 'Desconocido'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
         </>
       )}
     </Container>

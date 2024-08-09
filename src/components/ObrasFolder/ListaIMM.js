@@ -1,16 +1,32 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Table, Spinner, Alert, Container, Button, Form, Row, Col } from "react-bootstrap";
+import { Table, Spinner, Alert, Container, Button, Form, Row, Col, Card } from "react-bootstrap";
 import { getObrasMeses } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import * as XLSX from "xlsx";
+import { useNavigate } from "react-router-dom";
 
 const ListaIMM = () => {
   const [obras, setObras] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [cantidadMeses, setCantidadMeses] = useState(4); // Default value
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
   const getToken = useAuth();
   const componentRef = useRef();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const usuarioToken = getToken();
+    if (!usuarioToken) {
+      navigate("/");
+    }
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchObras = async () => {
@@ -76,57 +92,84 @@ const ListaIMM = () => {
               </Button>
             </Col>
           </Row>
-          <div
-            id="table-to-pdf"
-            style={{
-              maxHeight: "80vh", // Ajusta esta altura según tus necesidades
-              overflowY: "auto",
-              overflowX: "auto",
-            }}
-          >
-            <Table
-              striped
-              bordered
-              hover
-              ref={componentRef}
-              style={{ display: "block", width: "100%", whiteSpace: "nowrap" }}
+
+          {isSmallScreen ? (
+            obras.map((obra) => (
+              <Card key={obra.id} className="mb-3">
+                <Card.Body>
+                  <Card.Title>{obra.empresa?.nombre || "N/A"}</Card.Title>
+                  <Card.Text>
+                    <strong>Dirección:</strong> {obra.calle}, {obra.esquina}, {obra.barrio} <br />
+                    <strong>Detalle Residuos:</strong> {obra.ObraDetalle?.detalleResiduos || ""} <br />
+                    <strong>Res. Mezclados:</strong> {obra.ObraDetalle?.residuosMezclados ? "Sí" : "No"} <br />
+                    <strong>Res. Reciclados:</strong> {obra.ObraDetalle?.residuosReciclados ? "Sí" : "No"} <br />
+                    <strong>Frecuencia:</strong>{" "}
+                    {obra.ObraDetalle?.frecuenciaSemanal?.map((frecuencia, index) => (
+                      <span key={index}>
+                        {frecuencia.value}{" "}
+                        {index < obra.ObraDetalle.frecuenciaSemanal.length - 1 ? " A " : ""}
+                      </span>
+                    )) || "N/A"}{" "}
+                    <br />
+                    <strong>Destino Final:</strong> {obra.ObraDetalle?.destinoFinal || ""} <br />
+                    <strong>Días:</strong> {obra.ObraDetalle?.dias || ""} <br />
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            ))
+          ) : (
+            <div
+              id="table-to-pdf"
+              style={{
+                maxHeight: "80vh",
+                overflowY: "auto",
+                overflowX: "auto",
+              }}
             >
-              <thead>
-                <tr>
-                  <th>Empresa</th>
-                  <th>Dirección</th>
-                  <th>Detalle Residuos</th>
-                  <th>Res. Mezclados</th>
-                  <th>Res. Reciclados</th>
-                  <th>Frecuencia</th>
-                  <th>Destino Final</th>
-                  <th>Días</th>
-                </tr>
-              </thead>
-              <tbody>
-                {obras.map((obra) => (
-                  <tr key={obra.id}>
-                    <td>{obra.empresa?.nombre || "N/A"}</td>
-                    <td>
-                      {obra.calle}, {obra.esquina}, {obra.barrio}
-                    </td>
-                    <td>{obra.ObraDetalle?.detalleResiduos || ""}</td>
-                    <td>{obra.ObraDetalle?.residuosMezclados ? "Sí" : "No"}</td>
-                    <td>{obra.ObraDetalle?.residuosReciclados ? "Sí" : "No"}</td>
-                    <td>
-                      {obra.ObraDetalle?.frecuenciaSemanal?.map((frecuencia, index) => (
-                        <span key={index}>
-                          {frecuencia.value} {index < obra.ObraDetalle.frecuenciaSemanal.length - 1 ? " A " : ""}
-                        </span>
-                      )) || "N/A"}
-                    </td>
-                    <td>{obra.ObraDetalle?.destinoFinal || ""}</td>
-                    <td>{obra.ObraDetalle?.dias || ""}</td>
+              <Table
+                striped
+                bordered
+                hover
+                ref={componentRef}
+                style={{ display: "block", width: "100%", whiteSpace: "nowrap" }}
+              >
+                <thead>
+                  <tr>
+                    <th>Empresa</th>
+                    <th>Dirección</th>
+                    <th>Detalle Residuos</th>
+                    <th>Res. Mezclados</th>
+                    <th>Res. Reciclados</th>
+                    <th>Frecuencia</th>
+                    <th>Destino Final</th>
+                    <th>Días</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
+                </thead>
+                <tbody>
+                  {obras.map((obra) => (
+                    <tr key={obra.id}>
+                      <td>{obra.empresa?.nombre || "N/A"}</td>
+                      <td>
+                        {obra.calle}, {obra.esquina}, {obra.barrio}
+                      </td>
+                      <td>{obra.ObraDetalle?.detalleResiduos || ""}</td>
+                      <td>{obra.ObraDetalle?.residuosMezclados ? "Sí" : "No"}</td>
+                      <td>{obra.ObraDetalle?.residuosReciclados ? "Sí" : "No"}</td>
+                      <td>
+                        {obra.ObraDetalle?.frecuenciaSemanal?.map((frecuencia, index) => (
+                          <span key={index}>
+                            {frecuencia.value} {index < obra.ObraDetalle.frecuenciaSemanal.length - 1 ? " A " : ""}
+                          </span>
+                        )) || "N/A"}
+                      </td>
+                      <td>{obra.ObraDetalle?.destinoFinal || ""}</td>
+                      <td>{obra.ObraDetalle?.dias || ""}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          )}
         </>
       )}
     </Container>

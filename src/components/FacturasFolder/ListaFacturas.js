@@ -9,6 +9,7 @@ import {
   Col,
   Form,
   Button,
+  Card,
 } from "react-bootstrap";
 import { getFacturas, getParticularId, getEmpresaId } from "../../api";
 import useAuth from "../../hooks/useAuth";
@@ -35,11 +36,23 @@ const ListaFacturas = () => {
   const [empresaNombre, setEmpresaNombre] = useState("");
   const [particularId, setParticularId] = useState(null);
   const [particularNombre, setParticularNombre] = useState("");
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
   const getToken = useAuth();
-
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (!getToken()) {
+      navigate("/");
+    }
     fetchFacturas();
   }, []);
 
@@ -75,14 +88,14 @@ const ListaFacturas = () => {
           return { ...factura, nombre };
         })
       );
-  
+
       // Ordenar las facturas alfabéticamente por el nombre del cliente
       const facturasOrdenadas = facturasConNombre.sort((a, b) => {
         if (a.nombre < b.nombre) return -1;
         if (a.nombre > b.nombre) return 1;
         return 0;
       });
-  
+
       setFacturas(facturasOrdenadas);
     } catch (error) {
       console.error("Error al obtener las facturas:", error);
@@ -90,7 +103,6 @@ const ListaFacturas = () => {
     }
     setLoading(false);
   };
-  
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -154,7 +166,6 @@ const ListaFacturas = () => {
     let idFactura = factura.id;
     navigate("/facturas/datos", { state: { facturaId: idFactura } });
   };
-
 
   return (
     <Container>
@@ -263,35 +274,56 @@ const ListaFacturas = () => {
       <Button variant="success" onClick={exportToPDF} className="mb-3">
         Exportar a PDF
       </Button>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Factura</th>
-            <th>Numeración</th>
-            <th>Monto</th>
-            <th>Nombre</th>
-            <th>Fecha creación</th>
-            <th>Fecha Pago</th>
-          </tr>
-        </thead>
-        <tbody>
-          {facturas.map((factura) => (
-            <tr key={factura.id}
-            onClick={() => handleRowClick(factura)}>
-              <td>{factura.tipo}</td>
-              <td>{factura.numeracion}</td>
-              <td>{factura.monto}</td>
-              <td>{factura.nombre}</td>
-              <td>{moment(factura.createdAt).format("YYYY-MM-DD")}</td>
-              <td>
+
+      {isSmallScreen ? (
+        facturas.map((factura) => (
+          <Card key={factura.id} className="mb-3">
+            <Card.Body onClick={() => handleRowClick(factura)}>
+              <Card.Title>{factura.tipo}</Card.Title>
+              <Card.Text>
+                <strong>Numeración:</strong> {factura.numeracion} <br />
+                <strong>Monto:</strong> ${factura.monto} <br />
+                <strong>Nombre:</strong> {factura.nombre} <br />
+                <strong>Fecha creación:</strong>{" "}
+                {moment(factura.createdAt).format("YYYY-MM-DD")} <br />
+                <strong>Fecha Pago:</strong>{" "}
                 {factura.fechaPago
                   ? moment(factura.fechaPago).format("YYYY-MM-DD")
                   : "No Pagado"}
-              </td>
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        ))
+      ) : (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Factura</th>
+              <th>Numeración</th>
+              <th>Monto</th>
+              <th>Nombre</th>
+              <th>Fecha creación</th>
+              <th>Fecha Pago</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {facturas.map((factura) => (
+              <tr key={factura.id} onClick={() => handleRowClick(factura)}>
+                <td>{factura.tipo}</td>
+                <td>{factura.numeracion}</td>
+                <td>{factura.monto}</td>
+                <td>{factura.nombre}</td>
+                <td>{moment(factura.createdAt).format("YYYY-MM-DD")}</td>
+                <td>
+                  {factura.fechaPago
+                    ? moment(factura.fechaPago).format("YYYY-MM-DD")
+                    : "No Pagado"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
     </Container>
   );
 };

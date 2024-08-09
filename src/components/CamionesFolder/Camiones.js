@@ -8,6 +8,7 @@ import useAuth from "../../hooks/useAuth";
 import moment from "moment";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCamiones, removeCamion } from "../../features/camionesSlice";
+import "../../assets/css/Camiones.css"; // Importa el archivo CSS
 
 const Camiones = () => {
   const camiones = useSelector((state) => state.camiones.camiones);
@@ -15,8 +16,7 @@ const Camiones = () => {
   const [filtroMatricula, setFiltroMatricula] = useState("");
   const [filtroModelo, setFiltroModelo] = useState("");
   const [mostrarModificarCamion, setMostrarModificarCamion] = useState(null);
-  const [mostrarFormularioServicio, setMostrarFormularioServicio] =
-    useState(null);
+  const [mostrarFormularioServicio, setMostrarFormularioServicio] = useState(null);
   const [mostrarServiciosCamion, setMostrarServiciosCamion] = useState(null);
   const [mostrarAsignarChofer, setMostrarAsignarChofer] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -33,8 +33,10 @@ const Camiones = () => {
     const usuarioToken = getToken();
     if (usuarioToken === null) {
       navigate("/login");
-    } 
-  }, [getToken, navigate]);
+    } else {
+      dispatch(fetchCamiones(usuarioToken)); // Fetch camiones al montar el componente
+    }
+  }, [getToken, navigate, dispatch]);
 
   const handleEliminar = async (camionId) => {
     const usuarioToken = getToken();
@@ -56,13 +58,10 @@ const Camiones = () => {
   };
 
   const handleActualizarCamion = (camionActualizado) => {
-    const camionesActualizados = camiones.map((c) =>
-      c.id === camionActualizado.id ? camionActualizado : c
-    );
-    dispatch({
-      type: "camiones/updateCamion",
-      payload: camionesActualizados,
-    });
+    const usuarioToken = getToken();
+    setMostrarModificarCamion(null);
+    // Volver a cargar la lista de camiones
+    dispatch(fetchCamiones(usuarioToken));
   };
 
   const handleCancelarModificar = () => {
@@ -79,9 +78,7 @@ const Camiones = () => {
 
   const handleMostrarServicios = (camionId) => {
     setMostrarServiciosCamion((prev) => (prev === camionId ? null : camionId));
-    setMostrarFormularioServicio(
-      camionId === mostrarFormularioServicio ? null : camionId
-    );
+    setMostrarFormularioServicio(camionId === mostrarFormularioServicio ? null : camionId);
   };
 
   const handleMostrarAsignarChofer = (camionId) => {
@@ -97,13 +94,8 @@ const Camiones = () => {
   };
 
   const camionesFiltrados = camiones.filter((camion) => {
-    const matriculaMatches = camion.matricula
-      .toLowerCase()
-      .startsWith(filtroMatricula.toLowerCase());
-    const modeloMatches = camion.modelo
-      .toString()
-      .toLowerCase()
-      .startsWith(filtroModelo.toLowerCase());
+    const matriculaMatches = camion.matricula.toLowerCase().startsWith(filtroMatricula.toLowerCase());
+    const modeloMatches = camion.modelo.toString().toLowerCase().startsWith(filtroModelo.toLowerCase());
     return (
       (filtroMatricula === "" || matriculaMatches) &&
       (filtroModelo === "" || modeloMatches)
@@ -149,127 +141,201 @@ const Camiones = () => {
         </Form.Group>
       </div>
 
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th scope="col">Matricula</th>
-            <th scope="col">Modelo</th>
-            <th scope="col">Año</th>
-            <th scope="col">Estado</th>
-            <th scope="col">Acciones</th>
-          </tr>
-          <tr>
-            <th></th>
-            <th>
-              <Form.Control
-                type="text"
-                placeholder="Filtrar por Matricula"
-                value={filtroMatricula}
-                onChange={handleFiltrarMatricula}
-              />
-            </th>
-            <th>
-              <Form.Control
-                type="text"
-                placeholder="Filtrar por Modelo"
-                value={filtroModelo}
-                onChange={handleFiltrarModelo}
-              />
-            </th>
-            <th></th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {camionesFiltrados.map((camion, index) => (
-            <React.Fragment key={camion.id}>
-              <tr>
-                <td>{camion.matricula}</td>
-                <td>{camion.modelo}</td>
-                <td>{camion.anio}</td>
-                <td>{camion.estado}</td>
-                <td>
-                  {rolUsuario === "admin" && (
+      {/* Tabla para pantallas medianas y grandes */}
+      <div className="table-responsive d-none d-md-block">
+        <table className="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Matricula</th>
+              <th scope="col">Modelo</th>
+              <th scope="col">Año</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Acciones</th>
+            </tr>
+            <tr>
+              <th></th>
+              <th>
+                <Form.Control
+                  type="text"
+                  placeholder="Filtrar por Matricula"
+                  value={filtroMatricula}
+                  onChange={handleFiltrarMatricula}
+                />
+              </th>
+              <th>
+                <Form.Control
+                  type="text"
+                  placeholder="Filtrar por Modelo"
+                  value={filtroModelo}
+                  onChange={handleFiltrarModelo}
+                />
+              </th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {camionesFiltrados.map((camion, index) => (
+              <React.Fragment key={camion.id}>
+                <tr>
+                  <td>{camion.matricula}</td>
+                  <td>{camion.modelo}</td>
+                  <td>{camion.anio}</td>
+                  <td>{camion.estado}</td>
+                  <td>
+                    {rolUsuario === "admin" && (
+                      <Button
+                        variant="danger"
+                        style={{
+                          padding: "0.5rem 1rem",
+                          marginRight: "0.5rem",
+                        }}
+                        onClick={() => confirmarEliminar(camion)}
+                      >
+                        Eliminar
+                      </Button>
+                    )}
                     <Button
-                      variant="danger"
+                      variant="primary"
                       style={{
                         padding: "0.5rem 1rem",
                         marginRight: "0.5rem",
                       }}
-                      onClick={() => confirmarEliminar(camion)}
+                      onClick={() => handleModificar(camion)}
                     >
-                      Eliminar
+                      Modificar
                     </Button>
-                  )}
-                  <Button
-                    variant="primary"
-                    style={{
-                      padding: "0.5rem 1rem",
-                      marginRight: "0.5rem",
-                    }}
-                    onClick={() => handleModificar(camion)}
-                  >
-                    Modificar
-                  </Button>
-                  <Button
-                    variant="info"
-                    style={{
-                      padding: "0.5rem 1rem",
-                      marginRight: "0.5rem",
-                    }}
-                    onClick={() => handleMostrarServicios(camion.id)}
-                  >
-                    Servicios
-                  </Button>
-                  <Button
-                    variant="warning"
-                    style={{
-                      padding: "0.5rem 1rem",
-                      marginRight: "0.5rem",
-                    }}
-                    onClick={() => handleMostrarAsignarChofer(camion.id)}
-                  >
-                    Chofer
-                  </Button>
-                </td>
-              </tr>
-              {mostrarModificarCamion === camion && (
-                <tr>
-                  <td colSpan="6">
-                    <ModificarCamion
-                      camion={camion}
-                      onUpdate={handleActualizarCamion}
-                      onHide={handleCancelarModificar}
-                    />
+                    <Button
+                      variant="info"
+                      style={{
+                        padding: "0.5rem 1rem",
+                        marginRight: "0.5rem",
+                      }}
+                      onClick={() => handleMostrarServicios(camion.id)}
+                    >
+                      Servicios
+                    </Button>
+                    <Button
+                      variant="warning"
+                      style={{
+                        padding: "0.5rem 1rem",
+                        marginRight: "0.5rem",
+                      }}
+                      onClick={() => handleMostrarAsignarChofer(camion.id)}
+                    >
+                      Chofer
+                    </Button>
                   </td>
                 </tr>
+                {mostrarModificarCamion === camion && (
+                  <tr>
+                    <td colSpan="6">
+                      <ModificarCamion
+                        camion={camion}
+                        onUpdate={handleActualizarCamion}
+                        onHide={handleCancelarModificar}
+                      />
+                    </td>
+                  </tr>
+                )}
+                {mostrarServiciosCamion === camion.id && (
+                  <tr>
+                    <td colSpan="6">
+                      <ServiciosCamion
+                        camionId={camion.id}
+                        mes={mesSeleccionado}
+                        anio={anioSeleccionado}
+                      />
+                    </td>
+                  </tr>
+                )}
+                {mostrarAsignarChofer === camion.id && (
+                  <tr>
+                    <td colSpan="6">
+                      <AsignarChofer
+                        camionId={camion.id}
+                        onHide={() => handleMostrarAsignarChofer(null)}
+                      />
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Tarjetas para pantallas pequeñas */}
+      <div className="d-md-none">
+        {camionesFiltrados.map((camion) => (
+          <div key={camion.id} className="camion-item">
+            <p><strong>Matricula:</strong> {camion.matricula}</p>
+            <p><strong>Modelo:</strong> {camion.modelo}</p>
+            <p><strong>Año:</strong> {camion.anio}</p>
+            <p><strong>Estado:</strong> {camion.estado}</p>
+            <div className="camion-actions">
+              {rolUsuario === "admin" && (
+                <Button
+                  variant="danger"
+                  className="mb-2 w-100"
+                  onClick={() => confirmarEliminar(camion)}
+                >
+                  Eliminar
+                </Button>
               )}
-              {mostrarServiciosCamion === camion.id && (
-                <tr>
-                  <td colSpan="6">
-                    <ServiciosCamion
-                      camionId={camion.id}
-                      mes={mesSeleccionado}
-                      anio={anioSeleccionado}
-                    />
-                  </td>
-                </tr>
-              )}
-              {mostrarAsignarChofer === camion.id && (
-                <tr>
-                  <td colSpan="6">
-                    <AsignarChofer
-                      camionId={camion.id}
-                      onHide={() => handleMostrarAsignarChofer(null)}
-                    />
-                  </td>
-                </tr>
-              )}
-            </React.Fragment>
-          ))}
-        </tbody>
-      </table>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                onClick={() => handleModificar(camion)}
+              >
+                Modificar
+              </Button>
+              <Button
+                variant="warning"
+                className="w-100"
+                onClick={() => handleMostrarAsignarChofer(camion.id)}
+              >
+                Chofer
+              </Button>
+              <Button
+                variant="info"
+                className="mb-2 w-100"
+                onClick={() => handleMostrarServicios(camion.id)}
+              >
+                Servicios
+              </Button>
+            </div>
+            {mostrarModificarCamion === camion && (
+              <div className="mt-3">
+                <ModificarCamion
+                  camion={camion}
+                  onUpdate={handleActualizarCamion}
+                  onHide={handleCancelarModificar}
+                />
+              </div>
+            )}
+            {mostrarServiciosCamion === camion.id && (
+              <div className="mt-3">
+                <ServiciosCamion
+                  camionId={camion.id}
+                  mes={mesSeleccionado}
+                  anio={anioSeleccionado}
+                />
+              </div>
+            )}
+            {mostrarAsignarChofer === camion.id && (
+              <div className="mt-3">
+                <AsignarChofer
+                  camionId={camion.id}
+                  onHide={() => handleMostrarAsignarChofer(null)}
+                />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
       <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Confirmar Eliminación</Modal.Title>

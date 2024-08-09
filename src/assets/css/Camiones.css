@@ -1,0 +1,30 @@
+/* Camiones.css */
+
+.camion-item {
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: #fff;
+    margin-bottom: 15px;
+  }
+  
+  .camion-item p {
+    margin: 0 0 5px;
+  }
+  
+  .camion-item .camion-actions {
+    margin-top: 10px;
+  }
+  
+  @media (min-width: 768px) {
+    .camion-item {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .table-responsive {
+      display: none;
+    }
+  }
+  

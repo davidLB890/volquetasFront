@@ -15,8 +15,8 @@ import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import ModificarVolqueta from "./ModificarVolqueta";
 import { TAMANOS_VOLQUETA, ESTADOS_VOLQUETA } from "../../config/config";
-import "../../assets/css/tituloBoton.css"; // Asegúrate de ajustar la ruta según sea necesario
-import { deleteVolquetaAPI, putVolquetaAPI } from "../../api";
+import "../../assets/css/ListaVolquetas.css"; // Asegúrate de ajustar la ruta según sea necesario
+import { deleteVolquetaAPI } from "../../api";
 
 const ListaVolquetas = () => {
   const dispatch = useDispatch();
@@ -32,6 +32,9 @@ const ListaVolquetas = () => {
 
   useEffect(() => {
     const usuarioToken = getToken();
+    if (!usuarioToken) {
+      navigate("/");
+    }
     dispatch(fetchVolquetas(usuarioToken));
   }, [dispatch, getToken]);
 
@@ -136,6 +139,8 @@ const ListaVolquetas = () => {
           </Form.Group>
         </Col>
       </Row>
+
+      {/* Tabla para pantallas grandes */}
       <Table striped bordered hover size="sm" className="table-sm">
         <thead>
           <tr>
@@ -218,6 +223,62 @@ const ListaVolquetas = () => {
           ))}
         </tbody>
       </Table>
+
+      {/* Vista de lista para pantallas pequeñas */}
+      <div className="d-md-none">
+        {volquetasFiltradas.map((volqueta) => (
+          <div key={volqueta.numeroVolqueta} className="volqueta-item">
+            <p><strong>#:</strong> {volqueta.numeroVolqueta}</p>
+            <p><strong>Estado:</strong> {volqueta.estado}</p>
+            <p><strong>Tipo:</strong> {volqueta.tipo}</p>
+            <p><strong>Ocupada:</strong> {volqueta.ocupada ? "Sí" : "No"}</p>
+            <p>
+              <strong>Último movimiento:</strong>
+              {volqueta.Movimientos.length > 0 &&
+                volqueta.Movimientos.map((movimiento, index) => (
+                  <div key={index}>
+                    {movimiento.tipo === "entrega"
+                      ? `Entregada en ${movimiento?.Pedido?.Obra?.calle}`
+                      : movimiento.tipo === "levante"
+                      ? `Levantada en ${movimiento?.Pedido?.Obra?.calle}`
+                      : ""}
+                  </div>
+                ))}
+            </p>
+            <div className="volqueta-actions">
+              <Button
+                variant="danger"
+                className="w-100"
+                onClick={() => confirmarEliminar(volqueta)}
+              >
+                Eliminar
+              </Button>
+              <Button
+                variant="primary"
+                className="w-100"
+                onClick={() => {
+                  setVolquetaSeleccionada(volqueta);
+                  setShowModificarVolqueta(true);
+                }}
+              >
+                Modificar
+              </Button>
+              <Button
+                variant="info"
+                className="w-100"
+                onClick={() =>
+                  navigate("/volquetas/datos", {
+                    state: { volquetaId: volqueta.numeroVolqueta },
+                  })
+                }
+              >
+                Datos
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+
       {showModificarVolqueta && volquetaSeleccionada && (
         <ModificarVolqueta
           volqueta={volquetaSeleccionada}
@@ -225,6 +286,7 @@ const ListaVolquetas = () => {
           onUpdate={handleUpdateVolqueta}
         />
       )}
+
       <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Confirmar Eliminación</Modal.Title>

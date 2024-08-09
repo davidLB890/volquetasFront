@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect } from "react";
-import { Form, Button, Card, Alert } from "react-bootstrap";
+import React, { useEffect, useRef, useState } from "react";
+import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
@@ -16,6 +16,13 @@ const AgregarVolqueta = () => {
   const boton = useHabilitarBoton(refs);
   const navigate = useNavigate();
   const getToken = useAuth();
+
+  useEffect(() => {
+    const usuarioToken = getToken();
+    if (!usuarioToken) {
+      navigate("/");
+    }
+  }, [getToken, navigate]);
 
   const registrarVolqueta = async () => {
     const usuarioToken = getToken();
@@ -44,69 +51,63 @@ const AgregarVolqueta = () => {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center">
-      <Card className="mt-5 w-40">
-        <Card.Header>
-          <Card.Title>Agregar Volqueta</Card.Title>
-        </Card.Header>
-        <Card.Body>
-          <Form>
-            <Form.Group controlId="formNumeroVolqueta" className="mb-2">
-              <Form.Label>Número de Volqueta</Form.Label>
-              <Form.Control
-                ref={numeroVolquetaRef}
-                type="number"
-                placeholder="Número de Volqueta"
-                required
-              />
-            </Form.Group>
+    <div className="d-flex justify-content-center align-items-center flex-column mt-5">
+      <h2>Agregar Volqueta</h2>
+      <Form className="w-50">
+        <Form.Group controlId="formNumeroVolqueta" className="mb-2">
+          <Form.Label>Número de Volqueta</Form.Label>
+          <Form.Control
+            ref={numeroVolquetaRef}
+            type="number"
+            placeholder="Número de Volqueta"
+            required
+          />
+        </Form.Group>
 
-            <Form.Group controlId="formTipo" className="mb-2">
-              <Form.Label>Tamaño</Form.Label>
-              <Form.Control as="select" ref={tipoRef} required>
-                {TAMANOS_VOLQUETA.map((tamano) => (
-                  <option key={tamano.value} value={tamano.value}>
-                    {tamano.label}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
+        <Form.Group controlId="formTipo" className="mb-2">
+          <Form.Label>Tamaño</Form.Label>
+          <Form.Control as="select" ref={tipoRef} required>
+            {TAMANOS_VOLQUETA.map((tamano) => (
+              <option key={tamano.value} value={tamano.value}>
+                {tamano.label}
+              </option>
+            ))}
+          </Form.Control>
+        </Form.Group>
 
-            <Form.Group controlId="formEstado" className="mb-2">
-              <Form.Label>Estado</Form.Label>
-              <Form.Control as="select" ref={estadoRef} required>
-                {ESTADOS_VOLQUETA.map((estado) => (
-                  <option key={estado.value} value={estado.value}>
-                    {estado.label}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
+        <Form.Group controlId="formEstado" className="mb-2">
+          <Form.Label>Estado</Form.Label>
+          <Form.Control as="select" ref={estadoRef} required>
+            {ESTADOS_VOLQUETA.map((estado) => (
+              <option key={estado.value} value={estado.value}>
+                {estado.label}
+              </option>
+            ))}
+          </Form.Control>
+        </Form.Group>
 
-            {error && (
-              <Alert variant="danger" className="text-center mb-2">
-                {error}
-              </Alert>
-            )}
-            {success && (
-              <Alert variant="success" className="text-center mb-2">
-                {success}
-              </Alert>
-            )}
+        {error && (
+          <Alert variant="danger" className="text-center mb-2">
+            {error}
+          </Alert>
+        )}
+        {success && (
+          <Alert variant="success" className="text-center mb-2">
+            {success}
+          </Alert>
+        )}
 
-            <div className="text-center">
-              <Button
-                type="button"
-                variant="primary"
-                onClick={registrarVolqueta}
-                disabled={!boton}
-              >
-                Confirmar
-              </Button>
-            </div>
-          </Form>
-        </Card.Body>
-      </Card>
+        <div className="text-center">
+          <Button
+            type="button"
+            variant="primary"
+            onClick={registrarVolqueta}
+            disabled={!boton}
+          >
+            Confirmar
+          </Button>
+        </div>
+      </Form>
     </div>
   );
 };

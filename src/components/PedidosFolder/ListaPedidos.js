@@ -535,6 +535,23 @@ const ListaPedido = () => {
           </tbody>
         </Table>
         <div className="table-responsive-scroll"></div>
+        {/* Vista para pantallas pequeñas */}
+    <div className="d-md-none">
+      {pedidos.map((pedido) => (
+        <div key={pedido.id} className="pedido-item mb-3 p-3 border">
+          <p><strong>Fecha:</strong> {new Date(pedido.createdAt).toLocaleDateString()}</p>
+          <p><strong>Cliente:</strong> {pedido.Obra.empresa ? pedido.Obra.empresa.nombre : pedido.Obra.particular.nombre}</p>
+          <p><strong>Dirección:</strong> {pedido.Obra.calle} {pedido.Obra.numeroPuerta}</p>
+          <p><strong>Precio:</strong> ${pedido.pagoPedido?.precio}</p>
+          <p><strong>Pagado:</strong> {pedido.pagoPedido?.pagado ? "Sí" : "No"}</p>
+          <p><strong>Sugerencia:</strong> {renderSugerencia(pedido)}</p>
+          <p><strong>Movimiento:</strong> {renderMovimiento(pedido)}</p>
+          <Button variant="primary" onClick={() => handleRowClick(pedido)}>
+            Ver Detalles
+          </Button>
+        </div>
+      ))}
+    </div>
       </div>
     </Container>
   );

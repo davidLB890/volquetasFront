@@ -24,6 +24,9 @@ const ListaEmpresas = () => {
     const fetchEmpresas = async (letra) => {
       const usuarioToken = getToken();
       setLoading(true);
+      if(!usuarioToken){
+        navigate("/");
+      }
       try {
         const response = await getEmpresasLetra(letra, usuarioToken);
         setEmpresas(response.data);

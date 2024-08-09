@@ -50,6 +50,9 @@ const DatosEmpresa = () => {
     const fetchEmpresa = async () => {
       const usuarioToken = getToken();
       dispatch(fetchEmpresaStart());
+      if(!usuarioToken){
+        navigate("/");
+      }
       try {
         const response = await getEmpresaId(empresaId, usuarioToken);
         dispatch(fetchEmpresaSuccess(response.data));

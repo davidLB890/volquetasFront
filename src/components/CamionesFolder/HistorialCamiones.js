@@ -8,6 +8,7 @@ import {
 } from "../../api";
 import { Container, Row, Col, Form, Table, Alert } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const HistorialCamiones = () => {
   const [camiones, setCamiones] = useState([]);
@@ -16,12 +17,16 @@ const HistorialCamiones = () => {
   const [error, setError] = useState("");
   const [selectedCamion, setSelectedCamion] = useState("");
   const [selectedChofer, setSelectedChofer] = useState("");
+  const navigate = useNavigate();
 
   const getToken = useAuth();
 
   useEffect(() => {
     const fetchDatos = async () => {
       const usuarioToken = getToken();
+      if(!usuarioToken){
+        navigate("/");
+      }
       try {
         const responseCamiones = await getCamiones(usuarioToken);
         const responseChoferes = await obtenerEmpleados(usuarioToken);

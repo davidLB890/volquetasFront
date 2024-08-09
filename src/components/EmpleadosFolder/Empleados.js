@@ -32,7 +32,7 @@ const Empleados = () => {
   useEffect(() => {
     const usuarioToken = getToken();
     if (!usuarioToken) {
-      navigate("/login");
+      navigate("/");
     }
     dispatch(fetchEmpleados(usuarioToken)); // Fetch empleados al montar el componente
   }, [getToken, navigate, dispatch]);

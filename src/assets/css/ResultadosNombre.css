@@ -1,0 +1,12 @@
+/* ListaResultadosNombre.css */
+
+/* Opcional: Añadir márgenes o padding si es necesario */
+.card {
+    margin-bottom: 1rem;
+  }
+  
+  /* Asegurar que los botones ocupen todo el ancho en pantallas pequeñas */
+  .card-body .btn {
+    width: 100%;
+  }
+  

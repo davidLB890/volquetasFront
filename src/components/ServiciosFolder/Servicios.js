@@ -4,6 +4,7 @@ import { Container, Table, Alert, Button } from 'react-bootstrap';
 import useAuth from '../../hooks/useAuth';
 import AgregarServicio from './AgregarServicio';
 import moment from 'moment';
+/* import './ServiciosCamion.css'; */ // Importa el archivo CSS
 
 const ServiciosCamion = ({ camionId, mes, anio }) => {
   const [servicios, setServicios] = useState([]);
@@ -18,7 +19,6 @@ const ServiciosCamion = ({ camionId, mes, anio }) => {
     try {
       const response = await getServicioPorCamionFecha(camionId, mes, anio, usuarioToken);
       const datos = response.data;
-      console.log(datos);
       const ordenados = datos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
       setServicios(ordenados);
     } catch (error) {
@@ -46,7 +46,8 @@ const ServiciosCamion = ({ camionId, mes, anio }) => {
 
   return (
     <Container>
-      <>
+      {/* Tabla para pantallas medianas y grandes */}
+      <div className="table-responsive d-none d-md-block">
         <Table striped bordered hover>
           <thead>
             <tr>
@@ -57,7 +58,7 @@ const ServiciosCamion = ({ camionId, mes, anio }) => {
             </tr>
           </thead>
           <tbody>
-            {servicios.map((servicio, index) => (
+            {servicios.map((servicio) => (
               <tr key={servicio.id}>
                 <td>{moment(servicio.fecha).format('lll')}</td>
                 <td>{servicio.tipo}</td>
@@ -69,15 +70,27 @@ const ServiciosCamion = ({ camionId, mes, anio }) => {
             ))}
           </tbody>
         </Table>
+      </div>
 
-        <Button variant="primary" onClick={handleMostrarModal}>
-          Agregar Servicio
-        </Button>
+      {/* Tarjetas para pantallas pequeñas */}
+      <div className="d-md-none">
+        {servicios.map((servicio) => (
+          <div key={servicio.id} className="servicio-item">
+            <p><strong>Fecha:</strong> {moment(servicio.fecha).format('lll')}</p>
+            <p><strong>Tipo:</strong> {servicio.tipo}</p>
+            <p><strong>Descripción:</strong> {servicio.descripcion}</p>
+            <p><strong>Precio:</strong> $ {servicio.precio} {servicio.moneda === 'peso' ? 'UYU' : 'USD'}</p>
+          </div>
+        ))}
+      </div>
 
-        <AgregarServicio idCamion={camionId} onSuccess={handleSuccess} show={mostrarModal} onHide={handleCloseModal} />
+      <Button variant="primary" onClick={handleMostrarModal}>
+        Agregar Servicio
+      </Button>
 
-        {error && <Alert variant="danger">{error}</Alert>}
-      </>
+      <AgregarServicio idCamion={camionId} onSuccess={handleSuccess} show={mostrarModal} onHide={handleCloseModal} />
+
+      {error && <Alert variant="danger">{error}</Alert>}
     </Container>
   );
 };

@@ -1,18 +1,17 @@
-//implementado por volquetas y datos de clientes
 import React, { useState } from "react";
 import { Table, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import "../../assets/css/Movimientos.css"; // Importa el archivo CSS
 
-const Movimientos = ({
-  movimientos = [],
-  volquetaId
-}) => {
+const Movimientos = ({ movimientos = [], volquetaId }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const empleados = useSelector((state) => state.empleados.empleados || []);
-  const choferes = empleados.filter((empleado) => empleado.rol === "chofer" && empleado.habilitado);
+  const choferes = empleados.filter(
+    (empleado) => empleado.rol === "chofer" && empleado.habilitado
+  );
 
   const handleVerPedido = (pedidoId, volquetaId) => {
     navigate("/pedidos/datos", { state: { pedidoId: pedidoId, volquetaId: volquetaId } });
@@ -20,11 +19,12 @@ const Movimientos = ({
 
   return (
     <div>
-      <div>
-        {movimientos.length === 0 ? (
-          <p>No hay movimientos para esta volqueta.</p>
-        ) : (
-          <Table striped bordered hover>
+      {movimientos.length === 0 ? (
+        <p>No hay movimientos para esta volqueta.</p>
+      ) : (
+        <>
+          {/* Tabla para pantallas grandes */}
+          <Table striped bordered hover className="table">
             <thead>
               <tr>
                 <th>Número de Volqueta</th>
@@ -55,9 +55,30 @@ const Movimientos = ({
               ))}
             </tbody>
           </Table>
-        )}
-        {error && <Alert variant="danger">{error}</Alert>}
-      </div>
+
+          {/* Lista para pantallas pequeñas */}
+          <div className="d-md-none">
+            {movimientos.map((movimiento) => (
+              <div key={movimiento?.id} className="movimiento-item">
+                <div><strong>Número de Volqueta:</strong> {movimiento?.numeroVolqueta || "-"}</div>
+                <div><strong>Horario:</strong> {movimiento?.horario ? new Date(movimiento.horario).toLocaleString() : "-"}</div>
+                <div><strong>Último movimiento:</strong> {movimiento?.tipo || "-"}</div>
+                <div><strong>Chofer:</strong> {choferes.find(chofer => chofer.id === movimiento?.choferId)?.nombre || "Sin chofer asignado"}</div>
+                <div className="movimiento-actions">
+                  <Button
+                    variant="info"
+                    onClick={() => handleVerPedido(movimiento?.pedidoId, volquetaId)}
+                    className="w-100"
+                  >
+                    Ver Pedido
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+      {error && <Alert variant="danger">{error}</Alert>}
     </div>
   );
 };

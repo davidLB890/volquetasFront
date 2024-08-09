@@ -10,9 +10,9 @@ import {
   Col,
   Button,
 } from "react-bootstrap";
-import { getVolquetaId } from "../../api"; // Asegúrate de ajustar la ruta según sea necesario
+import { getVolquetaId } from "../../api";
 import useAuth from "../../hooks/useAuth";
-import Movimientos from "../MovimientosFolder/Movimientos"; // Asegúrate de ajustar la ruta según sea necesario
+import Movimientos from "../MovimientosFolder/Movimientos";
 
 const DatosVolqueta = () => {
   const location = useLocation();
@@ -23,7 +23,6 @@ const DatosVolqueta = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Establecer las fechas por defecto a la semana actual
   const getStartOfWeek = () => {
     const now = new Date();
     const firstDayOfWeek = new Date(
@@ -85,6 +84,7 @@ const DatosVolqueta = () => {
 
   return (
     <Container>
+      {/* Card para pantallas grandes */}
       <Card className="mt-3">
         <Card.Header>
           <h1>Detalles de la Volqueta {volqueta.numeroVolqueta}</h1>
@@ -101,9 +101,6 @@ const DatosVolqueta = () => {
           </p>
           <Form>
             <Row>
-              <div className="d-flex justify-content-between align-items-center">
-                <h4 className="mb-0">Movimientos</h4>
-              </div>
               <Col>
                 <Form.Group controlId="fechaInicio">
                   <Form.Label>Fecha de Inicio</Form.Label>
@@ -134,6 +131,8 @@ const DatosVolqueta = () => {
           />
         </Card.Body>
       </Card>
+
+      
     </Container>
   );
 };

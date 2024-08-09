@@ -159,11 +159,9 @@ const DatosParticular = () => {
               >
                 Agregar Obra
               </Button>
-            </Col>
-            <Col xs={12} md={4}>
               <Button
                 onClick={() => setShowAgregarPermiso(true)}
-                className="w-100"
+                className="mb-2 mb-md-0 me-md-2"
                 variant="info"
                 style={{
                   padding: "0.5rem 1rem",

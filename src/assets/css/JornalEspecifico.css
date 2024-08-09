@@ -1,0 +1,30 @@
+/* JornalEspecifico.css */
+
+.jornal-item {
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: #fff;
+    margin-bottom: 15px;
+  }
+  
+  .jornal-item p {
+    margin: 5px 0;
+  }
+  
+  .jornal-item .jornal-actions {
+    margin-top: 10px;
+  }
+  
+  @media (min-width: 768px) {
+    .jornal-item {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .table-responsive {
+      display: none;
+    }
+  }
+  

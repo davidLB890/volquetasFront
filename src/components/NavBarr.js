@@ -1,4 +1,4 @@
-import React from 'react';
+/* import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Nav, Navbar, Container, Button } from 'react-bootstrap';
 import Breadcrumbs from './Breadcrumbs';
@@ -34,5 +34,5 @@ const CustomNavbar = ({ toggleSidebar }) => {
   );
 };
 
-export default CustomNavbar;
+export default CustomNavbar; */
   /* import '../assets/css/navbar.css'; // Importa el archivo CSS */

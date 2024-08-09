@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { confirmarUsuario, obtenerUsuarios } from '../../api';
 import { Button, Form } from 'react-bootstrap';
 import useAuth from '../../hooks/useAuth';
-import AlertMessage from '../AlertMessage'; // Asegúrate de importar tu componente AlertMessage
+import AlertMessage from '../AlertMessage';
+import '../../assets/css/Confirmarusuario.css'; // Asegúrate de importar un archivo CSS para tus estilos
 
 const ConfirmarUsuario = () => {
   const navigate = useNavigate();
@@ -76,56 +77,78 @@ const ConfirmarUsuario = () => {
       <h1>Lista de Usuarios sin confirmar</h1>
       <AlertMessage type="error" message={error} />
       <AlertMessage type="success" message={success} />
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th scope="col"></th>
-            <th scope="col">Email</th>
-            <th scope="col">Rol</th>
-            <th scope="col">Acciones</th>
-          </tr>
-          <tr>
-            <th></th>
-            <th>
-              <Form.Control
-                type="text"
-                placeholder="Filtrar por Email"
-                value={filtroEmail}
-                onChange={(e) => setFiltroEmail(e.target.value)}
-              />
-            </th>
-            <th>
-              <Form.Control
-                as="select"
-                value={filtroRol}
-                onChange={(e) => setFiltroRol(e.target.value)}
-              >
-                <option value="">Todos</option>
-                <option value="admin">Admin</option>
-                <option value="normal">Normal</option>
-              </Form.Control>
-            </th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {usuariosFiltrados.map((usuario, index) => (
-            <tr key={usuario.id}>
-              <th scope="row">{index + 1}</th>
-              <td>{usuario.email}</td>
-              <td>{usuario.rol}</td>
-              <td>
-                <Button variant="danger" onClick={() => confirmar(usuario.email)}>
-                  Confirmar
-                </Button>
-              </td>
+      
+      {/* Vista para pantallas grandes */}
+      <div className="d-none d-md-block">
+        <table className="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">Email</th>
+              <th scope="col">Rol</th>
+              <th scope="col">Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+            <tr>
+              <th></th>
+              <th>
+                <Form.Control
+                  type="text"
+                  placeholder="Filtrar por Email"
+                  value={filtroEmail}
+                  onChange={(e) => setFiltroEmail(e.target.value)}
+                />
+              </th>
+              <th>
+                <Form.Control
+                  as="select"
+                  value={filtroRol}
+                  onChange={(e) => setFiltroRol(e.target.value)}
+                >
+                  <option value="">Todos</option>
+                  <option value="admin">Admin</option>
+                  <option value="normal">Normal</option>
+                </Form.Control>
+              </th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {usuariosFiltrados.map((usuario, index) => (
+              <tr key={usuario.id}>
+                <th scope="row">{index + 1}</th>
+                <td>{usuario.email}</td>
+                <td>{usuario.rol}</td>
+                <td>
+                  <Button variant="danger" onClick={() => confirmar(usuario.email)}>
+                    Confirmar
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Vista para pantallas pequeñas */}
+      <div className="d-md-none">
+        {usuariosFiltrados.map((usuario, index) => (
+          <div key={usuario.id} className="usuario-item">
+            <p><strong>Email:</strong> {usuario.email}</p>
+            <p><strong>Rol:</strong> {usuario.rol}</p>
+            <div className="usuario-actions">
+              <Button
+                variant="danger"
+                onClick={() => confirmar(usuario.email)}
+                className="w-100"
+              >
+                Confirmar
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
 export default ConfirmarUsuario;
-

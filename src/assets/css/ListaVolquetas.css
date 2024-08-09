@@ -1,0 +1,31 @@
+/* ListaVolquetas.css */
+.volqueta-item {
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    background-color: #fff;
+  }
+  
+  .volqueta-item p {
+    margin: 5px 0;
+  }
+  
+  .volqueta-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  @media (min-width: 769px) {
+    .volqueta-item {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .table {
+      display: none;
+    }
+  }
+  

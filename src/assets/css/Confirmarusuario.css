@@ -1,0 +1,18 @@
+/* src/assets/css/ConfirmarUsuario.css */
+
+.usuario-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: #fff;
+  }
+  
+  .usuario-item p {
+    margin: 0;
+  }
+  
+  .usuario-actions {
+    margin-top: 10px;
+  }
+  

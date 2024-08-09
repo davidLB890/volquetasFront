@@ -76,11 +76,11 @@ const Login = () => {
         <div className="card-header text-center">
           <h3>Inicia sesión</h3>
         </div>
-        {sessionExpired && (
+        {/* {sessionExpired && (
           <div className="alert alert-warning">
             Sesión expirada. Por favor, inicia sesión de nuevo.
           </div>
-        )}
+        )} */}
         <div className="card-body">
           <form>
             <div className="input-group form-group">
