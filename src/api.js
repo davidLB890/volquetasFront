@@ -607,7 +607,7 @@ export const getPedidos = (usuarioToken) => {
     },
   });
 };
-export const getPedidosFiltro = (usuarioToken, { estado, fechaInicio, fechaFin, tipoHorario, empresaId, particularId, obraId }) => {
+export const getPedidosFiltro = (usuarioToken, { estado, fechaInicio, fechaFin, tipoHorario, empresaId, particularId, obraId, choferId }) => {
   return axios.get(`${API_URL}pedidos-filtro`, {
     params: {
       estado,
@@ -617,6 +617,7 @@ export const getPedidosFiltro = (usuarioToken, { estado, fechaInicio, fechaFin, 
       empresaId,
       particularId,
       obraId,
+      choferId,
     },
     headers: {
       Authorization: usuarioToken,
@@ -957,3 +958,35 @@ export const deleteFactura = (facturaId, usuarioToken) => {
   });
 }
 
+//CAJAS
+export const obtenerCajas = (fechaInicio, fechaFin, usuarioToken) => {
+  return axios.get(`${API_URL}cajas?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, {
+    headers: {
+      Authorization: usuarioToken,
+      'Content-Type': 'application/json',
+    },
+  });
+};
+export const postCaja = (caja, usuarioToken) => {
+  return axios.post(`${API_URL}cajas`, caja, {
+    headers: {
+      Authorization: usuarioToken,
+      'Content-Type': 'application/json',
+    },
+  });
+}
+export const putCaja = (cajaId, caja, usuarioToken) => {
+  return axios.put(`${API_URL}cajas/${cajaId}`, caja, {
+    headers: {
+      Authorization: usuarioToken,
+    },
+  });
+}
+export const deleteCaja = (cajaId, usuarioToken) => {
+  return axios.delete(`${API_URL}cajas/${cajaId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      'Content-Type': 'application/json',
+    },
+  });
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Nav, Navbar, Container, Button } from "react-bootstrap";
+import { Nav, Navbar, Container, Button, NavLink } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "./Breadcrumbs";
 import "../assets/css/navbar.css";
@@ -12,7 +12,8 @@ const Navigation = ({ userRole }) => {
 
   const cerrarSesion = () => {
     localStorage.clear();
-    navigate("/login");
+  sessionStorage.clear();
+  navigate('/login');
   };
 
   const toggleExpand = (section) => {
@@ -222,7 +223,7 @@ const Navigation = ({ userRole }) => {
                   <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                     <i className="ni ni-align-left-2 text-info text-sm opacity-10"></i>
                   </div>
-                  <span className="nav-link-text ms-1">Listas</span>
+                  <span className="nav-link-text ms-1">Listas y Reportes</span>
                 </div>
                 <div
                   className={`nav-submenu ms-5 collapse ${
@@ -238,6 +239,9 @@ const Navigation = ({ userRole }) => {
                   <Nav.Link as={Link} to="/imm" onClick={handleMouseLeave}>
                     Lista para la IMM
                   </Nav.Link>
+                  <NavLink as={Link} to="/reporteChofer" onClick={handleMouseLeave}>
+                    Reporte de chofer
+                  </NavLink>
                 </div>
               </Nav.Item>
             </div>
@@ -272,6 +276,69 @@ const Navigation = ({ userRole }) => {
                 </div>
               </Nav.Item>
             </div>
+
+            <div
+              onMouseEnter={() => handleMouseEnter("cajas")}
+              onMouseLeave={handleMouseLeave}
+              className="nav-item-container"
+            >
+              <Nav.Item className="nav-item">
+                <div
+                  onClick={() => toggleExpand("cajas")}
+                  className="nav-link cursor-pointer nav-item-title"
+                >
+                  <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <i className="ni ni-app text-info text-sm opacity-10"></i>
+                  </div>
+                  <span className="nav-link-text ms-1">Cajas</span>
+                </div>
+                <div
+                  className={`nav-submenu ms-5 collapse ${
+                    expanded === "cajas" ? "show" : ""
+                  }`}
+                >
+                  <Nav.Link
+                    as={Link}
+                    to="/cajas"
+                    onClick={handleMouseLeave}
+                  >
+                    Lista de cajas
+                  </Nav.Link>
+                </div>
+              </Nav.Item>
+            </div>
+
+            <div
+              onMouseEnter={() => handleMouseEnter("estadisticas")}
+              onMouseLeave={handleMouseLeave}
+              className="nav-item-container"
+            >
+              <Nav.Item className="nav-item">
+                <div
+                  onClick={() => toggleExpand("estadisticas")}
+                  className="nav-link cursor-pointer nav-item-title"
+                >
+                  <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <i className="ni ni-chart-bar-32 text-info text-sm opacity-10"></i>
+                  </div>
+                  <span className="nav-link-text ms-1">Estadisticas</span>
+                </div>
+                <div
+                  className={`nav-submenu ms-5 collapse ${
+                    expanded === "estadisticas" ? "show" : ""
+                  }`}
+                >
+                  <Nav.Link
+                    as={Link}
+                    to="/estadisticas"
+                    onClick={handleMouseLeave}
+                  >
+                    Estadisticas
+                  </Nav.Link>
+                </div>
+              </Nav.Item>
+            </div>
+
             {userRole === "admin" && (
               <div
                 onMouseEnter={() => handleMouseEnter("usuarios")}

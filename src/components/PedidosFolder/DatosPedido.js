@@ -158,12 +158,13 @@ const DatosPedido = () => {
             <Col xs={12} md={6}>
               {pedido.creadoComo === "recambio" && <Referencia />}
               <h2>
-                Detalles del pedido{" "}
+                Pedido{" "}
                 {pedido.creadoComo === "multiple"
-                  ? ` ${pedido.id} (multiple) `
-                  : pedido.id}{" "}
+                  ? `  (multiple) `
+                  : " "}
                 en {obra?.calle}
               </h2>
+              <p>nro identificador: {pedido.id}</p>
             </Col>
             <Col
               xs={12}
@@ -176,11 +177,11 @@ const DatosPedido = () => {
           </Row>
         </Card.Header>
         <Card.Body>
-  <MovimientosYSugerencias />
-  <Row>
-    <Col md={6} xs={12}>
-      <DetallesPedido />
-    </Col>
+          <MovimientosYSugerencias />
+          <Row>
+            <Col md={6} xs={12}>
+              <DetallesPedido />
+            </Col>
             <Col md={6}>
               <PagoPedido />
             </Col>

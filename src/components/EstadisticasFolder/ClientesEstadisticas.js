@@ -4,7 +4,7 @@ import {
   Button,
   Spinner,
   Alert,
-  Modal,
+  Card,
   Form,
   Row,
   Col,
@@ -170,26 +170,18 @@ const ClientesEstadisticas = () => {
 
   return (
     <Container>
-      <Button
-        variant="link"
-        onClick={handleShowModal}
-        className="btn bg-gradient-default"
-      >
-        <h5>Cliente</h5>
-      </Button>
       {loading && <Spinner animation="border" />}
-
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>
+      <Card className="mb-4">
+        <Card.Header>
+          <Card.Title>
             {empresaId
               ? `Estadísticas de Empresa: ${empresaNombre}`
               : particularId
               ? `Estadísticas de Particular: ${particularNombre}`
               : `Estadísticas de Cliente`}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+          </Card.Title>
+        </Card.Header>
+        <Card.Body>
           {error && <Alert variant="danger">{error}</Alert>}
           <Form onSubmit={handleFormSubmit} className="mt-3">
             <Row>
@@ -300,304 +292,285 @@ const ClientesEstadisticas = () => {
           </Form>
           {!loading && !error && tieneEstadisticas && (
             <>
-              <ul style={{ listStyleType: "none", padding: 0 }}>
-                <li style={{ marginBottom: "2px" }}>
-                  <strong>Total: </strong>
-                  {estadisticas.total || 0}
-                </li>
-                <li style={{ marginBottom: "2px" }}>
-                  <strong>Pagados: </strong>{" "}
-                  {estadisticas.pagados?.cantidad > 0
-                    ? `Cantidad: ${estadisticas.pagados.cantidad}, Monto: $${estadisticas.pagados.monto}`
-                    : "Cantidad: 0, Monto: $0"}
-                  {estadisticas.pagados?.ids &&
-                    estadisticas.pagados.ids.length > 0 && (
-                      <>
-                        <Button
-                          variant="link"
-                          onClick={toggleMostrarPagados}
-                          className="mt-2"
-                          style={{
-                            marginLeft: "10px",
-                            padding: 0,
-                            fontSize: "0.9rem",
-                          }}
-                        >
-                          {mostrarPagados ? "Mostrar menos" : "Mostrar más"}
-                        </Button>
-                        {mostrarPagados && (
-                          <div style={{ marginLeft: "20px" }}>
-                            {estadisticas.pagados.ids.map((id) => (
-                              <div
-                                key={id}
-                                style={{ cursor: "pointer", color: "blue" }}
-                                onClick={() => handlePedidoClick(id)}
-                              >
-                                Pedido {id}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    )}
-                </li>
-                <li style={{ marginBottom: "2px" }}>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <strong>No Pagados:</strong>
-                    {estadisticas.nopagados?.cantidad > 0
-                      ? `Cantidad: ${estadisticas.nopagados.cantidad}, Monto: $${estadisticas.nopagados.monto}`
-                      : "Cantidad: 0, Monto: $0"}
-                    {estadisticas.nopagados?.ids &&
-                      estadisticas.nopagados.ids.length > 0 && (
-                        <Button
-                          variant="link"
-                          onClick={toggleMostrarNoPagados}
-                          className="mt-3"
-                          style={{
-                            marginLeft: "10px",
-                            padding: 0,
-                            fontSize: "0.9rem",
-                          }}
-                        >
-                          {mostrarNoPagados ? "Mostrar menos" : "Mostrar más"}
-                        </Button>
-                      )}
+            <Row>
+  <Col md={6}>
+    <ul style={{ listStyleType: "none", padding: 0 }}>
+      <li style={{ marginBottom: "2px" }}>
+        <strong>Total: </strong>
+        {estadisticas.total || 0}
+      </li>
+      <li style={{ marginBottom: "2px" }}>
+        <strong>Pagados: </strong>{" "}
+        {estadisticas.pagados?.cantidad > 0
+          ? `Cantidad: ${estadisticas.pagados.cantidad}, Monto: $${estadisticas.pagados.monto}`
+          : "Cantidad: 0, Monto: $0"}
+        {estadisticas.pagados?.ids && estadisticas.pagados.ids.length > 0 && (
+          <>
+            <Button
+              variant="link"
+              onClick={toggleMostrarPagados}
+              className="mt-2"
+              style={{
+                marginLeft: "10px",
+                padding: 0,
+                fontSize: "0.9rem",
+              }}
+            >
+              {mostrarPagados ? "Mostrar menos" : "Mostrar más"}
+            </Button>
+            {mostrarPagados && (
+              <div style={{ marginLeft: "20px" }}>
+                {estadisticas.pagados.ids.map((id) => (
+                  <div
+                    key={id}
+                    style={{ cursor: "pointer", color: "blue" }}
+                    onClick={() => handlePedidoClick(id)}
+                  >
+                    Pedido {id}
                   </div>
-                  {mostrarNoPagados && (
-                    <div style={{ marginLeft: "20px" }}>
-                      {estadisticas.nopagados.ids.map((id) => (
-                        <div
-                          key={id}
-                          style={{ cursor: "pointer", color: "blue" }}
-                          onClick={() => handlePedidoClick(id)}
-                        >
-                          Pedido {id}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </li>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </li>
+      <li style={{ marginBottom: "2px" }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <strong>No Pagados:</strong>
+          {estadisticas.nopagados?.cantidad > 0
+            ? `Cantidad: ${estadisticas.nopagados.cantidad}, Monto: $${estadisticas.nopagados.monto}`
+            : "Cantidad: 0, Monto: $0"}
+          {estadisticas.nopagados?.ids &&
+            estadisticas.nopagados.ids.length > 0 && (
+              <Button
+                variant="link"
+                onClick={toggleMostrarNoPagados}
+                className="mt-3"
+                style={{
+                  marginLeft: "10px",
+                  padding: 0,
+                  fontSize: "0.9rem",
+                }}
+              >
+                {mostrarNoPagados ? "Mostrar menos" : "Mostrar más"}
+              </Button>
+            )}
+        </div>
+        {mostrarNoPagados && (
+          <div style={{ marginLeft: "20px" }}>
+            {estadisticas.nopagados.ids.map((id) => (
+              <div
+                key={id}
+                style={{ cursor: "pointer", color: "blue" }}
+                onClick={() => handlePedidoClick(id)}
+              >
+                Pedido {id}
+              </div>
+            ))}
+          </div>
+        )}
+      </li>
 
-                <li style={{ marginBottom: "2px" }}>
-                  <strong>Estado:</strong>
-                  {estadisticas.estado && (
-                    <>
-                      {estadisticas.estado.levantado.cantidad > 0 && (
-                        <div
-                          style={{ marginBottom: "2px", marginLeft: "20px" }}
-                        >
-                          <div
-                            style={{ display: "flex", alignItems: "center" }}
-                          >
-                            <strong>Levantado:</strong>{" "}
-                            {`Cantidad: ${estadisticas.estado.levantado.cantidad}`}
-                            <Button
-                              variant="link"
-                              className="mt-2"
-                              onClick={() => toggleMostrarEstado("levantado")}
-                              style={{
-                                marginLeft: "10px",
-                                padding: 0,
-                                fontSize: "0.9rem",
-                              }}
-                            >
-                              {mostrarEstados.levantado
-                                ? "Mostrar menos"
-                                : "Mostrar más"}
-                            </Button>
-                          </div>
-                          {mostrarEstados.levantado && (
-                            <div style={{ marginLeft: "20px" }}>
-                              {estadisticas.estado.levantado.ids.map((id) => (
-                                <div
-                                  key={id}
-                                  style={{ cursor: "pointer", color: "blue" }}
-                                  onClick={() => handlePedidoClick(id)}
-                                >
-                                  Pedido {id}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {estadisticas.estado.entregado.cantidad > 0 && (
-                        <div
-                          style={{ marginBottom: "2px", marginLeft: "20px" }}
-                        >
-                          <div
-                            style={{ display: "flex", alignItems: "center" }}
-                          >
-                            <strong>Entregado:</strong>{" "}
-                            {`Cantidad: ${estadisticas.estado.entregado.cantidad}`}
-                            <Button
-                              variant="link"
-                              className="mt-2"
-                              onClick={() => toggleMostrarEstado("entregado")}
-                              style={{
-                                marginLeft: "10px",
-                                padding: 0,
-                                fontSize: "0.9rem",
-                              }}
-                            >
-                              {mostrarEstados.entregado
-                                ? "Mostrar menos"
-                                : "Mostrar más"}
-                            </Button>
-                          </div>
-                          {mostrarEstados.entregado && (
-                            <div style={{ marginLeft: "20px" }}>
-                              {estadisticas.estado.entregado.ids.map((id) => (
-                                <div
-                                  key={id}
-                                  style={{ cursor: "pointer", color: "blue" }}
-                                  onClick={() => handlePedidoClick(id)}
-                                >
-                                  Pedido {id}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {estadisticas.estado.iniciado.cantidad > 0 && (
-                        <div
-                          style={{ marginBottom: "2px", marginLeft: "20px" }}
-                        >
-                          <div
-                            style={{ display: "flex", alignItems: "center" }}
-                          >
-                            <strong>Iniciado:</strong>{" "}
-                            {`Cantidad: ${estadisticas.estado.iniciado.cantidad}`}
-                            <Button
-                              variant="link"
-                              className="mt-2"
-                              onClick={() => toggleMostrarEstado("iniciado")}
-                              style={{
-                                marginLeft: "10px",
-                                padding: 0,
-                                fontSize: "0.9rem",
-                              }}
-                            >
-                              {mostrarEstados.iniciado
-                                ? "Mostrar menos"
-                                : "Mostrar más"}
-                            </Button>
-                          </div>
-                          {mostrarEstados.iniciado && (
-                            <div style={{ marginLeft: "20px" }}>
-                              {estadisticas.estado.iniciado.ids.map((id) => (
-                                <div
-                                  key={id}
-                                  style={{ cursor: "pointer", color: "blue" }}
-                                  onClick={() => handlePedidoClick(id)}
-                                >
-                                  Pedido {id}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {estadisticas.estado.cancelado.cantidad > 0 && (
-                        <div
-                          style={{ marginBottom: "2px", marginLeft: "20px" }}
-                        >
-                          <div
-                            style={{ display: "flex", alignItems: "center" }}
-                          >
-                            <strong>Cancelado:</strong>{" "}
-                            {`Cantidad: ${estadisticas.estado.cancelado.cantidad}`}
-                            <Button
-                              variant="link"
-                              className="mt-2"
-                              onClick={() => toggleMostrarEstado("cancelado")}
-                              style={{
-                                marginLeft: "10px",
-                                padding: 0,
-                                fontSize: "0.9rem",
-                              }}
-                            >
-                              {mostrarEstados.cancelado
-                                ? "Mostrar menos"
-                                : "Mostrar más"}
-                            </Button>
-                          </div>
-                          {mostrarEstados.cancelado && (
-                            <div style={{ marginLeft: "20px" }}>
-                              {estadisticas.estado.cancelado.ids.map((id) => (
-                                <div
-                                  key={id}
-                                  style={{ cursor: "pointer", color: "blue" }}
-                                  onClick={() => handlePedidoClick(id)}
-                                >
-                                  Pedido {id}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </li>
-
-                <li style={{ marginBottom: "2px" }}>
-                  <strong>Obras:</strong>
-                  {estadisticas.obras &&
-                    Object.keys(estadisticas.obras).map((key) => (
+      <li style={{ marginBottom: "2px" }}>
+        <strong>Estado:</strong>
+        {estadisticas.estado && (
+          <>
+            {estadisticas.estado.levantado.cantidad > 0 && (
+              <div style={{ marginBottom: "2px", marginLeft: "20px" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <strong>Levantado:</strong>{" "}
+                  {`Cantidad: ${estadisticas.estado.levantado.cantidad}`}
+                  <Button
+                    variant="link"
+                    className="mt-2"
+                    onClick={() => toggleMostrarEstado("levantado")}
+                    style={{
+                      marginLeft: "10px",
+                      padding: 0,
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {mostrarEstados.levantado
+                      ? "Mostrar menos"
+                      : "Mostrar más"}
+                  </Button>
+                </div>
+                {mostrarEstados.levantado && (
+                  <div style={{ marginLeft: "20px" }}>
+                    {estadisticas.estado.levantado.ids.map((id) => (
                       <div
-                        key={key}
-                        style={{ marginBottom: "2px", marginLeft: "20px" }}
+                        key={id}
+                        style={{ cursor: "pointer", color: "blue" }}
+                        onClick={() => handlePedidoClick(id)}
                       >
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <strong>{getObraCalle(key)}:</strong>{" "}
-                          {`Cantidad: ${estadisticas.obras[key].cantidad || 0}`}
-                          {estadisticas.obras[key].ids.length > 0 && (
-                            <Button
-                              variant="link"
-                              onClick={() => toggleMostrarObra(key)}
-                              style={{
-                                marginLeft: "10px",
-                                padding: 0,
-                                fontSize: "0.9rem",
-                              }}
-                            >
-                              {mostrarObras[key]
-                                ? "Mostrar menos"
-                                : "Mostrar más"}
-                            </Button>
-                          )}
-                        </div>
-                        {mostrarObras[key] && (
-                          <div style={{ marginLeft: "20px" }}>
-                            {estadisticas.obras[key].ids.map((id) => (
-                              <div
-                                key={id}
-                                style={{ cursor: "pointer", color: "blue" }}
-                                onClick={() => handlePedidoClick(id)}
-                              >
-                                Pedido {id}
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                        Pedido {id}
                       </div>
                     ))}
-                </li>
-              </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {estadisticas.estado.entregado.cantidad > 0 && (
+              <div style={{ marginBottom: "2px", marginLeft: "20px" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <strong>Entregado:</strong>{" "}
+                  {`Cantidad: ${estadisticas.estado.entregado.cantidad}`}
+                  <Button
+                    variant="link"
+                    className="mt-2"
+                    onClick={() => toggleMostrarEstado("entregado")}
+                    style={{
+                      marginLeft: "10px",
+                      padding: 0,
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {mostrarEstados.entregado
+                      ? "Mostrar menos"
+                      : "Mostrar más"}
+                  </Button>
+                </div>
+                {mostrarEstados.entregado && (
+                  <div style={{ marginLeft: "20px" }}>
+                    {estadisticas.estado.entregado.ids.map((id) => (
+                      <div
+                        key={id}
+                        style={{ cursor: "pointer", color: "blue" }}
+                        onClick={() => handlePedidoClick(id)}
+                      >
+                        Pedido {id}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {estadisticas.estado.iniciado.cantidad > 0 && (
+              <div style={{ marginBottom: "2px", marginLeft: "20px" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <strong>Iniciado:</strong>{" "}
+                  {`Cantidad: ${estadisticas.estado.iniciado.cantidad}`}
+                  <Button
+                    variant="link"
+                    className="mt-2"
+                    onClick={() => toggleMostrarEstado("iniciado")}
+                    style={{
+                      marginLeft: "10px",
+                      padding: 0,
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {mostrarEstados.iniciado
+                      ? "Mostrar menos"
+                      : "Mostrar más"}
+                  </Button>
+                </div>
+                {mostrarEstados.iniciado && (
+                  <div style={{ marginLeft: "20px" }}>
+                    {estadisticas.estado.iniciado.ids.map((id) => (
+                      <div
+                        key={id}
+                        style={{ cursor: "pointer", color: "blue" }}
+                        onClick={() => handlePedidoClick(id)}
+                      >
+                        Pedido {id}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {estadisticas.estado.cancelado.cantidad > 0 && (
+              <div style={{ marginBottom: "2px", marginLeft: "20px" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <strong>Cancelado:</strong>{" "}
+                  {`Cantidad: ${estadisticas.estado.cancelado.cantidad}`}
+                  <Button
+                    variant="link"
+                    className="mt-2"
+                    onClick={() => toggleMostrarEstado("cancelado")}
+                    style={{
+                      marginLeft: "10px",
+                      padding: 0,
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {mostrarEstados.cancelado
+                      ? "Mostrar menos"
+                      : "Mostrar más"}
+                  </Button>
+                </div>
+                {mostrarEstados.cancelado && (
+                  <div style={{ marginLeft: "20px" }}>
+                    {estadisticas.estado.cancelado.ids.map((id) => (
+                      <div
+                        key={id}
+                        style={{ cursor: "pointer", color: "blue" }}
+                        onClick={() => handlePedidoClick(id)}
+                      >
+                        Pedido {id}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </li>
+    </ul>
+  </Col>
+
+  <Col md={6}>
+    <ul style={{ listStyleType: "none", padding: 0 }}>
+      <li style={{ marginBottom: "2px" }}>
+        <strong>Obras:</strong>
+        {estadisticas.obras &&
+          Object.keys(estadisticas.obras).map((key) => (
+            <div key={key} style={{ marginBottom: "2px", marginLeft: "20px" }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <strong>{getObraCalle(key)}:</strong>{" "}
+                {`Cantidad: ${estadisticas.obras[key].cantidad || 0}`}
+                {estadisticas.obras[key].ids.length > 0 && (
+                  <Button
+                    variant="link"
+                    onClick={() => toggleMostrarObra(key)}
+                    style={{
+                      marginLeft: "10px",
+                      padding: 0,
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {mostrarObras[key] ? "Mostrar menos" : "Mostrar más"}
+                  </Button>
+                )}
+              </div>
+              {mostrarObras[key] && (
+                <div style={{ marginLeft: "20px" }}>
+                  {estadisticas.obras[key].ids.map((id) => (
+                    <div
+                      key={id}
+                      style={{ cursor: "pointer", color: "blue" }}
+                      onClick={() => handlePedidoClick(id)}
+                    >
+                      Pedido {id}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+      </li>
+    </ul>
+  </Col>
+</Row>
             </>
           )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Cerrar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        </Card.Body>
+      </Card>
     </Container>
   );
 };

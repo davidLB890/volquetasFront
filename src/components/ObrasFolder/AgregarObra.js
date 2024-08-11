@@ -155,7 +155,7 @@ const AgregarObra = ({
           <h5 className="mt-4">Detalles extra</h5>
 
           <Row>
-            <Col md={4}>
+{/*             <Col md={4}>
               <Form.Group controlId="formEsquina" className="mb-2">
                 <Form.Label>Esquina</Form.Label>
                 <Form.Control
@@ -176,7 +176,7 @@ const AgregarObra = ({
                   required
                 />
               </Form.Group>
-            </Col>
+            </Col> */}
             <Col md={4}>
               <Form.Group controlId="formBarrio" className="mb-2">
                 <Form.Label>Barrio</Form.Label>
@@ -188,12 +188,9 @@ const AgregarObra = ({
                 />
               </Form.Group>
             </Col>
-          </Row>
-
-          <Row>
-            <Col md={6}>
+            <Col md={8}>
               <Form.Group controlId="formDescripcion" className="mb-2">
-                <Form.Label>Descripción</Form.Label>
+                <Form.Label>Referencias / Descripción</Form.Label>
                 <Form.Control
                   ref={descripcionRef}
                   type="text"
@@ -202,6 +199,9 @@ const AgregarObra = ({
                 />
               </Form.Group>
             </Col>
+          </Row>
+
+          <Row>
             <Col md={6}>
               <Form.Group controlId="formResiduos" className="mb-2">
                 <Form.Label>Detalle de Residuos</Form.Label>

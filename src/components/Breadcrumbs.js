@@ -25,6 +25,7 @@ const Breadcrumbs = () => {
     'facturas': 'Facturas',
     'permisos': 'Permisos',
     'imm': 'IMM',
+    'estadisticas': 'Estadisticas',
   };
 
   const handleClick = (to) => {

@@ -39,6 +39,9 @@ import AgregarFactura from './components/FacturasFolder/AgregarFactura';
 import DatosFactura from './components/FacturasFolder/DatosFactura';
 import ListaPermisosGeneral from './components/PermisosFolder/ListaPermisosGeneral';
 import ListaIMM from './components/ObrasFolder/ListaIMM';
+import Cajas from './components/CajasFolder/Cajas';
+import Estadisticas from './components/EstadisticasFolder/Estadisticas';
+import ChoferEstadisticas from './components/EstadisticasFolder/ChoferEstadisticas';
 
 function App() {
   const location = useLocation();
@@ -69,7 +72,7 @@ function App() {
     '/obras/crear', '/empresas', '/empresas/datos', '/empresas/crear', '/particulares', 
     '/particulares/datos', '/particulares/crear', '/pedidos/crear', '/pedidos/datos', 
     '/volquetas', '/volquetas/crear', '/volquetas/datos', '/facturas', '/facturas/crear',
-    '/facturas/datos', '/permisos', '/imm'].includes(location.pathname);
+    '/facturas/datos', '/permisos', '/facturas/datos', '/cajas', "/estadisticas", "/imm","/reporteChofer"].includes(location.pathname);
 
   const showSidebarAndNavbar = !isLoginPage && !isSinginPage && !isNotFoundPage;
 
@@ -116,9 +119,14 @@ function App() {
             <Route path="/facturas" element={<Facturas />} />
             <Route path="/facturas/crear" element={<AgregarFactura />} />
             <Route path="/facturas/datos" element={<DatosFactura />} />
-            {/* PERMISOS */}
+            {/* Listas y reportes */}
             <Route path="/permisos" element={<ListaPermisosGeneral />} />
             <Route path="/imm" element={<ListaIMM />} />
+            <Route path="/reporteChofer" element={<ChoferEstadisticas />} />
+            {/* CAJAS */}
+            <Route path="/cajas" element={<Cajas />} /> 
+            {/* ESTADISTICAS */}
+            <Route path="/estadisticas" element={<Estadisticas />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

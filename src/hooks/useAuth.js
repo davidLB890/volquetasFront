@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const FOUR_HOURS = 4 * 60 * 60 * 1000; // 4 horas en milisegundos
-//const FOUR_HOURS = 10 * 1000; // 10 segundos en milisegundos
 
 const isTokenExpired = () => {
   const savedTimestamp = localStorage.getItem('tokenTimestamp');
@@ -11,35 +10,36 @@ const isTokenExpired = () => {
   }
 
   const now = new Date().getTime();
-  if (now - savedTimestamp > FOUR_HOURS) {
-    return true; // Han pasado más de 4 horas, el token ha expirado
-  }
-
-  return false;
+  return now - savedTimestamp > FOUR_HOURS;
 };
 
 const getToken = () => {
-  if (isTokenExpired()) {
+  const token = localStorage.getItem('apiToken');
+  if (!token || isTokenExpired()) {
     localStorage.removeItem('apiToken');
     localStorage.removeItem('tokenTimestamp');
+    sessionStorage.clear();  // Limpia sessionStorage también
     return null;
   }
-  return localStorage.getItem('apiToken');
+  return token;
 };
 
 const useAuth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
+    const checkSessionValidity = () => {
       if (isTokenExpired()) {
         localStorage.removeItem('apiToken');
         localStorage.removeItem('tokenTimestamp');
+        sessionStorage.clear();
         navigate('/login', { state: { sessionExpired: true } });
       }
-    }, 60000); // Verifica cada minuto (60000 ms)
+    };
 
-    return () => clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonta
+    const intervalId = setInterval(checkSessionValidity, 60000); // Verifica cada minuto
+
+    return () => clearInterval(intervalId);
   }, [navigate]);
 
   return getToken;

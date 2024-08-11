@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Button,
   Spinner,
   Alert,
-  Modal,
+Card,
   Form,
   Row,
   Col,
@@ -45,6 +45,10 @@ const PedidosEstadisticas = () => {
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const getToken = useAuth();
+
+  useEffect(() => {
+    fetchEstadisticasPedidos(fechaInicio, fechaFin);
+  }, []);
 
   const fetchEstadisticasPedidos = async (fechaInicio, fechaFin) => {
     const usuarioToken = getToken();
@@ -146,77 +150,67 @@ const PedidosEstadisticas = () => {
   };
 
   return (
-    <Container>
-      <Button variant="link" onClick={handleShowModal} className="btn bg-gradient-default">
-        <h5>Pedidos</h5>
-      </Button>
-      {loading && <Spinner animation="border" />}
-
-      <Modal
-        show={showModal}
-        onHide={handleCloseModal}
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Estadísticas de Pedidos</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {error && <Alert variant="danger">{error}</Alert>}
-
-          <Form onSubmit={handleFormSubmit} className="mt-3">
-            <Row>
-              <Col md={6}>
-                <Form.Group controlId="fechaInicio">
-                  <Form.Label>Fecha de Inicio</Form.Label>
-                  <Form.Control
-                    type="date"
-                    value={fechaInicio}
-                    onChange={(e) => setFechaInicio(e.target.value)}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group controlId="fechaFin">
-                  <Form.Label>Fecha de Fin</Form.Label>
-                  <Form.Control
-                    type="date"
-                    value={fechaFin}
-                    onChange={(e) => setFechaFin(e.target.value)}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Button variant="primary" type="submit">
-              Aplicar
-            </Button>
-          </Form>
-
-          {!loading && estadisticas && (
-            <>
+    (
+      <Container>
+        {loading && <Spinner animation="border" />}
+  
+        <Card className="mb-4">
+          <Card.Header>
+            <div className="d-flex justify-content-between align-items-center">
+              <Card.Title className="mb-0">Estadísticas de Pedidos</Card.Title>
+            </div>
+          </Card.Header>
+          <Card.Body>
+            {error && <Alert variant="danger">{error}</Alert>}
+  
+            <Form onSubmit={handleFormSubmit} className="mt-1">
+              <Row className="align-items-end">
+                <Col md={4}>
+                  <Form.Group controlId="fechaInicio">
+                    <Form.Label>Fecha de Inicio</Form.Label>
+                    <Form.Control
+                      type="date"
+                      value={fechaInicio}
+                      onChange={(e) => setFechaInicio(e.target.value)}
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group controlId="fechaFin">
+                    <Form.Label>Fecha de Fin</Form.Label>
+                    <Form.Control
+                      type="date"
+                      value={fechaFin}
+                      onChange={(e) => setFechaFin(e.target.value)}
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={1} className="d-flex justify-content-between">
+                  <Button variant="primary" type="submit" className="ml-2 align-self-end">
+                    Aplicar
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+  
+            {!loading && estadisticas && (
               <Row style={{ marginTop: "20px" }}>
-                <Col md={6}>
+                <Col md={12}>
                   <h5>Pagados</h5>
                   <Bar data={getPagadosNoPagadosData()} options={optionsPagadosNoPagados} />
                 </Col>
-                <Col md={6}>
+                <Col md={12}>
                   <h5>Estado</h5>
                   <Bar data={getEstadoData()} />
                 </Col>
               </Row>
-            </>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Cerrar
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </Container>
+            )}
+          </Card.Body>
+        </Card>
+      </Container>
+    )
   );
 };
 

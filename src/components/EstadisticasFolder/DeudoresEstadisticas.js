@@ -4,7 +4,7 @@ import {
   Button,
   Spinner,
   Alert,
-  Modal,
+  Card,
   Form,
   Row,
   Col,
@@ -53,7 +53,7 @@ const Deudores = () => {
     moment().endOf("month").format("YYYY-MM-DD")
   );
   const [tipo, setTipo] = useState("cantidad");
-  const [deudores, setDeudores] = useState(2);
+  const [deudores, setDeudores] = useState(3);
   const getToken = useAuth();
   const navigate = useNavigate();
 
@@ -202,23 +202,20 @@ const Deudores = () => {
 
   return (
     <Container>
-      <Button variant="link" onClick={handleShowModal} className="btn bg-gradient-default">
-        <h5>Deudores</h5>
-      </Button>
       {loading && <Spinner animation="border" />}
       {error && <Alert variant="danger">{error}</Alert>}
 
-      <Modal show={showModal} onHide={handleCloseModal} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Top {deudores} Deudores</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      <Card className="mb-4">
+        <Card.Header className="d-flex justify-content-between align-items-center">
+          <Card.Title className="mb-0">Top {deudores} Deudores</Card.Title>
           <Button
             variant="secondary"
             onClick={() => setShowFilters(!showFilters)}
           >
             Filtros
           </Button>
+        </Card.Header>
+        <Card.Body className="pt-2">
           {showFilters && (
             <Form onSubmit={handleFormSubmit} className="mt-3">
               <Row>
@@ -279,15 +276,15 @@ const Deudores = () => {
           )}
           {!loading && !error && (
             <>
-              <Row>
-                <Col md={6}>
+              <Row className="mt-4">
+                <Col md={12}>
                   <h6>Empresas Deudoras</h6>
                   <Bar
                     data={getEmpresaChartData()}
                     options={chartOptions("empresa")}
                   />
                 </Col>
-                <Col md={6}>
+                <Col md={12}>
                   <h6>Particulares Deudores</h6>
                   <Bar
                     data={getParticularChartData()}
@@ -297,13 +294,8 @@ const Deudores = () => {
               </Row>
             </>
           )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Cerrar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        </Card.Body>
+      </Card>
     </Container>
   );
 };

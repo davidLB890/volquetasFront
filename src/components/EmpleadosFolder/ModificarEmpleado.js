@@ -12,6 +12,7 @@ const ModificarEmpleado = ({ empleado, onHide, onUpdate }) => {
     fechaEntrada: empleado.fechaEntrada,
     fechaSalida: empleado.fechaSalida,
     cedula: empleado.cedula,
+    diereccion: empleado.direccion,
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -26,7 +27,6 @@ const ModificarEmpleado = ({ empleado, onHide, onUpdate }) => {
     try {
       const response = await putEmpleado(empleado.id, nuevoEmpleado, usuarioToken);
       const datos = response.data;
-      console.log("Empleado actualizado:", datos);
       onUpdate(datos); // Llama a la función para actualizar el estado de empleados en el componente padre
       setSuccess("Empleado actualizado correctamente");
       setTimeout(() => {
@@ -50,6 +50,7 @@ const ModificarEmpleado = ({ empleado, onHide, onUpdate }) => {
       fechaEntrada: empleado.fechaEntrada,
       fechaSalida: empleado.fechaSalida,
       cedula: empleado.cedula,
+      direccion: empleado.direccion
     });
   }, [empleado]);
 
@@ -111,6 +112,16 @@ const ModificarEmpleado = ({ empleado, onHide, onUpdate }) => {
             type="text"
             name="cedula"
             value={nuevoEmpleado.cedula}
+            onChange={handleInputChange}
+            required
+          />
+        </Form.Group>
+        <Form.Group controlId="formDireccion">
+          <Form.Label>Dirección</Form.Label>
+          <Form.Control
+            type="text"
+            name="direccion"
+            value={nuevoEmpleado.direccion}
             onChange={handleInputChange}
             required
           />

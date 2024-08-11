@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Container, Row, Col, Card, Modal, Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { updatePago } from "../../features/pedidoSlice";
 import useAuth from "../../hooks/useAuth";
 import AlertMessage from "../AlertMessage";
 import ModificarPagoPedido from "./ModificarPagoPedido";
+import AgregarEntrada from "../CajasFolder/AgregarEntrada";
 import { useMediaQuery } from "react-responsive";
 
 const PagoPedido = () => {
@@ -12,13 +13,32 @@ const PagoPedido = () => {
   const getToken = useAuth();
   const pago = useSelector((state) => state.pedido.pedido.pagoPedido);
   const [showModal, setShowModal] = useState(false);
+  const [showAgregarEntradaModal, setShowAgregarEntradaModal] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Media query para detectar si la pantalla es menor a md (768px)
   const isSmallScreen = useMediaQuery({ query: "(max-width: 768px)" });
 
-  const handlePagadoChange = async () => {
+  const handlePagadoChange = () => {
+    if (pago.tipoPago === "efectivo" && !pago.pagado) {
+      setShowConfirm(true);
+    } else {
+      togglePagado();
+    }
+  };
+
+  const handleConfirmYes = () => {
+    setShowConfirm(false);
+    setShowAgregarEntradaModal(true);
+  };
+
+  const handleConfirmNo = () => {
+    setShowConfirm(false);
+    togglePagado();
+  };
+
+  const togglePagado = async () => {
     const usuarioToken = getToken();
     const nuevoEstadoPagado = !pago.pagado;
 
@@ -45,12 +65,12 @@ const PagoPedido = () => {
   };
 
   const cardStyle = {
-    backgroundColor: pago?.pagado ? "#d4edda" : "#f8d7da", // Verde claro o rojo claro
-    borderColor: pago?.pagado ? "#c3e6cb" : "#f5c6cb", // Verde claro o rojo claro
+    backgroundColor: pago?.pagado ? "#d4edda" : "#f8d7da",
+    borderColor: pago?.pagado ? "#c3e6cb" : "#f5c6cb",
   };
 
   const titleStyle = {
-    color: pago?.pagado ? "#28a745" : "#dc3545", // Verde para pagado, rojo para no pagado
+    color: pago?.pagado ? "#28a745" : "#dc3545",
   };
 
   if (!pago) return null;
@@ -124,6 +144,42 @@ const PagoPedido = () => {
         onHide={() => setShowModal(false)}
         pago={pago}
       />
+
+      {/* Modal de Confirmación para Agregar Entrada */}
+      <Modal show={showConfirm} onHide={() => setShowConfirm(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Agregar Entrada de Caja</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Desea agregar un registro de caja para este pago en efectivo?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleConfirmNo}>
+            No
+          </Button>
+          <Button variant="primary" onClick={handleConfirmYes}>
+            Sí
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal para Agregar Entrada */}
+      <Modal 
+        show={showAgregarEntradaModal} 
+        onHide={() => {
+          setShowAgregarEntradaModal(false);
+          togglePagado(); // Ejecuta togglePagado cuando se cierra el modal
+        }} 
+        size="lg"
+        onExited={togglePagado} // Se asegura de ejecutar togglePagado incluso después de cerrar
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Agregar Entrada</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <AgregarEntrada onSuccess={() => setShowAgregarEntradaModal(false)} onHide={() => setShowAgregarEntradaModal(false)} efectivo={true} />
+        </Modal.Body>
+      </Modal>
     </Container>
   );
 };

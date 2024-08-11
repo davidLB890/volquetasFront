@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { Button, Container, Row, Col } from "react-bootstrap";
 import { fetchEmpleados } from "../features/empleadosSlice";
 import useAuth from "../hooks/useAuth";
-import ListaPedido from "./PedidosFolder/ListaPedidos";
+import Pedidos from "./PedidosFolder/Pedidos";
 import Deudores from "./EstadisticasFolder/DeudoresEstadisticas";
 import ClientesEstadisticas from "./EstadisticasFolder/ClientesEstadisticas";
 import ChoferEstadisticas from "./EstadisticasFolder/ChoferEstadisticas";
@@ -28,10 +28,7 @@ const Dashboard = () => {
 
   return (
     <Container>
-      <div className="text-center">
-        <h1>Inicio</h1>
-      </div>
-      <div className="custom-background">
+      {/* <div className="custom-background">
         <Row>
           <Col xs={6} md={3}>
             <PedidosEstadisticas />
@@ -46,8 +43,8 @@ const Dashboard = () => {
             <Deudores />
           </Col>
         </Row>
-      </div>
-      <ListaPedido />
+      </div> */}
+      <Pedidos />
     </Container>
   );
 };

@@ -58,7 +58,9 @@ const AgregarPedido = () => {
   const navigate = useNavigate();
 
   const empleados = useSelector((state) => state.empleados.empleados);
-  const choferes = empleados.filter((empleado) => empleado.rol === "chofer" && empleado.habilitado);
+  const choferes = empleados.filter(
+    (empleado) => empleado.rol === "chofer" && empleado.habilitado
+  );
 
   //const refs = [nombreRef, descripcionRef, emailRef, empresaIdRef];
   //const boton = useHabilitarBoton(refs);
@@ -125,21 +127,19 @@ const AgregarPedido = () => {
       pagado,
       tipoPago,
       horarioSugerido: horarioSugerido === "" ? null : horarioSugerido,
-      choferSugeridoId: choferSeleccionado,
+      choferSugeridoId: choferSeleccionado === "" ? null : choferSeleccionado,
       cantidadMultiple: cantidad,
     };
 
-
     if (!obraSeleccionada) {
       setError("Debe seleccionar una obra");
-      setTimeout(() => setError(''), 3000); 
+      setTimeout(() => setError(""), 3000);
       return;
     } else if (!tipoPedido) {
       setError("Debe seleccionar un tipo de pedido");
-      setTimeout(() => setError(''), 3000);
+      setTimeout(() => setError(""), 3000);
       return;
     }
-    
 
     try {
       let response;
@@ -301,53 +301,45 @@ const AgregarPedido = () => {
             />
           )}
 
-        {(empresaSeleccionada || particularSeleccionado) && (
-          <>
-            {loadingObras && <Spinner animation="border" />}
-            {errorObras && <Alert variant="danger">{errorObras}</Alert>}
-            {!loadingObras && !errorObras && obras.length === 0 && (
-              <Alert variant="info">Sin obras hasta ahora</Alert>
-            )}
-            <SelectObra
-              obras={obras}
-              obraSeleccionada={obraSeleccionada} // Asegúrate de pasar la obra seleccionada
-              onSelect={(id) => setObraSeleccionada(id)}
-              onNuevaObra={() => setShowAgregarObra(true)}
-            />
-            <Button
-              variant="primary"
-              onClick={() => setShowAgregarObra(true)}
-              className="mt-2"
-            >
-              Nueva Obra
-            </Button>
-          </>
-        )}
-
-        <AgregarObra
-          show={showAgregarObra}
-          onHide={() => setShowAgregarObra(false)}
-          onObraAgregada={handleAgregarObra}
-          error={error}
-          success={success}
-          boton={true}
-          empresaId={empresaSeleccionada?.id}
-          particularId={particularSeleccionado?.id}
-        />
-
-        {(empresaSeleccionada || particularSeleccionado) && (
-          <SelectPermiso
-            empresaId={empresaSeleccionada?.id}
-            particularId={particularSeleccionado?.id}
-            onSelect={handlePermisoChange}
-            selectedPermisoId={permisoSeleccionado? permisoSeleccionado : null}
-          />
-        )}
+        {/* {(empresaSeleccionada || particularSeleccionado) && ( */}
+        <>
+          <Row>
+            <Col md={4}>
+              <SelectObra
+                obras={obras}
+                obraSeleccionada={obraSeleccionada} // Asegúrate de pasar la obra seleccionada
+                onSelect={(id) => setObraSeleccionada(id)}
+                onNuevaObra={() => setShowAgregarObra(true)}
+                disabled={!empresaSeleccionada && !particularSeleccionado} // Deshabilitar si no hay empresa o particular seleccionado
+              />
+              <Button
+                variant="primary"
+                onClick={() => setShowAgregarObra(true)}
+                className="mt-2"
+                disabled={!empresaSeleccionada && !particularSeleccionado} // Deshabilitar si no hay empresa o particular seleccionado
+              >
+                Nueva Obra
+              </Button>
+            </Col>
+            <Col md={3}>
+              {(empresaSeleccionada || particularSeleccionado) && (
+                <SelectPermiso
+                  empresaId={empresaSeleccionada?.id}
+                  particularId={particularSeleccionado?.id}
+                  onSelect={handlePermisoChange}
+                  selectedPermisoId={
+                    permisoSeleccionado ? permisoSeleccionado : null
+                  }
+                />
+              )}
+            </Col>
+          </Row>
+        </>
 
         <Row>
-          <Col>
+          <Col md={3}>
             <Form.Group controlId="choferSeleccionado">
-              <Form.Label>Chofer sugerido entrega</Form.Label>
+              <Form.Label>Chofer sugerido entrega (opcional)</Form.Label>
               <Form.Control
                 as="select"
                 value={choferSeleccionado}
@@ -362,9 +354,9 @@ const AgregarPedido = () => {
               </Form.Control>
             </Form.Group>
           </Col>
-          <Col>
+          <Col md={3}>
             <Form.Group controlId="horarioSugerido">
-              <Form.Label>Horario Sugerido</Form.Label>
+              <Form.Label>Horario Sugerido (opcional)</Form.Label>
               <Form.Control
                 type="datetime-local"
                 value={horarioSugerido}
@@ -375,35 +367,35 @@ const AgregarPedido = () => {
         </Row>
 
         <Row>
-          <Col>
+          <Col md={2}>
             <Form.Group controlId="tipoPedido">
               <Form.Label>Tipo de Pedido *</Form.Label>
-              <div>
-                <Form.Check
-                  type="radio"
-                  label="Simple"
-                  value="simple"
-                  checked={tipoPedido === "simple"}
-                  onChange={handleTipoPedidoChange}
-                />
-                <Form.Check
-                  type="radio"
-                  label="Múltiple"
-                  value="multiple"
-                  checked={tipoPedido === "multiple"}
-                  onChange={handleTipoPedidoChange}
-                />
-                <Form.Check
-                  type="radio"
-                  label="Entrega/Levante"
-                  value="entrega/levante"
-                  checked={tipoPedido === "entrega/levante"}
-                  onChange={handleTipoPedidoChange}
-                />
-              </div>
+              <Form.Control
+                as="select"
+                value={tipoPedido}
+                onChange={handleTipoPedidoChange}
+              >
+                <option value="simple">Simple</option>
+                <option value="multiple">Múltiple</option>
+                <option value="entrega/levante">Entrega/Levante</option>
+              </Form.Control>
             </Form.Group>
           </Col>
-          <Col>
+          <Col md={1}>
+            {tipoPedido === "multiple" && (
+              <Form.Group controlId="cantidad">
+                <Form.Label>Cantidad *</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={cantidad}
+                  onChange={(e) => setCantidad(parseInt(e.target.value))}
+                  min="1"
+                />
+              </Form.Group>
+            )}
+          </Col>
+
+          <Col md={3}>
             <Form.Group controlId="descripcion">
               <Form.Label>Descripción (opcional)</Form.Label>
               <Form.Control
@@ -415,29 +407,8 @@ const AgregarPedido = () => {
           </Col>
         </Row>
 
-        {tipoPedido === "multiple" && (
-          <Form.Group controlId="cantidad">
-            <Form.Label>Cantidad</Form.Label>
-            <Form.Control
-              type="number"
-              value={cantidad}
-              onChange={(e) => setCantidad(parseInt(e.target.value))}
-              min="1"
-            />
-          </Form.Group>
-        )}
-
-        <Form.Group controlId="pagado">
-          <Form.Check
-            type="checkbox"
-            label="Pagado"
-            checked={pagado}
-            onChange={(e) => setPagado(e.target.checked)}
-          />
-        </Form.Group>
-
         <Row>
-          <Col>
+          <Col md={3}>
             <Form.Group controlId="tipoPago">
               <Form.Label>Tipo de Pago *</Form.Label>
               <Form.Control
@@ -453,7 +424,7 @@ const AgregarPedido = () => {
               </Form.Control>
             </Form.Group>
           </Col>
-          <Col>
+          <Col md={3}>
             <Form.Group controlId="precio">
               <Form.Label>Precio</Form.Label>
               <Form.Control
@@ -465,6 +436,14 @@ const AgregarPedido = () => {
             </Form.Group>
           </Col>
         </Row>
+        <Form.Group controlId="pagado">
+          <Form.Check
+            type="checkbox"
+            label="Pagado"
+            checked={pagado}
+            onChange={(e) => setPagado(e.target.checked)}
+          />
+        </Form.Group>
 
         {error && <Alert variant="danger">{error}</Alert>}
         {success && <Alert variant="success">{success}</Alert>}
@@ -473,6 +452,16 @@ const AgregarPedido = () => {
           Crear Pedido
         </Button>
       </Form>
+      <AgregarObra
+        show={showAgregarObra}
+        onHide={() => setShowAgregarObra(false)}
+        onObraAgregada={handleAgregarObra}
+        error={error}
+        success={success}
+        boton={true}
+        empresaId={empresaSeleccionada?.id}
+        particularId={particularSeleccionado?.id}
+      />
     </Container>
   );
 };

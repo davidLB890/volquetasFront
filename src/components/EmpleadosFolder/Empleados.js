@@ -22,6 +22,7 @@ const Empleados = () => {
   const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState(null);
   const [showModificarEmpleado, setShowModificarEmpleado] = useState(false);
   const [showDatosEmpleado, setShowDatosEmpleado] = useState(false);
+  const [forceUpdate, setForceUpdate] = useState(0);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const rolUsuario = localStorage.getItem("userRol");
@@ -98,6 +99,15 @@ const Empleados = () => {
     }
   };
 
+  const handleUpdateEmpleado = (empleado) => {
+    dispatch(fetchEmpleados(getToken()));
+    setForceUpdate(prev => {
+      console.log('forceUpdate antes:', prev);
+      return prev + 1;
+    });
+  };
+  
+
   const empleadosFiltrados = empleados.filter((empleado) => {
     return (
       (filtroNombre === "" ||
@@ -161,7 +171,6 @@ const Empleados = () => {
               <th scope="col">Acciones</th>
             </tr>
             <tr>
-              <th></th>
               <th>
                 <Form.Control
                   type="text"
@@ -254,7 +263,8 @@ const Empleados = () => {
                           <HabilitarDeshabilitarEmpleado
                             empleado={empleado}
                             onUpdate={() =>
-                              dispatch(fetchEmpleados(getToken()))
+                              handleUpdateEmpleado(empleado)
+                              /* dispatch(fetchEmpleados(getToken())) */
                             }
                           />
                         )}
@@ -267,7 +277,7 @@ const Empleados = () => {
                     empleadoSeleccionado.id === empleado.id && (
                       <tr>
                         <td colSpan="5">
-                          <DatosEmpleado idEmpleado={empleado.id} />
+                          <DatosEmpleado idEmpleado={empleado.id} forceUpdate={forceUpdate} />
                         </td>
                       </tr>
                     )}
@@ -323,7 +333,7 @@ const Empleados = () => {
                 empleadoSeleccionado &&
                 empleadoSeleccionado.id === empleado.id && (
                   <div className="mt-3">
-                    <DatosEmpleado idEmpleado={empleado.id} />
+                    <DatosEmpleado idEmpleado={empleado.id} forceUpdate={forceUpdate}/>
                   </div>
                 )}
             </div>

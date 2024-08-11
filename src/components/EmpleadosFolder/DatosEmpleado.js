@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import TelefonosEmpleado from "./TelefonosEmpleado";
-import CedulaDireccionEmpleado from "./CedulaDireccionEmpleado";
 import { obtenerEmpleado } from "../../api";
 import useAuth from "../../hooks/useAuth";
 
-const DatosEmpleado = ({ idEmpleado }) => {
+const DatosEmpleado = ({ idEmpleado, forceUpdate }) => {
   const [showAgregar, setShowAgregar] = useState(false);
   const [telefonos, setTelefonos] = useState([]);
   const [empleado, setEmpleado] = useState(null);
@@ -25,7 +24,7 @@ const DatosEmpleado = ({ idEmpleado }) => {
     };
 
     fetchEmpleado();
-  }, [idEmpleado, getToken]);
+  }, [idEmpleado, forceUpdate, getToken]);
 
   if (!empleado) {
     return <div>Cargando datos del empleado...</div>;
@@ -33,10 +32,15 @@ const DatosEmpleado = ({ idEmpleado }) => {
 
   return (
     <div>
-      <div>
-        <CedulaDireccionEmpleado empleado={empleado} />
+      <div style={{ textAlign: "left" }}>
+        <p>
+          <strong>Cédula:</strong> {empleado.cedula}
+        </p>
+        <p>
+          <strong>Dirección:</strong> {empleado.direccion}
+        </p>
       </div>
-      <div>
+      <div style={{ textAlign: "left" }}>
         <TelefonosEmpleado
           telefonos={telefonos}
           empleadoId={empleado.id}

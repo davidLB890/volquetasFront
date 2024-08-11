@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+/* import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import {
   Table,
@@ -14,18 +14,19 @@ import {
 import { getEmpresaId, getParticularId, getPedidosFiltro } from "../../api"; // Asegúrate de tener esta función en api.js
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import moment from "moment";
+/* import moment from "moment"; *
 import BuscarEmpresaPorNombre from "../EmpresasFolder/BuscarEmpresaPorNombre"; // Ajusta la ruta según sea necesario
 import BuscarParticularPorNombre from "../ParticularesFolder/BuscarParticularPorNombre"; // Ajusta la ruta según sea necesario
 import { TIPOS_HORARIO_PEDIDO, ESTADOS_PEDIDO } from "../../config/config"; // Importa las constantes
+import FiltrosPedido from "./FiltrosPedido";
 
 const ListaPedido = () => {
   const [pedidos, setPedidos] = useState([]);
-  const [pedidosMultiples, setPedidosMultiples] = useState([]);
+/*   const [pedidosMultiples, setPedidosMultiples] = useState([]); *
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); */
   // Establecer fecha de inicio y fin por defecto al día corriente
-  const [fechaInicio, setFechaInicio] = useState(
+  /* const [fechaInicio, setFechaInicio] = useState(
     moment().startOf("day").add(1, "hours").format("YYYY-MM-DDTHH:mm")
   );
   const [fechaFin, setFechaFin] = useState(
@@ -45,8 +46,8 @@ const ListaPedido = () => {
   const empleados = useSelector((state) => state.empleados.empleados);
   const choferes = empleados.filter(
     (empleado) => empleado.rol === "chofer" && empleado.habilitado
-  );
-  const [choferSeleccionado, setChoferSeleccionado] = useState("");
+  ); */
+/*   const [choferSeleccionado, setChoferSeleccionado] = useState("");
   const getToken = useAuth();
   const navigate = useNavigate();
 
@@ -66,7 +67,7 @@ const ListaPedido = () => {
     }
   };
 
-  useEffect(() => {
+/*   useEffect(() => {
     const defaultParams = {
       estado,
       fechaInicio,
@@ -78,7 +79,7 @@ const ListaPedido = () => {
       choferId: choferSeleccionado,
     };
     fetchPedidos(defaultParams);
-  }, [getToken]);
+  }, [getToken]); *
 
   useEffect(() => {
     const fetchObras = async () => {
@@ -99,9 +100,9 @@ const ListaPedido = () => {
     } else {
       hasMounted.current = true;
     }
-  }, [empresaId, particularId, getToken]);
+  }, [empresaId, particularId, getToken]); */
 
-  const handleFilterChange = (e) => {
+/*   const handleFilterChange = (e) => {
     e.preventDefault();
     const params = {
       estado,
@@ -140,9 +141,9 @@ const ListaPedido = () => {
   const handleCancelarSeleccionParticular = () => {
     setParticularId(null);
     setParticularNombre("");
-  };
+  }; */
 
-  const filtrarPedidos = (fechaCreacion, pedidoId, creadoComo) => {
+/*   const filtrarPedidos = (fechaCreacion, pedidoId, creadoComo) => {
     const pedidosFiltrados = pedidos.filter(
       (pedido) =>
         pedido.createdAt === fechaCreacion &&
@@ -150,9 +151,9 @@ const ListaPedido = () => {
         (pedido.referenciaId === pedidoId || pedido.id === pedidoId)
     );
     setPedidosMultiples(pedidosFiltrados);
-  };
+  }; */
 
-  const handleRowClick = (pedido) => {
+  /* const handleRowClick = (pedido) => {
     let idPedido = pedido.id;
     navigate("/pedidos/datos", { state: { pedidoId: idPedido } });
   };
@@ -212,8 +213,8 @@ const ListaPedido = () => {
             Nuevo Pedido
           </Button>
         </Col>
-      </Row>
-      <Collapse in={openFilters}>
+      </Row> */
+      {/* <Collapse in={openFilters}>
         <div id="filtros-collapse">
           <Form onSubmit={handleFilterChange}>
             <Row>
@@ -264,7 +265,7 @@ const ListaPedido = () => {
                     value={estado}
                     onChange={(e) => setEstado(e.target.value)}
                   >
-                    <option value="">Todos</option> {/* Opción adicional */}
+                    <option value="">Todos</option> 
                     {ESTADOS_PEDIDO.map((estado) => (
                       <option key={estado.value} value={estado.value}>
                         {estado.label}
@@ -371,9 +372,9 @@ const ListaPedido = () => {
             </Button>
           </Form>
         </div>
-      </Collapse>
+      </Collapse> */}
 
-      <div className="table-container">
+      {/* <div className="table-container">
         <Table striped bordered hover className="mt-3">
           <thead>
             <tr>
@@ -390,7 +391,7 @@ const ListaPedido = () => {
               <th className="column-precio">Precio</th>
               <th className="column-pagado">Pagado</th>
               <th className="column-tipo-sugerido">Sugerencia</th>
-              <th className="column-movimiento">Último movimiento</th>
+              <th className="column-movimiento">Último movimiento</th> */}
               {/*<th className="column-chofer">
                 {tipoHorario === "creacion" && "Chofer"}
                 {tipoHorario === "sugerenciaEntrega" && "Chofer Sug. ent."}
@@ -398,7 +399,7 @@ const ListaPedido = () => {
                 {tipoHorario === "movimientoEntrega" && "Chofer Entrega"}
                 {tipoHorario === "movimientoLevante" && "Chofer Levante"}
               </th>*/}
-            </tr>
+            /* </tr>
           </thead>
           <tbody>
             {pedidos.map((pedido) => {
@@ -486,7 +487,7 @@ const ListaPedido = () => {
 
                   <td className="column-movimiento">
                     {renderMovimiento(pedido)}
-                  </td>
+                  </td> */
 
 
                   {/* <td className="column-chofer">
@@ -529,14 +530,14 @@ const ListaPedido = () => {
                         )?.nombre || "-"
                       : "-"}
                   </td> */}
-                </tr>
+                /* </tr>
               );
             })}
           </tbody>
         </Table>
-        <div className="table-responsive-scroll"></div>
+        <div className="table-responsive-scroll"></div> */
         {/* Vista para pantallas pequeñas */}
-    <div className="d-md-none">
+    {/* <div className="d-md-none">
       {pedidos.map((pedido) => (
         <div key={pedido.id} className="pedido-item mb-3 p-3 border">
           <p><strong>Fecha:</strong> {new Date(pedido.createdAt).toLocaleDateString()}</p>
@@ -557,4 +558,4 @@ const ListaPedido = () => {
   );
 };
 
-export default ListaPedido;
+export default ListaPedido; */}

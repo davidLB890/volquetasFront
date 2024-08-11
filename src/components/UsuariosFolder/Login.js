@@ -51,7 +51,9 @@ const Login = () => {
     const timestamp = new Date().getTime(); // Tiempo actual en milisegundos
     localStorage.setItem("apiToken", token);
     localStorage.setItem("tokenTimestamp", timestamp);
+    sessionStorage.setItem("activeSession", "true"); // Marcar la sesión como activa
   };
+  
 
   const saveUser = async (token) => {
     try {
@@ -60,6 +62,7 @@ const Login = () => {
   
       localStorage.setItem("userRol", rol);
       localStorage.setItem("userId", id);
+      sessionStorage.setItem('activeSession', 'true');
   
       const responseEmpleado = await obtenerEmpleado(id, token);
       const { nombre } = responseEmpleado.data;

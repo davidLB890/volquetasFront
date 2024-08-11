@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Container, ListGroup, Form } from 'react-bootstrap';
+import { Container, Form, Dropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
-import { obtenerEmpleados } from '../../api';
 import ListaJornalesDatos from './ListaJornalesDatos';
+import { useSelector } from 'react-redux';
 
 const Jornales = () => {
-  const [empleadosPorRol, setEmpleadosPorRol] = useState({});
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedEmpleado, setSelectedEmpleado] = useState(null);
+  const [filteredEmpleados, setFilteredEmpleados] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const navigate = useNavigate();
   const getToken = useAuth();
+
+  const empleados = useSelector((state) => state.empleados.empleados);
 
   useEffect(() => {
     const today = new Date();
@@ -20,57 +25,37 @@ const Jornales = () => {
     setFechaInicio(firstDayOfMonth);
     setFechaFin(lastDayOfMonth);
 
-    const fetchEmpleados = async () => {
-      const usuarioToken = getToken();
-      if (!usuarioToken) {
-        navigate('/login');
-      } else {
-        try {
-          const response = await obtenerEmpleados(usuarioToken);
-          agruparEmpleadosPorRol(response.data);
-        } catch (error) {
-          console.error('Error al obtener empleados:', error.response.data.error);
-        }
-      }
-    };
-
-    fetchEmpleados();
   }, [getToken, navigate]);
 
-  const agruparEmpleadosPorRol = (empleadosData) => {
-    const empleadosPorRolTemp = {};
-    empleadosData.forEach((empleado) => {
-      if (!empleadosPorRolTemp[empleado.rol]) {
-        empleadosPorRolTemp[empleado.rol] = [];
-      }
-      empleadosPorRolTemp[empleado.rol].push({ ...empleado, isSelected: false });
-    });
-    setEmpleadosPorRol(empleadosPorRolTemp);
+  const handleSearchChange = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+
+    if (term.length > 0) {
+      const filtered = empleados.filter(
+        (empleado) => empleado.habilitado && empleado.nombre.toLowerCase().includes(term.toLowerCase())
+      );
+      setFilteredEmpleados(filtered);
+    } else {
+      setFilteredEmpleados(empleados);
+    }
+    setShowDropdown(true);
   };
 
-  const handleEmpleadoClick = (empleadoId) => {
-    const updatedEmpleadosPorRol = { ...empleadosPorRol };
-
-    // Recorrer y actualizar el estado isSelected del empleado seleccionado
-    Object.keys(updatedEmpleadosPorRol).forEach((rol) => {
-      updatedEmpleadosPorRol[rol] = updatedEmpleadosPorRol[rol].map((empleado) => ({
-        ...empleado,
-        isSelected: empleado.id === empleadoId ? !empleado.isSelected : false,
-      }));
-    });
-
-    setEmpleadosPorRol(updatedEmpleadosPorRol);
+  const handleEmpleadoSelect = (empleado) => {
+    setSelectedEmpleado(empleado);
+    setShowDropdown(false);
+    setSearchTerm(empleado.nombre);
   };
 
-  const titulosPorRol = {
-    chofer: 'Choferes',
-    normal: 'Oficina',
-    admin: 'Administradores',
+  const handleSearchClick = () => {
+    setFilteredEmpleados(empleados);
+    setShowDropdown(true);
   };
 
   return (
-    <Container className='card' >
-      <h1 className="mt-4 mb-4">Jornales de Empleados</h1>
+    <Container className='card'>
+      <h1 className="mt-4 mb-4">Jornales</h1>
       <Form className="mb-4">
         <div className="row">
           <div className="col">
@@ -94,39 +79,49 @@ const Jornales = () => {
             </Form.Group>
           </div>
         </div>
-      </Form>
-      {Object.keys(empleadosPorRol).map((rol) => (
-        <div key={rol}>
-          <h2 className="mt-4 mb-3">{titulosPorRol[rol] || rol}</h2>
-          <ListGroup>
-            {empleadosPorRol[rol].map((empleado) => (
-              <React.Fragment key={empleado.id}>
-                <ListGroup.Item
-                  action
-                  onClick={() => handleEmpleadoClick(empleado.id)}
-                  active={empleado.isSelected}
+        <Form.Group controlId="searchEmpleado">
+          <Form.Label>Buscar Empleado</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Buscar por nombre"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            onClick={handleSearchClick}
+          />
+          {showDropdown && (
+            <Dropdown.Menu show>
+              {filteredEmpleados.map((empleado) => (
+                <Dropdown.Item
+                  key={empleado.id}
+                  onClick={() => handleEmpleadoSelect(empleado)}
                 >
-                  {empleado.nombre}
-                </ListGroup.Item>
-                {empleado.isSelected && (
-                  <ListGroup.Item>
-                    <ListaJornalesDatos
-                      empleadoId={empleado.id}
-                      empleadoNombre={empleado.nombre}
-                      empleadoRol={rol}
-                      fechaInicio={fechaInicio}
-                      fechaFin={fechaFin}
-                    />
-                  </ListGroup.Item>
-                )}
-              </React.Fragment>
-            ))}
-          </ListGroup>
+                  {empleado.nombre}{empleado.rol === "normal" && " (oficina)"}
+                  {empleado.rol === "chofer" && " (chofer)"}
+                  {empleado.rol === "admin" && " (admin)"}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          )}
+        </Form.Group>
+      </Form>
+
+      {selectedEmpleado && (
+        <div>
+          <h2 className="mt-4 mb-3">{selectedEmpleado.nombre} 
+            {selectedEmpleado.rol === "normal" && " (oficina)"}
+            {selectedEmpleado.rol === "chofer" && " (chofer)"}
+            {selectedEmpleado.rol === "admin" && " (administrador)"}</h2>
+          <ListaJornalesDatos
+            empleadoId={selectedEmpleado.id}
+            empleadoNombre={selectedEmpleado.nombre}
+            empleadoRol={selectedEmpleado.rol}
+            fechaInicio={fechaInicio}
+            fechaFin={fechaFin}
+          />
         </div>
-      ))}
+      )}
     </Container>
   );
 };
 
 export default Jornales;
-

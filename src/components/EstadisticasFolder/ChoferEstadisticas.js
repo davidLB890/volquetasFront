@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   Container,
   Button,
   Spinner,
   Alert,
-  Modal,
+  Card,
   Form,
   Row,
   Col,
@@ -23,7 +23,6 @@ const ChoferEstadisticas = () => {
   const [choferEstadisticas, setChoferEstadisticas] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showModal, setShowModal] = useState(false);
   const [fechaInicio, setFechaInicio] = useState(
     moment().startOf("month").format("YYYY-MM-DD")
   );
@@ -35,6 +34,12 @@ const ChoferEstadisticas = () => {
   const [showFilters, setShowFilters] = useState(false);
   const getToken = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!getToken()) {
+      navigate("/login");
+    }
+  }, [getToken, navigate]);
 
   const empleados = useSelector((state) => state.empleados.empleados || []);
   const choferes = empleados.filter(
@@ -48,6 +53,15 @@ const ChoferEstadisticas = () => {
     valorExtra
   ) => {
     const usuarioToken = getToken();
+    if(valorExtra === 0 || valorJornal === 0) {
+      setError("Los valores de jornal y extra no pueden ser 0");
+      setLoading(false);
+      return;
+    }else if(valorExtra > 10000000 || valorJornal > 10000000) {
+      setError("Los valores de jornal y extra no pueden ser tan grandes");
+      setLoading(false);
+      return;
+    }
     try {
       const response = await getChoferEstadisticas(
         choferId,
@@ -73,8 +87,6 @@ const ChoferEstadisticas = () => {
     setChoferNombre(nombre);
   };
 
-  const handleShowModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
   const handleFormSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -83,22 +95,13 @@ const ChoferEstadisticas = () => {
 
   return (
     <Container>
-      <Button variant="link" onClick={handleShowModal} className="btn bg-gradient-default">
-        <h5>Chofer</h5>
-      </Button>
       {loading && <Spinner animation="border" />}
 
-      <Modal
-        show={showModal}
-        onHide={handleCloseModal}
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Estadísticas del Chofer {choferNombre ? choferNombre : ""}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+       <Card>
+        <Card.Header closeButton>
+          <Card.Title>Reporte de Chofer {choferNombre ? choferNombre : ""}</Card.Title>
+        </Card.Header>
+        <Card.Body>
           {error && <Alert variant="danger">{error}</Alert>}
 
           <Form onSubmit={handleFormSubmit} className="mt-3">
@@ -229,13 +232,9 @@ const ChoferEstadisticas = () => {
               </div>
             </>
           )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Cerrar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        </Card.Body>
+
+      </Card>
     </Container>
   );
 };
