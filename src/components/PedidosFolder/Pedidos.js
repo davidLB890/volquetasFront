@@ -11,6 +11,7 @@ import {
   Form,
 } from "react-bootstrap";
 import { getPedidosFiltro } from "../../api";
+import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import FiltrosPedido from "./FiltrosPedido";
@@ -46,7 +47,18 @@ const Pedidos = () => {
   }, [filtros]);
 
   const fetchPedidos = async (params) => {
-    console.log("fetchPedidos", params);
+    console.log("params1", params);
+  
+    if (!params.fechaInicio || !params.fechaFin) {
+      params = {
+        ...params, // Mantener otras propiedades de params si las hay
+        fechaInicio: moment().startOf("day").add(1, "hours").format("YYYY-MM-DDTHH:mm"),
+        fechaFin: moment().endOf("day").format("YYYY-MM-DDTHH:mm"),
+        tipoHorario: "creacion"
+      };
+    }
+  
+    console.log("params2", params);
     const usuarioToken = getToken();
     try {
       const response = await getPedidosFiltro(usuarioToken, params);
@@ -58,10 +70,11 @@ const Pedidos = () => {
         "Error al obtener los pedidos:",
         error.response?.data?.error || error.message
       );
-      setError(error.response?.data?.error);
+      setError(error.response?.data?.error || "Error desconocido");
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchPedidos(filtros);

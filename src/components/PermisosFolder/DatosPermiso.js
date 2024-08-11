@@ -1,33 +1,52 @@
 import React, { useEffect, useState } from "react";
-import { Spinner, Alert, Container, Form, Button, Row, Col, Table } from "react-bootstrap";
-import { getPermisoIdFiltro } from "../../api"; // Ajusta la ruta según sea necesario
+import { Spinner, Alert, Container, Form, Row, Col, Table } from "react-bootstrap";
+import { getPermisoIdFiltro, getPedidoId } from "../../api"; // Importar la función getPedidoById
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
+import { useNavigate } from "react-router-dom"; // Importar useNavigate
 
 const DatosPermiso = ({ permisoId }) => {
   const [permiso, setPermiso] = useState(null);
+  const [pedidos, setPedidos] = useState([]); // Estado para almacenar los datos completos de los pedidos
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [fechaInicio, setFechaInicio] = useState(moment().startOf('month').format('YYYY-MM-DD'));
   const [fechaFin, setFechaFin] = useState(moment().endOf('month').format('YYYY-MM-DD'));
   const getToken = useAuth();
+  const navigate = useNavigate(); // Usar useNavigate para redirigir
 
   useEffect(() => {
-    const fetchPermiso = async () => {
+    const fetchPermisoYPedidos = async () => {
       const usuarioToken = getToken();
       try {
-        const response = await getPermisoIdFiltro(permisoId, usuarioToken, { fechaInicio, fechaFin });
-        setPermiso(response.data);
+        // Obtener el permiso y sus pedidos asociados
+        const permisoResponse = await getPermisoIdFiltro(permisoId, usuarioToken, { fechaInicio, fechaFin });
+        setPermiso(permisoResponse.data);
+
+        // Obtener la información completa de cada pedido
+        const pedidosPromises = permisoResponse.data.Pedidos.map((pedido) =>
+          getPedidoId(pedido.id, usuarioToken)
+        );
+        const pedidosResponses = await Promise.all(pedidosPromises);
+
+        // Guardar los pedidos en el estado
+        setPedidos(pedidosResponses.map(response => response.data));
         setLoading(false);
       } catch (error) {
-        console.error("Error al obtener el permiso:", error.response?.data?.error || error.message);
-        setError("Error al obtener el permiso");
+        console.error("Error al obtener los datos:", error.response?.data?.error || error.message);
+        setError("Error al obtener los datos");
         setLoading(false);
       }
     };
 
-    fetchPermiso();
+    fetchPermisoYPedidos();
   }, [permisoId, fechaInicio, fechaFin, getToken]);
+
+  const handleNavigateToPedido = (pedidoId) => {
+    navigate('/pedidos/datos', {
+      state: { pedidoId },
+    });
+  };
 
   const handleFilter = (e) => {
     e.preventDefault();
@@ -46,7 +65,7 @@ const DatosPermiso = ({ permisoId }) => {
 
   return (
     <Container>
-      <h3>Datos del Permiso</h3>
+      <h3>Datos del Permiso y Pedidos donde se usa</h3>
       <Form onSubmit={handleFilter}>
         <Row>
           <Col>
@@ -71,11 +90,6 @@ const DatosPermiso = ({ permisoId }) => {
               />
             </Form.Group>
           </Col>
-          <Col className="d-flex align-items-end">
-            <Button variant="primary" type="submit">
-              Filtrar
-            </Button>
-          </Col>
         </Row>
       </Form>
       {permiso && (
@@ -83,21 +97,20 @@ const DatosPermiso = ({ permisoId }) => {
           <p><strong>ID:</strong> {permiso.id}</p>
           <p><strong>Fecha de Creación:</strong> {moment(permiso.fechaCreacion).format("YYYY-MM-DD")}</p>
           <p><strong>Fecha de Vencimiento:</strong> {moment(permiso.fechaVencimiento).format("YYYY-MM-DD")}</p>
-          {permiso.Pedidos && permiso.Pedidos.length > 0 ? (
+          {pedidos.length > 0 ? (
             <Table striped bordered hover className="mt-3">
               <thead>
                 <tr>
-                  <th>ID Pedido</th>
+                  <th>Calle del Pedido</th>
                   <th>Fecha de Creación</th>
                   <th>Fecha de Vencimiento</th>
                 </tr>
               </thead>
               <tbody>
-                <strong>Pedidos donde se usa este permiso:</strong>
-                {permiso.Pedidos.map((pedido) => (
-                  <tr key={pedido.id}>
-                    <td>{pedido.id}</td>
-                    <td>{moment(pedido.fechaCreacion).format("YYYY-MM-DD")}</td>
+                {pedidos.map((pedido) => (
+                  <tr key={pedido.id} onClick={() => handleNavigateToPedido(pedido.id)} style={{ cursor: 'pointer' }}>
+                    <td>{pedido.Obra?.calle || "Calle no disponible"}</td>
+                    <td>{moment(pedido.createdAt).format("YYYY-MM-DD")}</td>
                     <td>{moment(pedido.fechaVencimiento).format("YYYY-MM-DD")}</td>
                   </tr>
                 ))}

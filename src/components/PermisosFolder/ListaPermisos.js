@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  Spinner,
-  Alert,
-  Button,
-  Collapse,
-  Card,
-  Container,
-  Modal,
-} from "react-bootstrap";
+import {Table,Spinner,Alert,Button,Collapse,Card,Container,Modal,} from "react-bootstrap";
 import { getPermisoIdEmpresa, getPermisoIdParticular, deletePermiso } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";

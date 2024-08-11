@@ -31,7 +31,7 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
     const usuarioToken = getToken();
     
     let numeroVolqueta = numero;
-    if (numeroVolqueta !== null && numeroVolqueta !== undefined) {
+    if (numeroVolqueta !== null && numeroVolqueta !== undefined && numeroVolqueta > 0) {
       numeroVolqueta = parseInt(numeroVolqueta); // Convertir a número si es necesario
     } else {
       numeroVolqueta = null;
@@ -113,13 +113,13 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
           <Form.Group controlId="formNumeroVolqueta">
             <Form.Label>Número de Volqueta</Form.Label>
             <Form.Control
-              type="text"
+              type="number"
               value={numero}
               onChange={(e) => setNumero(e.target.value)}
             />
           </Form.Group>
           <Button variant="secondary" onClick={onHide} className="mr-2">
-            Cancelar
+            Cerrar
           </Button>
           <Button variant="primary" type="submit">
             Agregar Movimiento

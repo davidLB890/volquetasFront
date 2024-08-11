@@ -276,7 +276,7 @@ const ModificarPedido = ({ show, onHide }) => {
             <Form.Group controlId="formNroPesada">
               <Form.Label>Nro Pesada</Form.Label>
               <Form.Control
-                type="text"
+                type="number"
                 value={nroPesada}
                 onChange={(e) => setNroPesada(e.target.value)}
               />

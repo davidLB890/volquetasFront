@@ -1,8 +1,10 @@
 // src/components/ObrasFolder/ContactosObra.js
 import React from "react";
 import { Card, Button } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 
 const ContactosObra = ({ obra, handleSeleccionarContacto }) => {
+  const location = useLocation();
   return (
     <Card className="mt-3">
       <Card.Body>

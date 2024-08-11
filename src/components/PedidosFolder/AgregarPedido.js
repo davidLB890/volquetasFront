@@ -17,10 +17,8 @@ import BuscarParticular from "../PedidosFolder/BuscarParticular";
 import SelectObra from "../ObrasFolder/SelectObra";
 import AgregarObra from "../ObrasFolder/AgregarObra";
 import useAuth from "../../hooks/useAuth";
-import useHabilitarBoton from "../../hooks/useHabilitarBoton";
 import { useNavigate } from "react-router-dom";
 import {
-  getPermisoIdEmpresa,
   postPedidoNuevo,
   postPedidoMultiple,
   postPedidoEntregaLevante,
@@ -41,7 +39,7 @@ const AgregarPedido = () => {
   const [obras, setObras] = useState([]);
   const [obraSeleccionada, setObraSeleccionada] = useState(null);
   const [horarioSugerido, setHorarioSugerido] = useState("");
-  const [tipoPedido, setTipoPedido] = useState("");
+  const [tipoPedido, setTipoPedido] = useState("simple");
   const [loadingObras, setLoadingObras] = useState(false);
   const [errorObras, setErrorObras] = useState("");
   const [showAgregarObra, setShowAgregarObra] = useState(false);

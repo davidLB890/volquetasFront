@@ -56,7 +56,7 @@ const ContactosObraPedido = () => {
         {obra?.contactosDesignados?.length > 0 ? (
           obra.contactosDesignados.map((contacto) => (
             <Dropdown.Item key={contacto.id}>
-              {contacto.nombre} - {contacto.Telefonos[0]?.telefono}
+              {contacto?.nombre} - {contacto.Telefonos[0]?.telefono}
             </Dropdown.Item>
           ))
         ) : (
@@ -76,11 +76,11 @@ const ContactosObraPedido = () => {
             <strong>Cliente:</strong>{" "}
             {cliente.particular ? (
               <span className="link-primary" onClick={() => handleNavigateToParticular(cliente.particular.id)} style={{ cursor: "pointer" }}>
-                {cliente.particular.nombre}
+                {cliente.particular?.nombre}
               </span>
             ) : (
               <span className="link-primary" onClick={() => handleNavigateToEmpresa(cliente.empresa.id)} style={{ cursor: "pointer" }}>
-                {cliente.empresa.nombre}
+                {cliente.empresa?.nombre}
               </span>
             )}
           </p>

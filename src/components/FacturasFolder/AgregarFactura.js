@@ -11,8 +11,8 @@ import {
 } from "react-bootstrap";
 import { getPedidosFiltro, postFactura } from "../../api";
 import useAuth from "../../hooks/useAuth";
-import BuscarEmpresaPorNombre from "../EmpresasFolder/BuscarEmpresaPorNombre";
-import BuscarParticularPorNombre from "../ParticularesFolder/BuscarParticularPorNombre";
+import SelectEmpresaPorNombre from "../EmpresasFolder/SelectEmpresaPorNombre";
+import SelectParticularPorNombre from "../ParticularesFolder/SelectParticularPorNombre";
 import moment from "moment";
 
 const AgregarFactura = () => {
@@ -26,22 +26,25 @@ const AgregarFactura = () => {
   const [tipoCliente, setTipoCliente] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [numeracion, setNumeracion] = useState("");
+  const [fechaInicio, setFechaInicio] = useState(moment().startOf("month").format("YYYY-MM-DD"));
+  const [fechaFin, setFechaFin] = useState(moment().endOf("month").format("YYYY-MM-DD"));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [descripcionError, setDescripcionError] = useState("");
   const [success, setSuccess] = useState("");
   const getToken = useAuth();
+
+  const MAX_DESCRIPCION_LENGTH = 255;
 
   useEffect(() => {
     if (empresaId || particularId) {
       fetchPedidos();
     }
-  }, [empresaId, particularId]);
+  }, [empresaId, particularId, fechaInicio, fechaFin]);
 
   const fetchPedidos = async () => {
     setLoading(true);
     const usuarioToken = getToken();
-    const fechaInicio = moment().startOf("month").format("YYYY-MM-DD");
-    const fechaFin = moment().endOf("month").format("YYYY-MM-DD");
     try {
       const response = await getPedidosFiltro(usuarioToken, {
         estado: null,
@@ -82,6 +85,16 @@ const AgregarFactura = () => {
     );
   };
 
+  const handleDescripcionChange = (e) => {
+    const value = e.target.value;
+    if (value.length > MAX_DESCRIPCION_LENGTH) {
+      setDescripcionError(`La descripción no puede exceder ${MAX_DESCRIPCION_LENGTH} caracteres.`);
+    } else {
+      setDescripcionError("");
+      setDescripcion(value);
+    }
+  };
+
   const handleSubmit = async (e) => {
     const usuarioToken = getToken();
     e.preventDefault();
@@ -95,6 +108,11 @@ const AgregarFactura = () => {
       setTimeout(() => setError(""), 5000);
       return;
     }
+    if (descripcion.length > MAX_DESCRIPCION_LENGTH) {
+      setDescripcionError(`La descripción no puede exceder ${MAX_DESCRIPCION_LENGTH} caracteres.`);
+      return;
+    }
+
     const factura = {
       empresaId,
       particularId,
@@ -103,7 +121,6 @@ const AgregarFactura = () => {
       descripcion,
       numeracion : numeracion || null,
     };
-    console.log(factura);
 
     try {
       const response = await postFactura(factura, usuarioToken);
@@ -135,11 +152,33 @@ const AgregarFactura = () => {
           {success && <Alert variant="success">{success}</Alert>}
           <Form onSubmit={handleSubmit}>
             <Row>
-              <Col md={12}>
+              <Col md={3}>
+                <Form.Group controlId="fechaInicio">
+                  <Form.Label>Traer Pedidos Desde:</Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={fechaInicio}
+                    onChange={(e) => setFechaInicio(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={3}>
+                <Form.Group controlId="fechaFin">
+                  <Form.Label>Traer Pedidos Hasta:</Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={fechaFin}
+                    onChange={(e) => setFechaFin(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={5}>
                 {!empresaId && !particularId && (
                   <>
                     <Form.Group controlId="tipoBusqueda">
-                      <Form.Label>Buscar por</Form.Label>
+                      <Form.Label>Del Cliente:</Form.Label>
                       <Form.Control
                         as="select"
                         value={tipoCliente}
@@ -152,12 +191,12 @@ const AgregarFactura = () => {
                       </Form.Control>
                     </Form.Group>
                     {tipoCliente === "empresa" && (
-                      <BuscarEmpresaPorNombre
+                      <SelectEmpresaPorNombre
                         onSeleccionar={handleEmpresaSeleccionada}
                       />
                     )}
                     {tipoCliente === "particular" && (
-                      <BuscarParticularPorNombre
+                      <SelectParticularPorNombre
                         onSeleccionar={handleParticularSeleccionada}
                       />
                     )}
@@ -194,21 +233,30 @@ const AgregarFactura = () => {
                 <Col md={12}>
                   <Form.Group controlId="pedidos">
                     <Form.Label>Seleccionar Pedidos</Form.Label>
-                    {pedidos.map((pedido) => (
-                      <Form.Check
-                        type="checkbox"
-                        key={pedido.id}
-                        label={`Pedido ${pedido.id}`}
-                        value={pedido.id}
-                        onChange={handlePedidoChange}
-                      />
-                    ))}
+                    <div
+                      style={{
+                        maxHeight: "200px",
+                        overflowY: "auto",
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                      }}
+                    >
+                      {pedidos.map((pedido) => (
+                        <Form.Check
+                          type="checkbox"
+                          key={pedido.id}
+                          label={`Pedido ${pedido.id} - ${pedido.Obra?.calle}`}
+                          value={pedido.id}
+                          onChange={handlePedidoChange}
+                        />
+                      ))}
+                    </div>
                   </Form.Group>
                 </Col>
               </Row>
             )}
             <Row>
-              <Col md={6}>
+              <Col md={3}>
                 <Form.Group controlId="tipo">
                   <Form.Label>Tipo</Form.Label>
                   <Form.Control
@@ -223,26 +271,32 @@ const AgregarFactura = () => {
                   </Form.Control>
                 </Form.Group>
               </Col>
-              <Col md={6}>
-                <Form.Group controlId="descripcion">
-                  <Form.Label>Descripción</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={descripcion}
-                    onChange={(e) => setDescripcion(e.target.value)}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={6}>
+              <Col md={3}>
                 <Form.Group controlId="numeracion">
                   <Form.Label>Numeración</Form.Label>
                   <Form.Control
-                    type="text"
+                    type="number"
                     value={numeracion}
                     onChange={(e) => setNumeracion(e.target.value)}
                   />
+                </Form.Group>
+              </Col>
+              <Col md={5}>
+                <Form.Group controlId="descripcion">
+                  <Form.Label>Descripción</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    value={descripcion}
+                    onChange={handleDescripcionChange}
+                    isInvalid={!!descripcionError}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {descripcionError}
+                  </Form.Control.Feedback>
+                  <Form.Text muted>
+                    {descripcion.length}/{MAX_DESCRIPCION_LENGTH} caracteres
+                  </Form.Text>
                 </Form.Group>
               </Col>
             </Row>

@@ -26,7 +26,10 @@ const particularSlice = createSlice({
       state.error = action.payload;
     },
     updateParticularSuccess(state, action) {
-      state.particular = action.payload;
+      state.particular = {
+        ...state.particular, // Mantén los datos existentes
+        ...action.payload,   // Sobrescribe con los nuevos datos
+      };
       state.success = 'Particular modificado correctamente';
     },
     updateParticularFailure(state, action) {
@@ -122,7 +125,7 @@ export const {
   modifyObraSuccess,
   modifyObraFailure,
   fetchPermisosStart,
-  fetchPermisosSuccess, // Añadido aquí
+  fetchPermisosSuccess,
   fetchPermisosFailure,
   createPermisoParticularSuccess,
   createPermisoSuccess,

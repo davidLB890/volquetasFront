@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getObraId, getEmpresaId } from "../../api";
 import { Container, Spinner, Alert, Modal, Row, Col, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation  } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import SeleccionarOAgregarContacto from "../EmpresasFolder/SeleccionarOAgregarContacto";
 import ModificarObra from "./ModificarObra";
@@ -18,6 +18,7 @@ const DatosObra = ({ obraId, onObraModificada }) => {
 
   const getToken = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchObra = async () => {
@@ -135,11 +136,13 @@ const DatosObra = ({ obraId, onObraModificada }) => {
             <p><strong>Número de Puerta:</strong> {numeroPuerta || ''}</p>
             <p><strong>Descripción:</strong> {descripcion || ''}</p>
             {renderDetallesAdicionales()}
-            <Button onClick={() => setShowModificarObra(true)}>Modificar Obra</Button>
+            {location.pathname !== '/pedidos/datos' && ( // Condición para mostrar el botón
+              <Button onClick={() => setShowModificarObra(true)}>Modificar Obra</Button>
+            )}
           </div>
         </Col>
         <Col md={6}>
-          {obra.empresa && (
+          {obra?.empresa && (
             <ContactosObra obra={obra} handleSeleccionarContacto={handleSeleccionarContacto} />
           )}
         </Col>

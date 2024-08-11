@@ -7,22 +7,22 @@ const ModificarObra = ({ obra, show, onHide, onUpdate }) => {
   const getToken = useAuth();
 
   const [nuevaObra, setNuevaObra] = useState({
-    calle: obra.calle,
-    esquina: obra.esquina,
-    barrio: obra.barrio,
-    coordenadas: obra.coordenadas,
-    numeroPuerta: obra.numeroPuerta,
-    descripcion: obra.descripcion,
-    clienteEmpresaId: obra.clienteEmpresaId,
+    calle: obra?.calle || '',
+    esquina: obra?.esquina || '',
+    barrio: obra?.barrio || '',
+    coordenadas: obra?.coordenadas || '',
+    numeroPuerta: obra?.numeroPuerta || '',
+    descripcion: obra?.descripcion || '',
+    clienteEmpresaId: obra?.clienteEmpresaId || null,
   });
 
   const [detalleObra, setDetalleObra] = useState({
-    detalleResiduos: obra.ObraDetalle?.detalleResiduos,
-    residuosMezclados: obra.ObraDetalle?.residuosMezclados,
-    residuosReciclados: obra.ObraDetalle?.residuosReciclados,
-    frecuenciaSemanal: obra.ObraDetalle?.frecuenciaSemanal,
-    destinoFinal: obra.ObraDetalle?.destinoFinal,
-    dias: obra.ObraDetalle?.dias,
+    detalleResiduos: obra?.ObraDetalle?.detalleResiduos || '',
+    residuosMezclados: obra?.ObraDetalle?.residuosMezclados || false,
+    residuosReciclados: obra?.ObraDetalle?.residuosReciclados || false,
+    frecuenciaSemanal: obra?.ObraDetalle?.frecuenciaSemanal || '',
+    destinoFinal: obra?.ObraDetalle?.destinoFinal || '',
+    dias: obra?.ObraDetalle?.dias || '',
   });
 
   const [loading, setLoading] = useState(false);

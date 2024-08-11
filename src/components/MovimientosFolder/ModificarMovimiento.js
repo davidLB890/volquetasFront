@@ -32,7 +32,7 @@ const ModificarMovimiento = ({ show, onHide, movimiento, choferes }) => {
     const usuarioToken = getToken();
 
     let numero = numeroVolqueta;
-    if (numero !== null && numero !== undefined) {
+    if (numero !== null && numero !== undefined && numero > 0) {
       numero = String(numero).trim();
     } else {
       numero = null;
@@ -104,13 +104,13 @@ const ModificarMovimiento = ({ show, onHide, movimiento, choferes }) => {
           <Form.Group controlId="formNumeroVolqueta">
             <Form.Label>Número de Volqueta</Form.Label>
             <Form.Control
-              type="text"
+              type="number"
               value={numeroVolqueta}
               onChange={(e) => setNumeroVolqueta(e.target.value)}
             />
           </Form.Group>
           <Button variant="secondary" onClick={onHide} className="mr-2">
-            Cancelar
+            Cerrar
           </Button>
           <Button variant="primary" type="submit">
             Modificar Movimiento

@@ -88,6 +88,13 @@ const ModificarTelefono = ({
             />
           </Form.Group>
           <Button
+              className="mt-3 me-2"
+              variant="secondary"
+              onClick={onHide}
+            >
+              Cerrar
+            </Button>
+          <Button
             className="mt-3"
             variant="primary"
             type="submit"

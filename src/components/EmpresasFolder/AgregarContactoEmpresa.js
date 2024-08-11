@@ -276,6 +276,13 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], show, onHide }) => {
               </Col>
             </Row>
             <Button
+              /* className="mt-3 me-2" */
+              variant="secondary"
+              onClick={onHide}
+            >
+              Cerrar
+            </Button>
+            <Button
               variant="primary"
               onClick={handleAgregarContacto}
               disabled={!boton}
