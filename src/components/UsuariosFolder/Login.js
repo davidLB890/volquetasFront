@@ -39,8 +39,8 @@ const Login = () => {
         navigate("/");
       }
     } catch (error) {
-      if (error.response?.data?.error) {
-        setError(error.response.data.error);
+      if (error) {
+        setError(error.error);
       } else {
         setError("Error inesperado. Inténtelo más tarde.");
       }
