@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/* import React, { useState } from "react";
 import { putObraDetalle } from "../../api";
 import { Form, Button, Modal } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
@@ -114,4 +114,4 @@ const ModificarObraDetalle = ({ obra, onHide, onUpdate }) => {
   );
 };
 
-export default ModificarObraDetalle;
+export default ModificarObraDetalle; */

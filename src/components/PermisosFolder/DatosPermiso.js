@@ -117,7 +117,7 @@ const DatosPermiso = ({ permisoId }) => {
               </tbody>
             </Table>
           ) : (
-            <p>No hay pedidos asociados a este permiso.</p>
+            <p>No hay pedidos asociados a este permiso en ese rango de fechas.</p>
           )}
         </div>
       )}

@@ -53,8 +53,8 @@ const ListaIMM = () => {
         "Res. Reciclados": obra.ObraDetalle?.residuosReciclados ? "Sí" : "No",
         Frecuencia:
           obra.ObraDetalle?.frecuenciaSemanal
-            ?.map((frecuencia) => `${frecuencia.value} ${frecuencia.inclusive ? "(Inclusivo)" : "(Exclusivo)"}`)
-            .join(", ") || "N/A",
+            ?.map((frecuencia) => `${frecuencia.value}`)
+            .join(" A ") || "N/A",
         "Destino Final": obra.ObraDetalle?.destinoFinal || "",
         Días: obra.ObraDetalle?.dias || "",
       }))

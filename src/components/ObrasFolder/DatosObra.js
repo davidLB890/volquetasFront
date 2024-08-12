@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getObraId, getEmpresaId } from "../../api";
 import { Container, Spinner, Alert, Modal, Row, Col, Button } from "react-bootstrap";
-import { useNavigate, useLocation  } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import SeleccionarOAgregarContacto from "../EmpresasFolder/SeleccionarOAgregarContacto";
 import ModificarObra from "./ModificarObra";
@@ -21,21 +21,22 @@ const DatosObra = ({ obraId, onObraModificada }) => {
   const location = useLocation();
 
   useEffect(() => {
-    const fetchObra = async () => {
-      const usuarioToken = getToken();
-      try {
-        const response = await getObraId(obraId, usuarioToken);
-        setObra(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error al obtener la obra:", error.response?.data?.error || error.message);
-        setError("Error al obtener la obra");
-        setLoading(false);
-      }
-    };
-
     fetchObra();
   }, [obraId, getToken]);
+
+  const fetchObra = async () => {
+    const usuarioToken = getToken();
+    setLoading(true);
+    try {
+      const response = await getObraId(obraId, usuarioToken);
+      setObra(response.data);
+    } catch (error) {
+      console.error("Error al obtener la obra:", error.response?.data?.error || error.message);
+      setError("Error al obtener la obra");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchEmpresa = async (empresaId) => {
     const usuarioToken = getToken();
@@ -72,11 +73,20 @@ const DatosObra = ({ obraId, onObraModificada }) => {
     setShowSeleccionarContacto(false);
   };
 
-  const handleModificarObra = (obraModificada) => {
-    setObra(obraModificada);
+  const handleModificarObra = (obraModificada, detallesModificados) => {
+    // Actualiza el estado local con los cambios realizados, incluyendo los detalles
+    setObra((prevObra) => ({
+      ...prevObra,
+      ...obraModificada,
+      ObraDetalle: {
+        ...prevObra.ObraDetalle,
+        ...detallesModificados, // Sobrescribe solo los detalles modificados
+      },
+    }));
     setShowModificarObra(false);
-    if (onObraModificada) onObraModificada(obraModificada);
-  };
+    if (onObraModificada) onObraModificada({ ...obraModificada, ObraDetalle: detallesModificados });
+};
+
 
   if (loading) {
     return <Spinner animation="border" />;
@@ -131,12 +141,12 @@ const DatosObra = ({ obraId, onObraModificada }) => {
           <div>
             <h4>Detalles de la Obra</h4>
             <p><strong>Calle:</strong> {calle || ''}</p>
-            <p><strong>Esquina:</strong> {esquina || ''}</p>
+            {/* <p><strong>Esquina:</strong> {esquina || ''}</p> */}
             <p><strong>Barrio:</strong> {barrio || ''}</p>
-            <p><strong>Número de Puerta:</strong> {numeroPuerta || ''}</p>
+            {/* <p><strong>Número de Puerta:</strong> {numeroPuerta || ''}</p> */}
             <p><strong>Descripción:</strong> {descripcion || ''}</p>
             {renderDetallesAdicionales()}
-            {location.pathname !== '/pedidos/datos' && ( // Condición para mostrar el botón
+            {location.pathname !== '/pedidos/datos' && (
               <Button onClick={() => setShowModificarObra(true)}>Modificar Obra</Button>
             )}
           </div>
@@ -181,6 +191,7 @@ const DatosObra = ({ obraId, onObraModificada }) => {
 };
 
 export default DatosObra;
+
 
 
 

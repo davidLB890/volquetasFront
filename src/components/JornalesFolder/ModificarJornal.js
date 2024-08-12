@@ -4,6 +4,7 @@ import { putJornal } from '../../api';
 import useAuth from '../../hooks/useAuth';
 
 const ModificarJornalModal = ({ show, onHide, jornal, onJornalModificado }) => {
+
   const [nuevoJornal, setNuevoJornal] = useState({
     fecha: '',
     entrada: '',
@@ -11,6 +12,7 @@ const ModificarJornalModal = ({ show, onHide, jornal, onJornalModificado }) => {
     horasExtra: '',
     tipo: 'trabajo', // Valor por defecto
   });
+  const [error, setError] = useState('');
 
     const getToken = useAuth();
 
@@ -22,13 +24,20 @@ const ModificarJornalModal = ({ show, onHide, jornal, onJornalModificado }) => {
         entrada: jornal.entrada || '',
         salida: jornal.salida || '',
         horasExtra: jornal.horasExtra || '',
-        tipo: jornal.tipo || 'trabajo', // Valor por defecto
+        tipo: jornal.tipo?.toLowerCase() || 'trabajo', // Valor por defecto
       });
+      console.log(nuevoJornal);
     }
   }, [jornal]);
 
   const handleModificarJornal = async () => {
     const usuarioToken = getToken();
+    if(nuevoJornal.tipo === 'trabajo'){
+      if(nuevoJornal.entrada === '' || nuevoJornal.salida === ''){
+        setError('Debe ingresar la hora de entrada y salida para un jornal de trabajo');
+        return;
+      }
+    }
     try {
       await putJornal(jornal.id, nuevoJornal, usuarioToken);
       onJornalModificado();
@@ -63,6 +72,7 @@ const ModificarJornalModal = ({ show, onHide, jornal, onJornalModificado }) => {
               type="time"
               value={nuevoJornal.entrada}
               onChange={(e) => setNuevoJornal({ ...nuevoJornal, entrada: e.target.value })}
+              
             />
           </Form.Group>
           <Form.Group controlId="formSalida">
@@ -71,6 +81,7 @@ const ModificarJornalModal = ({ show, onHide, jornal, onJornalModificado }) => {
               type="time"
               value={nuevoJornal.salida}
               onChange={(e) => setNuevoJornal({ ...nuevoJornal, salida: e.target.value })}
+              
             />
           </Form.Group>
           <Form.Group controlId="formHorasExtra">

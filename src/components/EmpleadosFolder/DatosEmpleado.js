@@ -39,6 +39,14 @@ const DatosEmpleado = ({ idEmpleado, forceUpdate }) => {
         <p>
           <strong>Dirección:</strong> {empleado.direccion}
         </p>
+        <p>
+          <strong>Fecha de entrada:</strong> {empleado.fechaEntrada}
+        </p>
+        {empleado.fechaSalida && (
+          <p>
+            <strong>Fecha de salida:</strong> {empleado.fechaSalida}
+          </p>
+        )}
       </div>
       <div style={{ textAlign: "left" }}>
         <TelefonosEmpleado

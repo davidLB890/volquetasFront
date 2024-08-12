@@ -70,13 +70,12 @@ const ListaJornalesDatos = ({
     }
 
     try {
-      await deleteJornal(jornalId, usuarioToken);
-      fetchDatos();
+      fetchDatos(); 
     } catch (error) {
       console.error('Error al eliminar el jornal:', error);
       setError('Error al eliminar el jornal.');
     }
-  };
+  };  
 
   const handleMostrarModificar = (jornal) => {
     setJornalSeleccionado(jornal);
@@ -156,12 +155,10 @@ const ListaJornalesDatos = ({
         )}
       </div>
       {datos && parseInt(datos.registros) > 0 && (
-  <Button variant="primary" onClick={() => toggleJornales(empleadoId)}>
-    {visibleJornales[empleadoId] ? 'Ocultar Jornales' : 'Ver Jornales'}
-  </Button>
-)}
-
-
+        <Button variant="primary" onClick={() => toggleJornales(empleadoId)}>
+          {visibleJornales[empleadoId] ? 'Ocultar Jornales' : 'Ver Jornales'}
+        </Button>
+      )}
 
       <Collapse in={visibleJornales[empleadoId]}>
         <div>
@@ -173,6 +170,7 @@ const ListaJornalesDatos = ({
               fechaFin={fechaFin}
               handleMostrarModificar={handleMostrarModificar}
               handleEliminarJornal={handleEliminarJornal}
+              onUpdate={fetchDatos} // Pasa la función de actualización
             />
           )}
         </div>

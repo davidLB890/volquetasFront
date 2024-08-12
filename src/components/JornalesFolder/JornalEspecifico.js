@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Alert, Button } from 'react-bootstrap';
-import { getJornalesEmpleado } from '../../api';
+import { Table, Alert, Button, Modal } from 'react-bootstrap';
+import { getJornalesEmpleado, deleteJornal } from '../../api';
 import useAuth from '../../hooks/useAuth';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import localeData from 'dayjs/plugin/localeData';
-import '../../assets/css/JornalEspecifico.css'; // Importa los estilos
+import '../../assets/css/JornalEspecifico.css';
 
 dayjs.extend(localeData);
 dayjs.locale('es');
 
-const JornalEspecifico = ({ empleadoId, empleadoRol, fechaInicio, fechaFin, handleMostrarModificar, handleEliminarJornal }) => {
+const JornalEspecifico = ({ empleadoId, empleadoRol, fechaInicio, fechaFin, handleMostrarModificar, handleEliminarJornal: eliminarJornalExterno, onUpdate }) => {
   const [jornales, setJornales] = useState([]);
   const [error, setError] = useState('');
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [jornalToDelete, setJornalToDelete] = useState(null);
   const rolUsuario = localStorage.getItem('userRol');
   const getToken = useAuth();
 
@@ -33,7 +35,6 @@ const JornalEspecifico = ({ empleadoId, empleadoRol, fechaInicio, fechaFin, hand
       const response = await getJornalesEmpleado(empleadoId, fechaInicioActual, fechaFinActual, usuarioToken);
       const jornalesData = response.data || [];
 
-      // Ordenar los jornales por fecha de forma descendente
       const jornalesOrdenados = jornalesData.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
       setJornales(jornalesOrdenados);
@@ -46,7 +47,39 @@ const JornalEspecifico = ({ empleadoId, empleadoRol, fechaInicio, fechaFin, hand
 
   useEffect(() => {
     fetchJornales();
-  }, []); // Dependencias vacías para que se ejecute solo una vez cuando el componente se monta
+  }, [empleadoId, fechaInicio, fechaFin, onUpdate]); // Se actualiza cuando `empleadoId`, `fechaInicio`, `fechaFin` o `onUpdate` cambian
+
+  const handleInternalEliminarJornal = async () => {
+    const usuarioToken = getToken();
+    if (!jornalToDelete || !usuarioToken) {
+      return;
+    }
+    try {
+      await deleteJornal(jornalToDelete.id, usuarioToken);
+      // Eliminar el jornal de la lista después de la eliminación exitosa
+      setJornales((prevJornales) =>
+        prevJornales.filter((jornal) => jornal.id !== jornalToDelete.id)
+      );
+      setShowConfirm(false);
+      setJornalToDelete(null);
+      if (eliminarJornalExterno) {
+        eliminarJornalExterno(jornalToDelete.id);
+      }
+    } catch (error) {
+      console.error('Error al eliminar jornal:', error);
+      setError('Error al eliminar jornal.');
+    }
+  };
+
+  const confirmEliminarJornal = (jornal) => {
+    setJornalToDelete(jornal);
+    setShowConfirm(true);
+  };
+
+  const handleCloseConfirm = () => {
+    setShowConfirm(false);
+    setJornalToDelete(null);
+  };
 
   return (
     <>
@@ -95,7 +128,7 @@ const JornalEspecifico = ({ empleadoId, empleadoRol, fechaInicio, fechaFin, hand
                       </Button>
                       <Button
                         variant="danger"
-                        onClick={() => handleEliminarJornal(jornal.id)}
+                        onClick={() => confirmEliminarJornal(jornal)}
                         className="ml-2"
                       >
                         Eliminar
@@ -139,7 +172,7 @@ const JornalEspecifico = ({ empleadoId, empleadoRol, fechaInicio, fechaFin, hand
                   <Button
                     variant="danger"
                     className="w-100"
-                    onClick={() => handleEliminarJornal(jornal.id)}
+                    onClick={() => confirmEliminarJornal(jornal)}
                   >
                     Eliminar
                   </Button>
@@ -156,6 +189,24 @@ const JornalEspecifico = ({ empleadoId, empleadoRol, fechaInicio, fechaFin, hand
       </div>
 
       {error && <Alert variant="danger">{error}</Alert>}
+
+      {/* Modal de confirmación de eliminación */}
+      <Modal show={showConfirm} onHide={handleCloseConfirm}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Eliminación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Está seguro de que desea eliminar este jornal?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseConfirm}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleInternalEliminarJornal}>
+            Eliminar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

@@ -33,7 +33,7 @@ const Jornales = () => {
 
     if (term.length > 0) {
       const filtered = empleados.filter(
-        (empleado) => empleado.habilitado && empleado.nombre.toLowerCase().includes(term.toLowerCase())
+        (empleado) => /* empleado.habilitado && */ empleado.nombre.toLowerCase().includes(term.toLowerCase())
       );
       setFilteredEmpleados(filtered);
     } else {
@@ -98,6 +98,7 @@ const Jornales = () => {
                   {empleado.nombre}{empleado.rol === "normal" && " (oficina)"}
                   {empleado.rol === "chofer" && " (chofer)"}
                   {empleado.rol === "admin" && " (admin)"}
+                  {!empleado.habilitado && " deshabilitado"}
                 </Dropdown.Item>
               ))}
             </Dropdown.Menu>
@@ -110,7 +111,8 @@ const Jornales = () => {
           <h2 className="mt-4 mb-3">{selectedEmpleado.nombre} 
             {selectedEmpleado.rol === "normal" && " (oficina)"}
             {selectedEmpleado.rol === "chofer" && " (chofer)"}
-            {selectedEmpleado.rol === "admin" && " (administrador)"}</h2>
+            {selectedEmpleado.rol === "admin" && " (administrador)"}
+            {!selectedEmpleado.habilitado && " deshabilitado"}</h2>
           <ListaJornalesDatos
             empleadoId={selectedEmpleado.id}
             empleadoNombre={selectedEmpleado.nombre}

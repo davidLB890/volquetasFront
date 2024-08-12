@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import {
-  Table,
-  Spinner,
-  Alert,
-  Button,
-  Row,
-  Col,
-  Container,
-  Form,
-} from "react-bootstrap";
+import { Table, Spinner, Alert, Button, Row, Col, Container, Form, } from "react-bootstrap";
 import { getPedidosFiltro } from "../../api";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
@@ -21,9 +12,11 @@ const Pedidos = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filtros, setFiltros] = useState({});
+  
   const [tipoSugerencia, setTipoSugerencia] = useState("general");
   const [filtroPago, setFiltroPago] = useState("todos");
   const [filtroCliente, setFiltroCliente] = useState("todos");
+
   const empleados = useSelector((state) => state.empleados.empleados);
   const choferes = empleados.filter(
     (empleado) => empleado.rol === "chofer" && empleado.habilitado
@@ -46,9 +39,7 @@ const Pedidos = () => {
     localStorage.setItem("filtrosPedido", JSON.stringify(filtros));
   }, [filtros]);
 
-  const fetchPedidos = async (params) => {
-    console.log("params1", params);
-  
+  const fetchPedidos = async (params) => {  
     if (!params.fechaInicio || !params.fechaFin) {
       params = {
         ...params, // Mantener otras propiedades de params si las hay
@@ -295,7 +286,7 @@ const Pedidos = () => {
       )}
 
       {/* Vista para pantallas grandes */}
-      {pedidosFiltrados.length > 0 && (
+      {pedidos.length > 0 && (
         <div className="table-container d-none d-md-block">
           <Table striped bordered hover className="mt-3">
             <thead>

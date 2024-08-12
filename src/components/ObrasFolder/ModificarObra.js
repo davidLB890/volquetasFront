@@ -39,39 +39,30 @@ const ModificarObra = ({ obra, show, onHide, onUpdate }) => {
     }
   };
 
-  const handleModificar = async () => {
-    const usuarioToken = getToken();
-    setLoading(true);
-    setError("");
-    setSuccess("");
+const handleModificar = async () => {
+  const usuarioToken = getToken();
+  setLoading(true);
+  setError("");
+  setSuccess("");
 
-    try {
-      if (Object.keys(nuevaObra).some(key => nuevaObra[key] !== obra[key])) {
-        await putObra(obra.id, nuevaObra, usuarioToken);
-      }
-      if (Object.keys(detalleObra).some(key => detalleObra[key] !== obra.ObraDetalle?.[key])) {
-        await putObraDetalle(obra.ObraDetalle.id, detalleObra, usuarioToken);
-      }
-      setSuccess("Obra actualizada correctamente");
-      onUpdate({ ...nuevaObra, ...detalleObra }); // Llama a la función para actualizar el estado de obras en el componente padre
-      onHide(); // Cierra el modal después de actualizar
-    } catch (error) {
-      console.error(
-        "Error al actualizar la obra:",
-        error
-      );
-      setError(
-        error.response?.data?.error || "Error al actualizar la obra"
-      );
+  try {
+    if (Object.keys(nuevaObra).some(key => nuevaObra[key] !== obra[key])) {
+      await putObra(obra.id, nuevaObra, usuarioToken);
     }
+    if (Object.keys(detalleObra).some(key => detalleObra[key] !== obra.ObraDetalle?.[key])) {
+      await putObraDetalle(obra.ObraDetalle.id, detalleObra, usuarioToken);
+    }
+    setSuccess("Obra actualizada correctamente");
+    onUpdate(nuevaObra, detalleObra); // Pasar por separado
+    onHide(); // Cierra el modal después de actualizar
+  } catch (error) {
+    console.error("Error al actualizar la obra:", error);
+    setError(error.response?.data?.error || "Error al actualizar la obra");
+  }
 
-    setLoading(false);
+  setLoading(false);
+};
 
-    setTimeout(() => {
-      setError("");
-      setSuccess("");
-    }, 3000);
-  };
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
@@ -94,7 +85,7 @@ const ModificarObra = ({ obra, show, onHide, onUpdate }) => {
             />
           </Form.Group>
           <Row>
-            <Col md={4}>
+            {/* <Col md={4}>
               <Form.Group controlId="formEsquina" className="mb-2">
                 <Form.Label>Esquina</Form.Label>
                 <Form.Control
@@ -117,7 +108,7 @@ const ModificarObra = ({ obra, show, onHide, onUpdate }) => {
                   required
                 />
               </Form.Group>
-            </Col>
+            </Col> */}
             <Col md={4}>
               <Form.Group controlId="formBarrio" className="mb-2">
                 <Form.Label>Barrio</Form.Label>
@@ -130,11 +121,9 @@ const ModificarObra = ({ obra, show, onHide, onUpdate }) => {
                 />
               </Form.Group>
             </Col>
-          </Row>
-          <Row>
             <Col md={6}>
               <Form.Group controlId="formDescripcion" className="mb-2">
-                <Form.Label>Descripción</Form.Label>
+                <Form.Label>Referencias / Descripción</Form.Label>
                 <Form.Control
                   type="text"
                   name="descripcion"
@@ -144,6 +133,9 @@ const ModificarObra = ({ obra, show, onHide, onUpdate }) => {
                 />
               </Form.Group>
             </Col>
+          </Row>
+          <Row>
+            
           </Row>
 
           {obra.ObraDetalle && (
