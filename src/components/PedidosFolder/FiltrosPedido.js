@@ -9,18 +9,19 @@ import { getEmpresaId, getParticularId } from "../../api";
 import useAuth from "../../hooks/useAuth";
 
 const FiltrosPedido = ({ setFiltros }) => {
+  const savedFiltros = JSON.parse(localStorage.getItem("filtrosPedido")) || {};
   const [fechaInicio, setFechaInicio] = useState(
-    moment().startOf("day").add(1, "hours").format("YYYY-MM-DDTHH:mm")
+    savedFiltros.fechaInicio || moment().startOf("day").add(1, "hours").format("YYYY-MM-DDTHH:mm")
   );
   const [fechaFin, setFechaFin] = useState(
-    moment().endOf("day").format("YYYY-MM-DDTHH:mm")
+    savedFiltros.fechaFin || moment().endOf("day").format("YYYY-MM-DDTHH:mm")
   );
-  const [estado, setEstado] = useState("");
-  const [tipoHorario, setTipoHorario] = useState("creacion");
-  const [empresaId, setEmpresaId] = useState(null);
+  const [estado, setEstado] = useState(savedFiltros.estado || "");
+  const [tipoHorario, setTipoHorario] = useState(savedFiltros.tipoHorario || "creacion");
+  const [empresaId, setEmpresaId] = useState(savedFiltros.empresaId || null);
   const [obras, setObras] = useState([]);
-  const [obraId, setObraId] = useState("");
-  const [particularId, setParticularId] = useState(null);
+  const [obraId, setObraId] = useState(savedFiltros.obraId || "");
+  const [particularId, setParticularId] = useState(savedFiltros.particularId || null);
   const [empresaNombre, setEmpresaNombre] = useState("");
   const [particularNombre, setParticularNombre] = useState("");
   const [openFilters, setOpenFilters] = useState(false);
@@ -30,7 +31,7 @@ const FiltrosPedido = ({ setFiltros }) => {
   const choferes = empleados.filter(
     (empleado) => empleado.rol === "chofer" && empleado.habilitado
   );
-  const [choferSeleccionado, setChoferSeleccionado] = useState("");
+  const [choferSeleccionado, setChoferSeleccionado] = useState(savedFiltros.choferId || "");
   const getToken = useAuth();
 
   useEffect(() => {
@@ -40,7 +41,7 @@ const FiltrosPedido = ({ setFiltros }) => {
       fechaInicio,
       fechaFin,
       tipoHorario,
-      empresaId,
+      empresaId,  
       particularId,
       obraId: obraId === "" ? "" : Number(obraId),
       choferId: choferSeleccionado,

@@ -48,8 +48,6 @@ const Pedidos = () => {
         tipoHorario: "creacion"
       };
     }
-  
-    console.log("params2", params);
     const usuarioToken = getToken();
     try {
       const response = await getPedidosFiltro(usuarioToken, params);

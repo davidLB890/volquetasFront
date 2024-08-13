@@ -117,7 +117,21 @@ const ModificarFactura = ({ factura, show, handleClose, onFacturaActualizada }) 
               </Form.Group>
             </Col>
           </Row>
-          <Button variant="primary" type="submit" disabled={loading}>
+          <Button variant="secondary" 
+          className="mt-3"
+            style={{
+              padding: "0.5rem 1rem",
+              marginRight: "0.5rem",
+            }}
+            onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button variant="primary" type="submit" disabled={loading}
+          className="mt-3"
+          style={{
+            padding: "0.5rem 1rem",
+            marginRight: "0.5rem",
+          }}>
             Guardar Cambios
           </Button>
         </Form>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Nav, Navbar, Container, Button, NavLink } from "react-bootstrap";
+import { Nav, Navbar, Container, Button, NavLink, Row, Col } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "./Breadcrumbs";
 import "../assets/css/navbar.css";
@@ -105,6 +105,32 @@ const Navigation = ({ userRole }) => {
           style={{ overflowY: "auto", height: "calc(100vh - 150px)" }}
         >
           <Nav className="navbar-nav">
+          <div
+              onMouseEnter={() => handleMouseEnter("pedidos")}
+              onMouseLeave={handleMouseLeave}
+              className="nav-item-container"
+            >
+              <Nav.Item className="nav-item">
+                <div
+                  onClick={() => toggleExpand("pedidos")}
+                  className="nav-link cursor-pointer nav-item-title"
+                >
+                  <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <i className="ni ni-tag text-info text-sm opacity-10"></i>
+                  </div>
+                  <span className="nav-link-text ms-1">Pedidos</span>
+                </div>
+                <div
+                  className={`nav-submenu ms-5 collapse ${
+                    expanded === "pedidos" ? "show" : ""
+                  }`}
+                >
+                  <Nav.Link as={Link} to="/" onClick={handleMouseLeave}>
+                    Pedidos
+                  </Nav.Link>
+                </div>
+              </Nav.Item>
+            </div>
             <div
               onMouseEnter={() => handleMouseEnter("clientes")}
               onMouseLeave={handleMouseLeave}
@@ -221,7 +247,7 @@ const Navigation = ({ userRole }) => {
                   className="nav-link cursor-pointer nav-item-title"
                 >
                   <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                    <i className="ni ni-align-left-2 text-info text-sm opacity-10"></i>
+                    <i className="ni ni-align-left-2 text-primary text-sm opacity-10"></i>
                   </div>
                   <span className="nav-link-text ms-1">Consultas y Reportes</span>
                 </div>
@@ -234,7 +260,7 @@ const Navigation = ({ userRole }) => {
                     Lista de permisos
                   </Nav.Link>
                   <Nav.Link as={Link} to="/facturas" onClick={handleMouseLeave}>
-                    Lista de facturas
+                    Facturas
                   </Nav.Link>
                   <Nav.Link as={Link} to="/imm" onClick={handleMouseLeave}>
                     Lista IMM
@@ -257,7 +283,7 @@ const Navigation = ({ userRole }) => {
                   className="nav-link cursor-pointer nav-item-title"
                 >
                   <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                    <i className="ni ni-basket text-info text-sm opacity-10"></i>
+                    <i className="ni ni-basket text-success text-sm opacity-10"></i>
                   </div>
                   <span className="nav-link-text ms-1">Volquetas</span>
                 </div>
@@ -302,7 +328,7 @@ const Navigation = ({ userRole }) => {
                     to="/cajas"
                     onClick={handleMouseLeave}
                   >
-                    Lista de cajas
+                    Entradas y Salidas
                   </Nav.Link>
                 </div>
               </Nav.Item>
@@ -319,7 +345,7 @@ const Navigation = ({ userRole }) => {
                   className="nav-link cursor-pointer nav-item-title"
                 >
                   <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                    <i className="ni ni-chart-bar-32 text-info text-sm opacity-10"></i>
+                    <i className="ni ni-chart-bar-32 text-primary text-sm opacity-10"></i>
                   </div>
                   <span className="nav-link-text ms-1">Estadisticas</span>
                 </div>

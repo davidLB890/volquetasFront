@@ -30,8 +30,9 @@ import { PRECIO_VOLQUETA_PEQUENA } from "../../config/config";
 import { TIPOS_PAGO } from "../../config/config";
 
 const AgregarPedido = () => {
-  const [clienteTipo, setClienteTipo] = useState("");
   const [clienteEstado, setClienteEstado] = useState("");
+  const [clienteTipo, setClienteTipo] = useState("");
+
   const [clienteNuevo, setClienteNuevo] = useState(null);
   const [particularSeleccionado, setParticularSeleccionado] = useState(null);
   const [empresaSeleccionada, setEmpresaSeleccionada] = useState(null);
@@ -74,7 +75,7 @@ const AgregarPedido = () => {
   const handleClienteTipoChange = (e) => {
     setClienteTipo(e.target.value);
     setClienteNuevo(null);
-    setClienteEstado("");
+    //setClienteEstado("");
     setParticularSeleccionado(null);
     setEmpresaSeleccionada(null);
     setObras([]);
@@ -220,29 +221,6 @@ const AgregarPedido = () => {
       <Form>
         <Row>
           <Col md={4}>
-            <Form.Group controlId="clienteTipo">
-              <Form.Label>Tipo de Cliente *</Form.Label>
-              <div>
-                <Form.Check
-                  inline
-                  type="radio"
-                  label="Empresa"
-                  value="empresa"
-                  checked={clienteTipo === "empresa"}
-                  onChange={handleClienteTipoChange}
-                />
-                <Form.Check
-                  inline
-                  type="radio"
-                  label="Particular"
-                  value="particular"
-                  checked={clienteTipo === "particular"}
-                  onChange={handleClienteTipoChange}
-                />
-              </div>
-            </Form.Group>
-          </Col>
-          <Col md={4}>
             <Form.Group controlId="clienteEstado">
               <Form.Label>Estado del Cliente *</Form.Label>
               <div>
@@ -265,6 +243,30 @@ const AgregarPedido = () => {
               </div>
             </Form.Group>
           </Col>
+          <Col md={4}>
+            <Form.Group controlId="clienteTipo">
+              <Form.Label>Tipo de Cliente *</Form.Label>
+              <div>
+                <Form.Check
+                  inline
+                  type="radio"
+                  label="Empresa"
+                  value="empresa"
+                  checked={clienteTipo === "empresa"}
+                  onChange={handleClienteTipoChange}
+                />
+                <Form.Check
+                  inline
+                  type="radio"
+                  label="Particular"
+                  value="particular"
+                  checked={clienteTipo === "particular"}
+                  onChange={handleClienteTipoChange}
+                />
+              </div>
+            </Form.Group>
+          </Col>
+          
         </Row>
 
         {clienteEstado === "nuevo" && clienteTipo === "empresa" && (

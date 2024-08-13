@@ -76,11 +76,26 @@ const pedidoSlice = createSlice({
       state.pedido.Movimientos = state.pedido.Movimientos.filter(movimiento => movimiento.id !== action.payload);
     },
     modifyMovimiento: (state, action) => {
-      const index = state.pedido.Movimientos.findIndex(movimiento => movimiento.id === action.payload.id);
-      if (index !== -1) {
-        state.pedido.Movimientos[index] = action.payload;
+      const movimientoIndex = state.pedido.Movimientos.findIndex(movimiento => movimiento.id === action.payload.id);
+    
+      if (movimientoIndex !== -1) {
+        const movimientoActualizado = { ...state.pedido.Movimientos[movimientoIndex], ...action.payload };
+    
+        // Actualizar el movimiento específico
+        state.pedido.Movimientos[movimientoIndex] = movimientoActualizado;
+    
+        // Actualizar el movimiento relacionado si existe
+        const movimientoRelacionadoIndex = state.pedido.Movimientos.findIndex(movimiento => 
+          movimiento.pedidoId === movimientoActualizado.pedidoId && 
+          movimiento.tipo !== movimientoActualizado.tipo
+        );
+    
+        if (movimientoRelacionadoIndex !== -1) {
+          state.pedido.Movimientos[movimientoRelacionadoIndex].numeroVolqueta = movimientoActualizado.numeroVolqueta;
+        }
       }
     },
+    
   },
   extraReducers: (builder) => {
     builder

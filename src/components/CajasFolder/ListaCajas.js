@@ -139,7 +139,7 @@ const ListaCajas = ({ data }) => {
                 <td>
                   {c.Pedido ? (
                     <span className="link-primary" onClick={() => handleNavigateToPedido(c.pedidoId)} style={{ cursor: 'pointer' }}>
-                      {c.Pedido.Obra.calle} {c.Pedido.Obra.numeroPuerta}
+                      {c.Pedido.Obra.calle}
                     </span>
                   ) : (
                     ''

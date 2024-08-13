@@ -48,8 +48,7 @@ const ModificarMovimiento = ({ show, onHide, movimiento, choferes }) => {
     try {
       const response = await putMovimiento(movimiento.id, movimientoModificado, usuarioToken);
       if (response.status === 200) {
-        //TODO: la data no devuelve el movimiento, solo dice ok, por lo tanto no actualiza
-        dispatch(modifyMovimiento(response.data));
+        dispatch(modifyMovimiento(movimientoModificado));
         setSuccess("Movimiento modificado correctamente");
         setError("");
         setTimeout(() => {
@@ -57,6 +56,7 @@ const ModificarMovimiento = ({ show, onHide, movimiento, choferes }) => {
           onHide();
         }, 2000);
       }
+      
     } catch (error) {
       setError(error.response?.data?.error || "Error al modificar el movimiento");
       setTimeout(() => {

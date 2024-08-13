@@ -81,7 +81,7 @@ const ModificarPagoPedido = ({ show, onHide, pago }) => {
               onChange={handleInputChange}
             />
           </Form.Group>
-          <Form.Group controlId="formFacturaId">
+          {/* <Form.Group controlId="formFacturaId">
             <Form.Label>ID de Factura</Form.Label>
             <Form.Control
               type="text"
@@ -89,7 +89,7 @@ const ModificarPagoPedido = ({ show, onHide, pago }) => {
               value={editablePago.facturaId || ""}
               onChange={handleInputChange}
             />
-          </Form.Group>
+          </Form.Group> */}
         </Form>
       </Modal.Body>
       <Modal.Footer>

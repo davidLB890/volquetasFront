@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Card, Modal, Button, Form } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Modal,
+  Button,
+  Form,
+} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { updatePago } from "../../features/pedidoSlice";
 import useAuth from "../../hooks/useAuth";
@@ -7,6 +15,7 @@ import AlertMessage from "../AlertMessage";
 import ModificarPagoPedido from "./ModificarPagoPedido";
 import AgregarEntrada from "../CajasFolder/AgregarEntrada";
 import { useMediaQuery } from "react-responsive";
+import { useNavigate } from "react-router-dom";
 
 const PagoPedido = () => {
   const dispatch = useDispatch();
@@ -18,6 +27,7 @@ const PagoPedido = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const navigate = useNavigate();
   const isSmallScreen = useMediaQuery({ query: "(max-width: 768px)" });
 
   const handlePagadoChange = () => {
@@ -75,6 +85,11 @@ const PagoPedido = () => {
 
   if (!pago) return null;
 
+  const handleFacturaClick = () => {
+    let idFactura = pago.facturaId;
+    navigate("/facturas/datos", { state: { facturaId: idFactura } });
+  };
+
   return (
     <Container>
       {isSmallScreen ? (
@@ -89,7 +104,9 @@ const PagoPedido = () => {
           {success && <AlertMessage type="success" message={success} />}
           <Row>
             <Col xs={12} className="mb-3">
-              <p><strong>Precio:</strong> ${pago.precio}</p>
+              <p>
+                <strong>Precio:</strong> ${pago.precio}
+              </p>
               <Form.Check
                 type="checkbox"
                 label="Pagado"
@@ -98,11 +115,28 @@ const PagoPedido = () => {
                 onChange={handlePagadoChange}
                 inline
               />
-              <p><strong>Remito:</strong> {pago.remito ? pago.remito : "No disponible"}</p>
+              <p>
+                <strong>Remito:</strong>{" "}
+                {pago.remito ? pago.remito : "No disponible"}
+              </p>
             </Col>
             <Col xs={12}>
-              <p><strong>Tipo de Pago:</strong> {pago.tipoPago}</p>
-              <p><strong>Factura:</strong> {pago.facturaId ? pago.facturaId : "No disponible"}</p>
+              <p>
+                <strong>Tipo de Pago:</strong> {pago.tipoPago}
+              </p>
+              <p>
+                <strong>Factura:</strong>{" "}
+                {pago.facturaId ? (
+                  <span
+                    style={{ cursor: "pointer", color: "blue" }}
+                    onClick={handleFacturaClick}
+                  >
+                    {pago.facturaId}
+                  </span>
+                ) : (
+                  "No disponible"
+                )}
+              </p>
             </Col>
           </Row>
         </div>
@@ -119,7 +153,9 @@ const PagoPedido = () => {
             {success && <AlertMessage type="success" message={success} />}
             <Row>
               <Col md={6}>
-                <p><strong>Precio:</strong> ${pago.precio}</p>
+                <p>
+                  <strong>Precio:</strong> ${pago.precio}
+                </p>
                 <Form.Check
                   type="checkbox"
                   label="Pagado"
@@ -128,11 +164,28 @@ const PagoPedido = () => {
                   onChange={handlePagadoChange}
                   inline
                 />
-                <p><strong>Remito:</strong> {pago.remito ? pago.remito : "No disponible"}</p>
+                <p>
+                  <strong>Remito:</strong>{" "}
+                  {pago.remito ? pago.remito : "No disponible"}
+                </p>
               </Col>
               <Col md={6}>
-                <p><strong>Tipo de Pago:</strong> {pago.tipoPago}</p>
-                <p><strong>Factura:</strong> {pago.facturaId ? pago.facturaId : "No disponible"}</p>
+                <p>
+                  <strong>Tipo de Pago:</strong> {pago.tipoPago}
+                </p>
+                <p>
+                <strong>Factura:</strong>{" "}
+                {pago.facturaId ? (
+                  <span
+                    style={{ cursor: "pointer", color: "blue" }}
+                    onClick={handleFacturaClick}
+                  >
+                    {pago.facturaId}
+                  </span>
+                ) : (
+                  "No disponible"
+                )}
+              </p>
               </Col>
             </Row>
           </Card.Body>
@@ -164,12 +217,12 @@ const PagoPedido = () => {
       </Modal>
 
       {/* Modal para Agregar Entrada */}
-      <Modal 
-        show={showAgregarEntradaModal} 
+      <Modal
+        show={showAgregarEntradaModal}
         onHide={() => {
           setShowAgregarEntradaModal(false);
           togglePagado(); // Ejecuta togglePagado cuando se cierra el modal
-        }} 
+        }}
         size="lg"
         onExited={togglePagado} // Se asegura de ejecutar togglePagado incluso después de cerrar
       >
@@ -177,7 +230,11 @@ const PagoPedido = () => {
           <Modal.Title>Agregar Entrada</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AgregarEntrada onSuccess={() => setShowAgregarEntradaModal(false)} onHide={() => setShowAgregarEntradaModal(false)} efectivo={true} />
+          <AgregarEntrada
+            onSuccess={() => setShowAgregarEntradaModal(false)}
+            onHide={() => setShowAgregarEntradaModal(false)}
+            efectivo={true}
+          />
         </Modal.Body>
       </Modal>
     </Container>
@@ -185,4 +242,3 @@ const PagoPedido = () => {
 };
 
 export default PagoPedido;
-
