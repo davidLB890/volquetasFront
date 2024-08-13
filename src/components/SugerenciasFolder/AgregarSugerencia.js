@@ -66,6 +66,7 @@ const AgregarSugerencia = ({
               as="select"
               value={choferSugeridoId}
               onChange={(e) => setChoferSugeridoId(e.target.value)}
+              required
             >
               <option value="">Seleccione un chofer</option>
               {choferes.map((chofer) => (
@@ -81,6 +82,7 @@ const AgregarSugerencia = ({
               type="datetime-local"
               value={horarioSugerido}
               onChange={(e) => setHorarioSugerido(e.target.value)}
+              required
             />
           </Form.Group>
           <Form.Group controlId="formTipoSugerido">

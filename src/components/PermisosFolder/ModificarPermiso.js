@@ -80,10 +80,20 @@ const ModificarPermiso = ({ permiso, onHide, onPermisoModificado }) => {
           required
         />
       </Form.Group> */}
-      <Button variant="secondary" onClick={onHide}>
+      <Button variant="secondary" onClick={onHide}
+      className="mt-3"
+      style={{
+        padding: "0.5rem 1rem",
+        marginRight: "0.5rem",
+      }}>
         Cancelar
       </Button>
-      <Button variant="primary" type="submit">
+      <Button variant="primary" type="submit"
+      className="mt-3"
+      style={{
+        padding: "0.5rem 1rem",
+        marginRight: "0.5rem",
+      }}>
         Guardar Cambios
       </Button>
     </Form>

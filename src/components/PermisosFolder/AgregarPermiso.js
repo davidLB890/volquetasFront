@@ -97,7 +97,20 @@ const AgregarPermiso = ({ show, onHide, empresaId, particularId }) => {
               required
             />
           </Form.Group>
-          <Button className="mt-3" variant="primary" type="submit">
+          <Button variant="secondary" 
+          className="mt-3"
+            style={{
+              padding: "0.5rem 1rem",
+              marginRight: "0.5rem",
+            }}
+            onClick={onHide}>
+            Cancelar
+          </Button>
+          <Button className="mt-3" variant="primary" type="submit"
+          style={{
+            padding: "0.5rem 1rem",
+            marginRight: "0.5rem",
+          }}>
             Agregar Permiso
           </Button>
         </Form>

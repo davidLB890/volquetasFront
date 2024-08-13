@@ -97,6 +97,7 @@ const ListaPermisosGeneral = () => {
 
   return (
     <Container>
+      <h1>Lista de Permisos</h1>
       {loading && <Spinner animation="border" />}
       {error && <Alert variant="danger">{error}</Alert>}
       {!loading && !error && (

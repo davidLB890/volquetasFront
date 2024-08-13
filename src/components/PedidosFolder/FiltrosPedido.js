@@ -162,7 +162,7 @@ const FiltrosPedido = ({ setFiltros }) => {
             onClick={() => setOpenFilters(!openFilters)}
             aria-controls="filtros-collapse"
             aria-expanded={openFilters}
-            className="mb-2 mb-md-0 me-md-2"
+            className="mt-3 mb-2 mb-md-0 me-md-2"
             style={{
               padding: "0.5rem 1rem",
             }}
@@ -173,7 +173,7 @@ const FiltrosPedido = ({ setFiltros }) => {
             <Button
               type="submit"
               onClick={handleFilterChange}
-              className="mb-2 mb-md-0 me-md-2"
+              className="mt-3 mb-2 mb-md-0 me-md-2"
               style={{
                 padding: "0.5rem 1rem",
               }}

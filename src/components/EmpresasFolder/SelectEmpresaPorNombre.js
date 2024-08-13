@@ -49,6 +49,7 @@ const SelectEmpresaPorNombre = ({ onSeleccionar }) => {
           variant="outline-secondary"
           onClick={handleSearch}
           style={{ height: "34px", display: "flex", alignItems: "center" }}
+          disabled={!searchTerm.trim()} // Deshabilitar si searchTerm está vacío o solo contiene espacios en blanco
         >
           <i className="bi bi-search"></i>
         </Button>

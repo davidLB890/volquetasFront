@@ -287,12 +287,24 @@ const AgregarObra = ({
             />
           </Form.Group>
 
-          <div className="text-center">
+          <div >
+          <Button variant="secondary" 
+            style={{
+              padding: "0.5rem 1rem",
+              marginRight: "0.5rem",
+            }}
+            onClick={onHide}>
+            Cancelar
+          </Button>
             <Button
               type="button"
               variant="primary"
               onClick={registrarObra}
               disabled={!botonHabilitado}
+              style={{
+                padding: "0.5rem 1rem",
+                marginRight: "0.5rem",
+              }}
             >
               Crear Obra
             </Button>

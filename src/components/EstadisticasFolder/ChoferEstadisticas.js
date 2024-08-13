@@ -99,7 +99,7 @@ const ChoferEstadisticas = () => {
 
        <Card>
         <Card.Header closeButton>
-          <Card.Title>Reporte de Chofer {choferNombre ? choferNombre : ""}</Card.Title>
+          <h1>Reporte de Chofer {choferNombre ? choferNombre : ""}</h1>
         </Card.Header>
         <Card.Body>
           {error && <Alert variant="danger">{error}</Alert>}

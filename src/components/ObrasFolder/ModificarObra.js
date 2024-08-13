@@ -214,11 +214,23 @@ const handleModificar = async () => {
             </>
           )}
           <div className="text-center">
+          <Button variant="secondary" 
+            style={{
+              padding: "0.5rem 1rem",
+              marginRight: "0.5rem",
+            }}
+            onClick={onHide}>
+            Cancelar
+          </Button>
             <Button
               type="button"
               variant="primary"
               onClick={handleModificar}
               disabled={loading}
+              style={{
+                padding: "0.5rem 1rem",
+                marginRight: "0.5rem",
+              }}
             >
               Guardar Cambios
             </Button>

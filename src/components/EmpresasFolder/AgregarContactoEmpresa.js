@@ -275,15 +275,22 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], show, onHide }) => {
                 </Form.Group>
               </Col>
             </Row>
-            <Button
-              /* className="mt-3 me-2" */
-              variant="secondary"
-              onClick={onHide}
-            >
-              Cerrar
-            </Button>
+            <Button variant="secondary" 
+          className="mt-3"
+            style={{
+              padding: "0.5rem 1rem",
+              marginRight: "0.5rem",
+            }}
+            onClick={onHide}>
+            Cancelar
+          </Button>
             <Button
               variant="primary"
+              className="mt-3"
+            style={{
+              padding: "0.5rem 1rem",
+              marginRight: "0.5rem",
+            }}
               onClick={handleAgregarContacto}
               disabled={!boton}
             >

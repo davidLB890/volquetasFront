@@ -14,8 +14,8 @@ import {
 import { getFacturas, getParticularId, getEmpresaId } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
-import BuscarEmpresaPorNombre from "../EmpresasFolder/BuscarEmpresaPorNombre";
-import BuscarParticularPorNombre from "../ParticularesFolder/BuscarParticularPorNombre";
+import SelectEmpresaPorNombre from "../EmpresasFolder/SelectEmpresaPorNombre";
+import SelectParticularPorNombre from "../ParticularesFolder/SelectParticularPorNombre";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
@@ -238,12 +238,12 @@ const ListaFacturas = () => {
               </Form.Group>
             )}
             {tipoCliente === "empresa" && !empresaId && (
-              <BuscarEmpresaPorNombre
+              <SelectEmpresaPorNombre
                 onSeleccionar={handleEmpresaSeleccionada}
               />
             )}
             {tipoCliente === "particular" && !particularId && (
-              <BuscarParticularPorNombre
+              <SelectParticularPorNombre
                 onSeleccionar={handleParticularSeleccionada}
               />
             )}
@@ -265,13 +265,18 @@ const ListaFacturas = () => {
             )}
           </Col>
           <Col md={3} className="d-flex align-items-end">
-            <Button type="submit" variant="primary">
-              Buscar
+            <Button type="submit" variant="primary" className="mt-4">
+              Aplicar Filtros
             </Button>
           </Col>
         </Row>
       </Form>
-      <Button variant="success" onClick={exportToPDF} className="mb-3">
+      <Button 
+        variant="success" 
+        onClick={exportToPDF} 
+        className="mb-3"
+        disabled={facturas.length === 0}
+      >
         Exportar a PDF
       </Button>
 

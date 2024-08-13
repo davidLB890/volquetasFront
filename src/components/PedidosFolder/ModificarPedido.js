@@ -27,7 +27,7 @@ const ModificarPedido = ({ show, onHide }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [permisos, setPermisos] = useState([]);
-  const [useNewPermiso, setUseNewPermiso] = useState(!permisoId);
+  const [useNewPermiso, setUseNewPermiso] = useState(false);
   const [nuevoPermiso, setNuevoPermiso] = useState({
     fechaCreacion: "",
     fechaVencimiento: "",

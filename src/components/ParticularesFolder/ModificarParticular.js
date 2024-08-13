@@ -67,7 +67,22 @@ const ModificarParticular = ({ particular, show, onHide }) => {
             <Form.Label>Cédula</Form.Label>
             <Form.Control type="text" value={cedula} onChange={(e) => setCedula(e.target.value)} />
           </Form.Group>
-          <Button variant="primary" onClick={handleModificarParticular}>Modificar Particular</Button>
+
+          <Button variant="secondary" onClick={onHide}
+      className="mt-3"
+      style={{
+        padding: "0.5rem 1rem",
+        marginRight: "0.5rem",
+      }}>
+        Cancelar
+      </Button>
+          <Button variant="primary" onClick={handleModificarParticular}
+          className="mt-3"
+          style={{
+            padding: "0.5rem 1rem",
+            marginRight: "0.5rem",
+          }}>Modificar Particular</Button>
+
         </Form>
       </Modal.Body>
     </Modal>

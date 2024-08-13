@@ -223,7 +223,7 @@ const Navigation = ({ userRole }) => {
                   <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                     <i className="ni ni-align-left-2 text-info text-sm opacity-10"></i>
                   </div>
-                  <span className="nav-link-text ms-1">Listas y Reportes</span>
+                  <span className="nav-link-text ms-1">Consultas y Reportes</span>
                 </div>
                 <div
                   className={`nav-submenu ms-5 collapse ${
@@ -237,7 +237,7 @@ const Navigation = ({ userRole }) => {
                     Lista de facturas
                   </Nav.Link>
                   <Nav.Link as={Link} to="/imm" onClick={handleMouseLeave}>
-                    Lista para la IMM
+                    Lista IMM
                   </Nav.Link>
                   <NavLink as={Link} to="/reporteChofer" onClick={handleMouseLeave}>
                     Reporte de chofer

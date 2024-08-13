@@ -70,6 +70,7 @@ const ListaIMM = () => {
 
   return (
     <Container>
+      <h1>Lista de Obras para la IMM</h1>
       {loading && <Spinner animation="border" />}
       {error && <Alert variant="danger">{error}</Alert>}
       {!loading && !error && (
