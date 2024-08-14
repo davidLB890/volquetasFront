@@ -18,10 +18,15 @@ const ModificarPagoPedido = ({ show, onHide, pago }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditablePago({
-      ...editablePago,
-      [name]: value,
-    });
+    
+    let updatedPago = { ...editablePago, [name]: value };
+
+    // Si se agrega un remito, establece 'pagado' en true
+    if (name === "remito" && value) {
+      updatedPago.pagado = true;
+    }
+
+    setEditablePago(updatedPago);
   };
 
   const handleSave = async () => {
@@ -81,15 +86,6 @@ const ModificarPagoPedido = ({ show, onHide, pago }) => {
               onChange={handleInputChange}
             />
           </Form.Group>
-          {/* <Form.Group controlId="formFacturaId">
-            <Form.Label>ID de Factura</Form.Label>
-            <Form.Control
-              type="text"
-              name="facturaId"
-              value={editablePago.facturaId || ""}
-              onChange={handleInputChange}
-            />
-          </Form.Group> */}
         </Form>
       </Modal.Body>
       <Modal.Footer>
