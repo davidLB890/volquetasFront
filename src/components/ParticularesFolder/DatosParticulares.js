@@ -9,6 +9,7 @@ import {
   Container,
   Row,
   Col,
+  Modal
 } from "react-bootstrap";
 import useAuth from "../../hooks/useAuth";
 import { getParticularId } from "../../api";
@@ -28,6 +29,7 @@ import AgregarTelefono from "../TelefonosFolder/AgregarTelefono";
 import ListaPermisos from "../PermisosFolder/ListaPermisos";
 import ListaPedidosEmpresaOParticular from "../PedidosFolder/ListaPedidosEmpresaOParticular";
 import AgregarPermiso from "../PermisosFolder/AgregarPermiso";
+import { deleteParticular } from "../../api";
 
 const DatosParticular = () => {
   const { particular, loading, error } = useSelector(
@@ -37,6 +39,8 @@ const DatosParticular = () => {
   const [showAgregarObra, setShowAgregarObra] = useState(false);
   const [showAgregarTelefono, setShowAgregarTelefono] = useState(false);
   const [showAgregarPermiso, setShowAgregarPermiso] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false); // Estado para el modal de confirmación
+  const [deleteError, setDeleteError] = useState(null);
 
   const dispatch = useDispatch();
   const getToken = useAuth();
@@ -87,6 +91,20 @@ const DatosParticular = () => {
     dispatch(deleteObraSuccess(obraId)); // Despacha la acción para eliminar la obra del estado de Redux
   };
 
+  const handleConfirmEliminar = async () => {
+    const usuarioToken = getToken();
+    try {
+      await deleteParticular(particularId, usuarioToken);
+      navigate("/particulares");
+    } catch (error) {
+      setDeleteError(
+        error.response?.data?.error || "Error al eliminar el particular"
+      );
+    } finally {
+      setShowConfirmDelete(false); // Cierra el modal después de intentar eliminar el particular
+    }
+  };
+
   if (loading) {
     return <Spinner animation="border" />;
   }
@@ -129,6 +147,16 @@ const DatosParticular = () => {
           {/* Grupo de botones con disposición vertical en pantallas pequeñas */}
           <Row>
             <Col xs={12} md={8} className="d-flex flex-column flex-md-row">
+            <Button
+                onClick={() => setShowConfirmDelete(true)} // Muestra el modal de confirmación
+                className="mb-2 mb-md-0 me-md-2"
+                variant="danger"
+                style={{
+                  padding: "0.5rem 1rem",
+                }}
+              >
+                Eliminar Particular
+              </Button>
               <Button
                 onClick={() => setShowModificarParticular(true)}
                 className="mb-2 mb-md-0 me-md-2"
@@ -162,7 +190,7 @@ const DatosParticular = () => {
               <Button
                 onClick={() => setShowAgregarPermiso(true)}
                 className="mb-2 mb-md-0 me-md-2"
-                variant="info"
+                variant="secondary"
                 style={{
                   padding: "0.5rem 1rem",
                 }}
@@ -210,6 +238,25 @@ const DatosParticular = () => {
         onHide={() => setShowAgregarPermiso(false)}
         particularId={particular.id}
       />
+
+      {/* Modal de Confirmación de Eliminación */}
+      <Modal show={showConfirmDelete} onHide={() => setShowConfirmDelete(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Eliminación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Estás seguro de que deseas eliminar esta empresa? Esta acción no se
+          puede deshacer.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowConfirmDelete(false)}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleConfirmEliminar}>
+            Eliminar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

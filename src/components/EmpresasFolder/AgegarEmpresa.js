@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { postEmpresa } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import AlertMessage from "../AlertMessage";
@@ -23,6 +23,7 @@ const AgregarEmpresa = ({ onSubmit }) => {
   const boton = useHabilitarBoton(refs);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const getToken = useAuth();
 
   useEffect(() => {
@@ -56,6 +57,8 @@ const AgregarEmpresa = ({ onSubmit }) => {
         setEmpresaAgregada({ id: datos.id, nombre: datos.nombre });
         setSuccess("Empresa creada correctamente");
         setError("");
+        let empresaId = datos.id;
+        if(location.pathname === "/empresas/crear") navigate("/empresas/datos", { state: { empresaId } });
         setFormularioVisible(false); // Ocultar el formulario al crear la empresa con éxito
 
         // Aquí llamamos a onSubmit con los datos de la empresa creada

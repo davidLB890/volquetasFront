@@ -1,0 +1,14 @@
+.table-sm td, .table-sm th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }  
+
+/* ListaVolquetas.css */
+@media (max-width: 768px) {
+    .lista-volquetas {
+      width: 100%; /* Se asegura que la lista ocupe el ancho completo de la pantalla en dispositivos móviles */
+    }
+  }
+  
+  

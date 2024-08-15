@@ -385,6 +385,14 @@ export const putParticular = (particularId, particular, usuarioToken) => {
     },
   });
 }
+export const deleteParticular = (particularId, usuarioToken) => {
+  return axios.delete(`${API_URL}particulares/${particularId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
 //Empresas
 export const getEmpresas = (usuarioToken) => {
   return axios.get(`${API_URL}empresas`, {
@@ -430,6 +438,14 @@ export const putEmpresa = (empresaId, empresa, usuarioToken) => {
   return axios.put(`${API_URL}empresas/${empresaId}`, empresa, {
     headers: {
       Authorization: usuarioToken,
+    },
+  });
+}
+export const deleteEmpresa = (empresaId, usuarioToken) => {
+  return axios.delete(`${API_URL}empresas/${empresaId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
     },
   });
 }

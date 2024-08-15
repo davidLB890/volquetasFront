@@ -103,7 +103,7 @@ const ModificarEmpresa = ({ show, onHide }) => {
               marginRight: "0.5rem",
             }}
             onClick={onHide}>
-            Cancelar
+            Cerrar
           </Button>
           <Button
           className="mt-3"

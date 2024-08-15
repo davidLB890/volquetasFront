@@ -25,6 +25,7 @@ import Multiples from "./Multiples";
 import Recambio from "../RecambioFolder/Recambio";
 import Referencia from "./Referencia";
 import { deletePedidoId } from "../../api";
+import ListaVolquetasResumida from "../VolquetasFolder/ListaVolquetasResumida";
 
 const DatosPedido = () => {
   const location = useLocation();
@@ -144,7 +145,6 @@ const DatosPedido = () => {
           &larr; Volver a la Factura
         </Button>
       )}
-
       <Card className="mt-3">
         <Card.Header>
           <Row>
@@ -220,6 +220,8 @@ const DatosPedido = () => {
           )}
         </Card.Body>
       </Card>
+
+      <ListaVolquetasResumida />
 
       <Modal show={showConfirmModal} onHide={handleHideConfirmModal}>
         <Modal.Header closeButton>

@@ -282,7 +282,7 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], show, onHide }) => {
               marginRight: "0.5rem",
             }}
             onClick={onHide}>
-            Cancelar
+            Cerrar
           </Button>
             <Button
               variant="primary"
@@ -318,7 +318,9 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], show, onHide }) => {
               </Button>
             )}
           </div>
+          
         )}
+        
       </Modal.Body>
     </Modal>
   );

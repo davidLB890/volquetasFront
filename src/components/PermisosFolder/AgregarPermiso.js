@@ -104,7 +104,7 @@ const AgregarPermiso = ({ show, onHide, empresaId, particularId }) => {
               marginRight: "0.5rem",
             }}
             onClick={onHide}>
-            Cancelar
+            Cerrar
           </Button>
           <Button className="mt-3" variant="primary" type="submit"
           style={{

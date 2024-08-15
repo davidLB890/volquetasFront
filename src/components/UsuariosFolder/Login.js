@@ -7,10 +7,12 @@ import AlertMessage from "../AlertMessage";
 import { fetchEmpleados } from "../../features/empleadosSlice";
 import { fetchCamiones } from "../../features/camionesSlice";
 import { jwtDecode } from "jwt-decode";
+import { Button, InputGroup, FormControl } from "react-bootstrap";
 
 const Login = () => {
   const email = useRef(null);
   const password = useRef(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -53,25 +55,28 @@ const Login = () => {
     localStorage.setItem("tokenTimestamp", timestamp);
     sessionStorage.setItem("activeSession", "true"); // Marcar la sesión como activa
   };
-  
 
   const saveUser = async (token) => {
     try {
       const decodedToken = jwtDecode(token);
       const { rol, id } = decodedToken;
-  
+
       localStorage.setItem("userRol", rol);
       localStorage.setItem("userId", id);
-      sessionStorage.setItem('activeSession', 'true');
-  
+      sessionStorage.setItem("activeSession", "true");
+
       const responseEmpleado = await obtenerEmpleado(id, token);
       const { nombre } = responseEmpleado.data;
-  
+
       localStorage.setItem("userNombre", nombre);
     } catch (error) {
       console.error("Error processing user data:", error);
     }
-  };  
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
@@ -79,11 +84,7 @@ const Login = () => {
         <div className="card-header text-center">
           <h3>Inicia sesión</h3>
         </div>
-        {/* {sessionExpired && (
-          <div className="alert alert-warning">
-            Sesión expirada. Por favor, inicia sesión de nuevo.
-          </div>
-        )} */}
+        
         <div className="card-body">
           <form>
             <div className="input-group form-group">
@@ -95,13 +96,23 @@ const Login = () => {
               />
             </div>
             <div className="input-group form-group">
-              <input
-                ref={password}
-                type="password"
-                className="form-control"
-                placeholder="contraseña"
-              />
-            </div>
+  <InputGroup>
+    <FormControl
+      ref={password}
+      type={showPassword ? "text" : "password"}
+      className="form-control"
+      placeholder="contraseña"
+      style={{ height: "calc(1.5em + .75rem + 2px)" }} // Ajusta la altura para que coincida con el botón
+    />
+    <Button
+      variant="outline-secondary"
+      onClick={togglePasswordVisibility}
+      style={{ height: "calc(1.5em + .75rem + 2px)" }} // Ajusta la altura para que coincida con el campo de contraseña
+    >
+      {showPassword ? "Ocultar" : "Mostrar"}
+    </Button>
+  </InputGroup>
+</div>
             <AlertMessage type="error" message={error} />
             <div className="text-center">
               <input
@@ -124,3 +135,8 @@ const Login = () => {
 };
 
 export default Login;
+{/* {sessionExpired && (
+          <div className="alert alert-warning">
+            Sesión expirada. Por favor, inicia sesión de nuevo.
+          </div>
+        )} */}

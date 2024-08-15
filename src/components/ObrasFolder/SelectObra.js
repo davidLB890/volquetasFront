@@ -4,7 +4,7 @@ import { Form } from "react-bootstrap";
 const SelectObra = ({ obras, obraSeleccionada, onSelect, onNuevaObra }) => {
   return (
     <Form.Group controlId="obraSeleccionada">
-      <Form.Label>Obra *</Form.Label>
+      <Form.Label>Obra</Form.Label>
       <Form.Control
         as="select"
         value={obraSeleccionada || ""}
