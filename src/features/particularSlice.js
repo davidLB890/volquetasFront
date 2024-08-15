@@ -55,6 +55,17 @@ const particularSlice = createSlice({
     modifyTelefonoFailure(state, action) {
       state.error = action.payload;
     },
+    deleteTelefonoSuccess(state, action) {
+      if (state.particular) {
+        state.particular.Telefonos = state.particular.Telefonos.filter(
+          (tel) => tel.id !== action.payload
+        );
+      }
+      state.success = 'Teléfono eliminado correctamente';
+    },
+    deleteTelefonoFailure(state, action) {
+      state.error = action.payload;
+    },
     createObraSuccess(state, action) {
       if (state.particular) {
         state.particular.obras = [...state.particular.obras, action.payload];
@@ -120,6 +131,8 @@ export const {
   createTelefonoFailure,
   modifyTelefonoSuccess,
   modifyTelefonoFailure,
+  deleteTelefonoSuccess,
+  deleteTelefonoFailure,
   createObraSuccess,
   createObraFailure,
   modifyObraSuccess,

@@ -332,8 +332,14 @@ export const putTelefono = (telefonoId, telefonoData, usuarioToken) => {
     },
   });
 };
-
-
+export const deleteTelefono = (telefonoId, usuarioToken) => {
+  return axios.delete(`${API_URL}telefonos/${telefonoId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
 
 
 //CLIENTES
