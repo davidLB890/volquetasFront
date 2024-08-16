@@ -487,6 +487,13 @@ export const deleteContactoEmpresa = (contactoId, usuarioToken) => {
     },
   });
 }
+export const putContactoEmpresa = (contactoId, contactoEmpresa, usuarioToken) => {
+  return axios.put(`${API_URL}contacto-empresas/${contactoId}`, contactoEmpresa, {
+    headers: {
+      Authorization: usuarioToken,
+    },
+  });
+}
 
 
 

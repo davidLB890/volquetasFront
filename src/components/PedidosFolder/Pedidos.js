@@ -291,63 +291,98 @@ const Pedidos = () => {
               <tr>
                 <th>Fecha Creación</th>
                 <th>
-                  <Form.Control
-                    as="select"
-                    value={filtroCliente}
-                    onChange={handleFiltroClienteChange}
-                    style={{
-                      display: "inline-block",
-                      width: "auto",
-                      border: "none",
-                      padding: 0,
-                    }}
-                  >
-                    <option value="todos">Cliente</option>
-                    <option value="empresa">Cliente Empresa</option>
-                    <option value="particular">Cliente Particular</option>
-                  </Form.Control>
+                  <div style={{ position: "relative", display: "inline-block" }}>
+                    <Form.Control
+                      as="select"
+                      value={filtroCliente}
+                      onChange={handleFiltroClienteChange}
+                      style={{
+                        display: "inline-block",
+                        width: "auto",
+                        border: "none",
+                        padding: "0 1.5rem 0 0", // Espacio a la derecha para el ícono
+                        background: "none", // Elimina fondo predeterminado
+                      }}
+                    >
+                      <option value="todos">Cliente</option>
+                      <option value="empresa">Cliente Empresa</option>
+                      <option value="particular">Cliente Particular</option>
+                    </Form.Control>
+                    <i
+                      className="bi bi-caret-down-fill"
+                      style={{
+                        position: "absolute",
+                        right: "0.5rem",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        pointerEvents: "none",
+                      }}
+                    ></i>
+                  </div>
                 </th>
                 <th>Dirección</th>
                 <th>Precio</th>
                 <th>
-                  <Form.Control
-                    as="select"
-                    value={filtroPago}
-                    onChange={handleFiltroPagoChange}
-                    style={{
-                      display: "inline-block",
-                      width: "auto",
-                      border: "none",
-                      padding: 0,
-                    }}
-                  >
-                    <option value="todos">Pagado</option>
-                    <option value="pagado">Pagado: sí</option>
-                    <option value="noPagado">Pagado: no</option>
-                  </Form.Control>
+                  <div style={{ position: "relative", display: "inline-block" }}>
+                    <Form.Control
+                      as="select"
+                      value={filtroPago}
+                      onChange={handleFiltroPagoChange}
+                      style={{
+                        display: "inline-block",
+                        width: "auto",
+                        border: "none",
+                        padding: "0 1.5rem 0 0", // Espacio a la derecha para el ícono
+                        background: "none", // Elimina fondo predeterminado
+                      }}
+                    >
+                      <option value="todos">Pagado</option>
+                      <option value="pagado">Pagado: sí</option>
+                      <option value="noPagado">Pagado: no</option>
+                    </Form.Control>
+                    <i
+                      className="bi bi-caret-down-fill"
+                      style={{
+                        position: "absolute",
+                        right: "0.5rem",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        pointerEvents: "none",
+                      }}
+                    ></i>
+                  </div>
                 </th>
                 <th>
-                  <Form.Control
-                    as="select"
-                    value={tipoSugerencia}
-                    onChange={handleTipoSugerenciaChange}
-                    style={{
-                      display: "inline-block",
-                      width: "auto",
-                      border: "none",
-                      padding: 0,
-                    }}
-                  >
-                    <option value="general">Sugerencia</option>
-                    <option value="entrega">Sugerencia Entrega</option>
-                    <option value="levante">Sugerencia Levante</option>
-                    <option value="entregaChofer">
-                      Sugerencia Entrega Chofer
-                    </option>
-                    <option value="levanteChofer">
-                      Sugerencia Levante Chofer
-                    </option>
-                  </Form.Control>
+                  <div style={{ position: "relative", display: "inline-block" }}>
+                    <Form.Control
+                      as="select"
+                      value={tipoSugerencia}
+                      onChange={handleTipoSugerenciaChange}
+                      style={{
+                        display: "inline-block",
+                        width: "auto",
+                        border: "none",
+                        padding: "0 1.5rem 0 0", // Espacio a la derecha para el ícono
+                        background: "none", // Elimina fondo predeterminado
+                      }}
+                    >
+                      <option value="general">Sugerencia</option>
+                      <option value="entrega">Sugerencia Entrega</option>
+                      <option value="levante">Sugerencia Levante</option>
+                      <option value="entregaChofer">Sugerencia Entrega Chofer</option>
+                      <option value="levanteChofer">Sugerencia Levante Chofer</option>
+                    </Form.Control>
+                    <i
+                      className="bi bi-caret-down-fill"
+                      style={{
+                        position: "absolute",
+                        right: "0.5rem",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        pointerEvents: "none",
+                      }}
+                    ></i>
+                  </div>
                 </th>
                 <th>Último movimiento</th>
               </tr>

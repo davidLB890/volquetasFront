@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, ListGroup, Button, Table, Card, Modal } from 'react-bootstrap';
+import { Container, ListGroup, Button, Table, Card, Modal, Col, Row } from 'react-bootstrap';
 import ModificarCaja from './ModificarCaja';
 import { deleteCaja } from '../../api';
 import useAuth from '../../hooks/useAuth';
@@ -114,49 +114,132 @@ const ListaCajas = ({ data }) => {
       </Card>
 
       <Container className="card pt-4">
-        <Table bordered hover>
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Motivo</th>
-              <th>Monto</th>
-              <th>Descripcion</th>
-              <th>Empleado</th>
-              <th>Pedido</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cajas.map((c) => (
-              <tr key={c.id}>
-                <td>{c.fecha}</td>
-                <td>{c.motivo}</td>
-                <td style={c.monto > 0 ? { backgroundColor: '#beffcc' } : { backgroundColor: '#ffd9dc' }}>
-                  ${c.monto} {c.moneda === 'peso' ? 'UY' : 'USD'}
-                </td>
-                <td>{c.descripcion}</td>
-                <td>{c.Empleado ? c.Empleado.nombre : ''}</td>
-                <td>
-                  {c.Pedido ? (
-                    <span className="link-primary" onClick={() => handleNavigateToPedido(c.pedidoId)} style={{ cursor: 'pointer' }}>
-                      {c.Pedido.Obra.calle}
-                    </span>
-                  ) : (
-                    ''
-                  )}
-                </td>
-                <td>
-                  <Button variant="secondary" onClick={() => handleShowModificarModal(c)}>
-                    Modificar
-                  </Button>
-                  <Button variant="danger" className="ms-2" onClick={() => handleShowConfirmDelete(c)}>
-                    Eliminar
-                  </Button>
-                </td>
+        {/* Si la pantalla es md o más grande, muestra una tabla */}
+        {window.innerWidth >= 768 ? (
+          <Table bordered hover>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Motivo</th>
+                <th>Monto</th>
+                <th>Descripción</th>
+                <th>Empleado</th>
+                <th>Pedido</th>
+                <th>Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {cajas.map((c) => (
+                <tr key={c.id}>
+                  <td>{c.fecha}</td>
+                  <td>{c.motivo}</td>
+                  <td
+                    style={
+                      c.monto > 0
+                        ? { backgroundColor: '#beffcc' }
+                        : { backgroundColor: '#ffd9dc' }
+                    }
+                  >
+                    ${c.monto} {c.moneda === 'peso' ? 'UY' : 'USD'}
+                  </td>
+                  <td>{c.descripcion}</td>
+                  <td>{c.Empleado ? c.Empleado.nombre : ''}</td>
+                  <td>
+                    {c.Pedido ? (
+                      <span
+                        className="link-primary"
+                        onClick={() => handleNavigateToPedido(c.pedidoId)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {c.Pedido.Obra.calle}
+                      </span>
+                    ) : (
+                      ''
+                    )}
+                  </td>
+                  <td>
+                    <Button variant="secondary" onClick={() => handleShowModificarModal(c)}>
+                      Modificar
+                    </Button>
+                    <Button
+                      variant="danger"
+                      className="ms-2"
+                      onClick={() => handleShowConfirmDelete(c)}
+                    >
+                      Eliminar
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        ) : (
+          // Para pantallas más pequeñas, muestra tarjetas
+          cajas.map((c) => (
+            <Card key={c.id} className="mb-3">
+              <Card.Body>
+                <Row>
+                  <Col xs={6}>
+                    <strong>Fecha:</strong> {c.fecha}
+                  </Col>
+                  <Col xs={6}>
+                    <strong>Motivo:</strong> {c.motivo}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={6}>
+                    <strong>Monto:</strong>{' '}
+                    <span
+                      style={
+                        c.monto > 0
+                          ? { backgroundColor: '#beffcc' }
+                          : { backgroundColor: '#ffd9dc' }
+                      }
+                    >
+                      ${c.monto} {c.moneda === 'peso' ? 'UY' : 'USD'}
+                    </span>
+                  </Col>
+                  <Col xs={6}>
+                    <strong>Descripción:</strong> {c.descripcion}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={6}>
+                    <strong>Empleado:</strong> {c.Empleado ? c.Empleado.nombre : ''}
+                  </Col>
+                  <Col xs={6}>
+                    <strong>Pedido:</strong>{' '}
+                    {c.Pedido ? (
+                      <span
+                        className="link-primary"
+                        onClick={() => handleNavigateToPedido(c.pedidoId)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {c.Pedido.Obra.calle}
+                      </span>
+                    ) : (
+                      ''
+                    )}
+                  </Col>
+                </Row>
+                <Row className="mt-3">
+                  <Col>
+                    <Button variant="secondary" onClick={() => handleShowModificarModal(c)}>
+                      Modificar
+                    </Button>
+                    <Button
+                      variant="danger"
+                      className="ms-2"
+                      onClick={() => handleShowConfirmDelete(c)}
+                    >
+                      Eliminar
+                    </Button>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          ))
+        )}
       </Container>
 
       {showModificarModal && (

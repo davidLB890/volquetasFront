@@ -9,6 +9,7 @@ const AgregarEntrada = ({ onSuccess, onHide, efectivo }) => {
   const [fecha, setFecha] = useState("");
   const [motivo, setMotivo] = useState(efectivo ? "ingreso pedido" : "");
   const [monto, setMonto] = useState("");
+  const montoAPagar = useSelector((state) => state.pedido.pedido.pagoPedido.precio);
   const [moneda, setMoneda] = useState("peso");
   const [descripcion, setDescripcion] = useState("");
   const [empleadoId, setEmpleadoId] = useState("");
@@ -27,6 +28,11 @@ const AgregarEntrada = ({ onSuccess, onHide, efectivo }) => {
   const MAX_DESCRIPCION_LENGTH = 255;
 
   const getToken = useAuth();
+  useEffect(() => {
+    if (efectivo) {
+      setMonto(montoAPagar);
+    }
+  }, [efectivo, montoAPagar]);
 
   useEffect(() => {
     if (efectivo) {
@@ -240,17 +246,19 @@ const AgregarEntrada = ({ onSuccess, onHide, efectivo }) => {
             </Form.Group>
           </Col>
 
-          <Col md={6}>
-            <Form.Group controlId="pedidoId">
-              <Form.Label>Nro Identificador del Pedido</Form.Label>
-              <Form.Control
-                type="number"
-                value={pedidoId}
-                onChange={(e) => setPedidoId(e.target.value)}
-                disabled={location.pathname === "/pedidos/datos"} // Deshabilitar si la ruta es /pedidos/datos
-              />
-            </Form.Group>
-          </Col>
+          {!location.pathname === "/pedidos/datos" && (
+            <Col md={6}>
+              <Form.Group controlId="pedidoId">
+                <Form.Label>Nro Identificador del Pedido</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={pedidoId}
+                  onChange={(e) => setPedidoId(e.target.value)}
+                  disabled={location.pathname === "/pedidos/datos"} // Deshabilitar si la ruta es /pedidos/datos
+                />
+              </Form.Group>
+            </Col>
+          )}
         </Row>
         <div className="d-flex justify-content-end mt-4">
           <Button variant="secondary" onClick={onHide} className="me-2">

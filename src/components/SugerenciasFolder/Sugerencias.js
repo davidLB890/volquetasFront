@@ -19,6 +19,7 @@ const Sugerencias = () => {
 
   const { pedido } = useSelector((state) => state.pedido);
   const sugerencias = pedido?.Sugerencias || [];
+  const movimientos = pedido?.Movimientos || [];
   const empleados = useSelector((state) => state.empleados.empleados || []);
   const choferes = empleados.filter((empleado) => empleado.rol === "chofer" && empleado.habilitado);
   const pedidoId = useSelector((state) => state.pedido.pedido?.id);
@@ -57,33 +58,36 @@ const Sugerencias = () => {
   };
 
   const renderAgregarButton = () => {
-    if (sugerencias.length === 0) {
-      return (
-        <div className="d-flex">
-          <Button variant="primary" onClick={() => handleShowModal("entrega")} className="me-2">
-            Agregar Sugerencia Entrega
-          </Button>
-          <Button variant="primary" onClick={() => handleShowModal("levante")}>
-            Agregar Sugerencia Levante
-          </Button>
-        </div>
-      );
-    } else if (sugerencias.length === 1) {
-      if (sugerencias[0].tipoSugerido === "entrega") {
+    if(movimientos.length !== 2){
+
+      if (sugerencias.length === 0) {
         return (
-          <Button variant="primary" onClick={() => handleShowModal("levante")}>
-            Agregar Sugerencia Levante
-          </Button>
+          <div className="d-flex">
+            <Button variant="primary" onClick={() => handleShowModal("entrega")} className="me-2">
+              Agregar Sugerencia Entrega
+            </Button>
+            {/* <Button variant="primary" onClick={() => handleShowModal("levante")}>
+              Agregar Sugerencia Levante
+            </Button> */}
+          </div>
         );
+      } else if (sugerencias.length === 1) {
+        /* if (sugerencias[0].tipoSugerido === "entrega") {
+          return (
+            <Button variant="primary" onClick={() => handleShowModal("levante")}>
+              Agregar Sugerencia Levante
+            </Button>
+          );
+        } else  */{
+          return (
+            <Button variant="primary" onClick={() => handleShowModal("levante")}>
+              Agregar Sugerencia Levante
+            </Button>
+          );
+        }
       } else {
-        return (
-          <Button variant="primary" onClick={() => handleShowModal("entrega")}>
-            Agregar Sugerencia Entrega
-          </Button>
-        );
+        return null;
       }
-    } else {
-      return null;
     }
   };
 

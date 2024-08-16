@@ -26,6 +26,8 @@ const Breadcrumbs = () => {
     'permisos': 'Permisos',
     'imm': 'IMM',
     'estadisticas': 'Estadisticas',
+    "reporteChofer": "Reportes de Chofer",
+    "cajas": "Caja",
   };
 
   const handleClick = (to) => {

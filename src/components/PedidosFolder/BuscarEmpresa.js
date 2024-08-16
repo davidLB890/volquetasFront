@@ -12,18 +12,20 @@ const BuscarEmpresaPorNombre = ({ onSeleccionar, getToken }) => {
 
   const handleSearch = async () => {
     const usuarioToken = getToken();
-    setLoading(true);
     setError("");
-    setShowResults(false);
-    try {
-      const response = await getEmpresasNombre(searchTerm, usuarioToken);
-      setResultados(response.data);
-      setShowResults(true);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error al buscar las empresas:", error.response?.data?.error || error.message);
-      setError("Error al buscar las empresas");
-      setLoading(false);
+    if(searchTerm !== "") {
+      setLoading(true);
+      setShowResults(false);
+      try {
+        const response = await getEmpresasNombre(searchTerm, usuarioToken);
+        setResultados(response.data);
+        setShowResults(true);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error al buscar las empresas:", error.response?.data?.error || error.message);
+        setError("Error al buscar las empresas");
+        setLoading(false);
+      }
     }
   };
 

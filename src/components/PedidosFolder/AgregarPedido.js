@@ -311,6 +311,9 @@ const AgregarPedido = () => {
                 onSelect={(id) => setObraSeleccionada(id)}
                 onNuevaObra={() => setShowAgregarObra(true)}
                 disabled={!empresaSeleccionada && !particularSeleccionado} // Deshabilitar si no hay empresa o particular seleccionado
+                label={
+                  `Obra* ${!empresaSeleccionada && !particularSeleccionado ? "- Debe seleccionar un cliente primero" : ""}`
+                }
               />
               <Button
                 variant="primary"

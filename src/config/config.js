@@ -31,6 +31,10 @@ export const TIPOS_PAGO = [
   { value: "transferencia", label: "Transferencia" },
   { value: "cheque", label: "Cheque" },
 ];
+export const DESTINO_FINAL = [
+  { value: "RCD", label: "RCD" },
+  { value: "USINA 8", label: "USINA 8" },
+];
 
 export const TIPOS_MOVIMIENTO = ["entrega", "levante"];
 

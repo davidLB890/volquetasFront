@@ -12,18 +12,20 @@ const BuscarParticularPorNombre = ({ onSeleccionar, getToken }) => {
 
   const handleSearch = async () => {
     const usuarioToken = getToken();
-    setLoading(true);
     setError("");
-    setShowResults(false);
-    try {
-      const response = await getParticularNombre(searchTerm, usuarioToken);
-      setResultados(response.data);
-      setShowResults(true);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error al buscar los particulares:", error.response?.data?.error || error.message);
-      setError("Error al buscar los particulares");
-      setLoading(false);
+    if(searchTerm !== "") {
+      setLoading(true);
+      setShowResults(false);
+      try {
+        const response = await getParticularNombre(searchTerm, usuarioToken);
+        setResultados(response.data);
+        setShowResults(true);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error al buscar los particulares:", error.response?.data?.error || error.message);
+        setError("Error al buscar los particulares");
+        setLoading(false);
+      }
     }
   };
 

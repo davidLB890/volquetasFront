@@ -77,14 +77,25 @@ const ListaIMM = () => {
         <>
           <Row className="mb-3">
             <Col md={6}>
+
+
               <Form.Group controlId="formCantidadMeses">
-                <Form.Label>Cantidad de Meses:</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={cantidadMeses}
-                  onChange={handleMesesChange}
-                  min="1"
-                />
+                <Form.Label>
+                  Cargar obras que tengan pedidos en los últimos{" "}
+                  <Form.Control
+                    as="select"
+                    value={cantidadMeses}
+                    onChange={handleMesesChange}
+                    style={{ display: "inline-block", width: "auto", marginLeft: "5px", marginRight: "5px" }}
+                  >
+                    {[1, 3, 4, 6, 12, 24].map((meses) => (
+                      <option key={meses} value={meses}>
+                        {meses}
+                      </option>
+                    ))}
+                  </Form.Control>
+                  {" "}meses:
+                </Form.Label>
               </Form.Group>
             </Col>
             <Col md={6} className="d-flex justify-content-end align-items-end">

@@ -5,6 +5,8 @@ import AlertMessage from "../AlertMessage";
 import { postObra } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import barrios from "../../config/barrios.json"
+import { DESTINO_FINAL } from "../../config/config";
 
 const AgregarObra = ({
   show,
@@ -178,15 +180,17 @@ const AgregarObra = ({
               </Form.Group>
             </Col> */}
             <Col md={4}>
-              <Form.Group controlId="formBarrio" className="mb-2">
-                <Form.Label>Barrio</Form.Label>
-                <Form.Control
-                  ref={barrioRef}
-                  type="text"
-                  placeholder="Barrio"
-                  required
-                />
-              </Form.Group>
+            <Form.Group controlId="formBarrio" className="mb-2">
+              <Form.Label>Barrio</Form.Label>
+              <Form.Control as="select" ref={barrioRef} required>
+                <option value="">Seleccione un barrio</option>
+                {barrios.map((barrio, index) => (
+                  <option key={index} value={barrio}>
+                    {barrio}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
             </Col>
             <Col md={8}>
               <Form.Group controlId="formDescripcion" className="mb-2">
@@ -268,13 +272,19 @@ const AgregarObra = ({
               <Form.Group controlId="formDestinoFinal" className="mb-2">
                 <Form.Label>Destino Final</Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Destino Final"
+                  as="select"
                   value={destinoFinal}
                   onChange={(e) => setDestinoFinal(e.target.value)}
-                />
+                >
+                  <option value="">Seleccione un destino final</option>
+                  {DESTINO_FINAL.map((destino, index) => (
+                    <option key={index} value={destino.value}>
+                      {destino.label}
+                    </option>
+                  ))}
+                </Form.Control>
               </Form.Group>
-            </Col>
+          </Col>
           </Row>
 
           <Form.Group controlId="formDias" className="mb-2">

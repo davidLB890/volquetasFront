@@ -56,13 +56,15 @@ const HistorialCamiones = () => {
     setSelectedCamion(e.target.value);
     setSelectedChofer("");
     const usuarioToken = getToken();
-    try {
-      const response = await getHistoricoCamion(e.target.value, usuarioToken);
-      const datos = response.data;
-      setHistorial(datos);
-    } catch (error) {
-      console.error("Error al obtener el historial del camión:", error);
-      setError("Error al obtener el historial del camión.");
+    if (e.target.value) {
+      try {
+        const response = await getHistoricoCamion(e.target.value, usuarioToken);
+        const datos = response.data;
+        setHistorial(datos);
+      } catch (error) {
+        console.error("Error al obtener el historial del camión:", error);
+        setError("Error al obtener el historial del camión.");
+      }
     }
   };
 
@@ -70,13 +72,15 @@ const HistorialCamiones = () => {
     setSelectedChofer(e.target.value);
     setSelectedCamion("");
     const usuarioToken = getToken();
-    try {
-      const response = await getHistoricoChofer(e.target.value, usuarioToken);
-      const datos = response.data;
-      setHistorial(datos);
-    } catch (error) {
-      console.error("Error al obtener el historial del chofer:", error);
-      setError("Error al obtener el historial del chofer.");
+    if(e.target.value){
+      try {
+        const response = await getHistoricoChofer(e.target.value, usuarioToken);
+        const datos = response.data;
+        setHistorial(datos);
+      } catch (error) {
+        console.error("Error al obtener el historial del chofer:", error);
+        setError("Error al obtener el historial del chofer.");
+      }
     }
   };
   
