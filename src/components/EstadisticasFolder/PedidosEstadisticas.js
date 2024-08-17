@@ -197,11 +197,11 @@ const PedidosEstadisticas = () => {
   
             {!loading && estadisticas && (
               <Row style={{ marginTop: "20px" }}>
-                <Col md={12}>
+                <Col md={6}>
                   <h5>Pagados</h5>
                   <Bar data={getPagadosNoPagadosData()} options={optionsPagadosNoPagados} />
                 </Col>
-                <Col md={12}>
+                <Col md={6}>
                   <h5>Estado</h5>
                   <Bar data={getEstadoData()} />
                 </Col>

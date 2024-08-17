@@ -4,16 +4,25 @@ import { postCaja } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import SelectEmpresaPorNombre from "../EmpresasFolder/SelectEmpresaPorNombre";
+import SelectParticularPorNombre from "../ParticularesFolder/SelectParticularPorNombre";
+import SelectPedido from "../PedidosFolder/SelectPedidos";
 
 const AgregarEntrada = ({ onSuccess, onHide, efectivo }) => {
   const [fecha, setFecha] = useState("");
   const [motivo, setMotivo] = useState(efectivo ? "ingreso pedido" : "");
   const [monto, setMonto] = useState("");
-  const montoAPagar = useSelector((state) => state.pedido.pedido.pagoPedido.precio);
+  const montoAPagar = useSelector((state) => state.pedido.pedido?.pagoPedido?.precio);
   const [moneda, setMoneda] = useState("peso");
   const [descripcion, setDescripcion] = useState("");
   const [empleadoId, setEmpleadoId] = useState("");
   const [pedidoId, setPedidoId] = useState("");
+  const [filtroTipo, setFiltroTipo] = useState("");
+  const [empresaId, setEmpresaId] = useState("");
+  const [empresaNombre, setEmpresaNombre] = useState("");
+  const [particularId, setParticularId] = useState("");
+  const [particularNombre, setParticularNombre] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -124,6 +133,30 @@ const AgregarEntrada = ({ onSuccess, onHide, efectivo }) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
       setShowDropdown(false);
     }
+  };
+
+  const handleEmpresaSeleccionada = (id, nombre) => {
+    setEmpresaId(id);
+    setEmpresaNombre(nombre);
+    setParticularId(null);
+    setParticularNombre("");
+  };
+
+  const handleParticularSeleccionado = (id, nombre) => {
+    setParticularId(id);
+    setParticularNombre(nombre);
+    setEmpresaId(null);
+    setEmpresaNombre("");
+  };
+
+  const handleCancelarSeleccionEmpresa = () => {
+    setEmpresaId(null);
+    setEmpresaNombre("");
+  };
+
+  const handleCancelarSeleccionParticular = () => {
+    setParticularId(null);
+    setParticularNombre("");
   };
 
   useEffect(() => {
@@ -246,18 +279,97 @@ const AgregarEntrada = ({ onSuccess, onHide, efectivo }) => {
             </Form.Group>
           </Col>
 
-          {!location.pathname === "/pedidos/datos" && (
-            <Col md={6}>
-              <Form.Group controlId="pedidoId">
-                <Form.Label>Nro Identificador del Pedido</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={pedidoId}
-                  onChange={(e) => setPedidoId(e.target.value)}
-                  disabled={location.pathname === "/pedidos/datos"} // Deshabilitar si la ruta es /pedidos/datos
-                />
-              </Form.Group>
-            </Col>
+           {/* <Col md={6}>
+            <Form.Group controlId="pedidoId">
+              <Form.Label>Nro Identificador del Pedido</Form.Label>
+              <Form.Control
+                type="number"
+                value={pedidoId}
+                onChange={(e) => setPedidoId(e.target.value)}
+                disabled={location.pathname === "/pedidos/datos"} // Deshabilitar si la ruta es /pedidos/datos
+              />
+            </Form.Group>
+          </Col> */} 
+
+          {location.pathname === "/cajas" && (
+            <>
+              <Col md={5}>
+                {!empresaId && !particularId && (
+                  <Form.Group controlId="filtroTipo">
+                    <Form.Label>Cliente</Form.Label>
+                    <Form.Control
+                      as="select"
+                      value={filtroTipo}
+                      onChange={(e) => setFiltroTipo(e.target.value)}
+                    >
+                      <option value="">Seleccione tipo Cliente</option>
+                      <option value="empresa">Empresa</option>
+                      <option value="particular">Particular</option>
+                    </Form.Control>
+                  </Form.Group>
+                )}
+                {filtroTipo &&
+                  filtroTipo !== "" &&
+                  (filtroTipo === "empresa" ? (
+                    empresaId ? (
+                      <>
+                        <Form.Text>
+                          <strong>Cliente:</strong> {empresaNombre}{" "}
+                          <a
+                            href="#"
+                            onClick={handleCancelarSeleccionEmpresa}
+                            style={{
+                              marginLeft: "10px",
+                              fontSize: "0.875em",
+                              color: "red",
+                            }}
+                          >
+                            (Cancelar)
+                          </a>
+                        </Form.Text>
+                      </>
+                    ) : (
+                      <SelectEmpresaPorNombre onSeleccionar={handleEmpresaSeleccionada} />
+                    )
+                  ) : (
+                    filtroTipo === "particular" &&
+                    (particularId ? (
+                      <>
+                        <Form.Text>
+                          <strong>Cliente:</strong> {particularNombre}{" "}
+                          <a
+                            href="#"
+                            onClick={handleCancelarSeleccionParticular}
+                            style={{
+                              marginLeft: "10px",
+                              fontSize: "0.875em",
+                              color: "red",
+                            }}
+                          >
+                            (Cancelar)
+                          </a>
+                        </Form.Text>
+                      </>
+                    ) : (
+                      <SelectParticularPorNombre
+                        onSeleccionar={handleParticularSeleccionado}
+                      />
+                    ))
+                  ))}
+              </Col>
+
+              {empresaId || particularId ? (
+                <Col md={6} className="d-flex align-items-end">
+                  <SelectPedido
+                    empresaId={empresaId}
+                    particularId={particularId}
+                    onSelect={(pedido) => {
+                      setPedidoId(pedido.id); // Aquí se guarda el pedido seleccionado en el estado
+                    }}
+                  />
+                </Col>
+              ) : null}
+            </>
           )}
         </Row>
         <div className="d-flex justify-content-end mt-4">
@@ -274,263 +386,3 @@ const AgregarEntrada = ({ onSuccess, onHide, efectivo }) => {
 };
 
 export default AgregarEntrada;
-
-
-/*import React, { useState, useEffect, useRef } from "react";
-import { Form, Button, Row, Col, Alert, Spinner, Container, Dropdown } from "react-bootstrap";
-import { postCaja } from "../../api";
-import useAuth from "../../hooks/useAuth";
-import { useSelector } from "react-redux";
-
-const AgregarEntrada = ({ onSuccess, onHide, efectivo }) => {
-  const [fecha, setFecha] = useState("");
-  const [motivo, setMotivo] = useState("");
-  const [monto, setMonto] = useState("");
-  const [moneda, setMoneda] = useState("peso");
-  const [descripcion, setDescripcion] = useState("");
-  const [empleadoId, setEmpleadoId] = useState("");
-  const [pedidoId, setPedidoId] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [descripcionError, setDescripcionError] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredEmpleados, setFilteredEmpleados] = useState([]);
-  const dropdownRef = useRef(null);
-
-  const empleados = useSelector((state) => state.empleados.empleados);
-  const MAX_DESCRIPCION_LENGTH = 255;
-
-  const getToken = useAuth();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    setSuccess("");
-
-    if (descripcion.length > MAX_DESCRIPCION_LENGTH) {
-      setDescripcionError(`La descripción no puede exceder ${MAX_DESCRIPCION_LENGTH} caracteres.`);
-      setLoading(false);
-      return;
-    }
-
-    const usuarioToken = getToken();
-    const caja = {
-      fecha,
-      motivo,
-      monto: parseFloat(monto),
-      moneda,
-      descripcion: descripcion || undefined,
-      empleadoId: empleadoId ? parseInt(empleadoId) : undefined,
-      pedidoId: pedidoId ? parseInt(pedidoId) : undefined,
-    };
-
-    try {
-      await postCaja(caja, usuarioToken);
-      setSuccess("Entrada agregada exitosamente");
-      if (onSuccess) onSuccess(); // Cierra el modal al agregar con éxito
-    } catch (err) {
-      setError(err.response?.data?.error || "Error al agregar la entrada");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDescripcionChange = (e) => {
-    const value = e.target.value;
-    setDescripcion(value);
-
-    if (value.length > MAX_DESCRIPCION_LENGTH) {
-      setDescripcionError(`La descripción no puede exceder ${MAX_DESCRIPCION_LENGTH} caracteres.`);
-    } else {
-      setDescripcionError("");
-    }
-  };
-
-  const handleSearchChange = (e) => {
-    const term = e.target.value;
-    setSearchTerm(term);
-
-    if (term.length > 0) {
-      const filtered = empleados.filter(
-        (empleado) => empleado.habilitado && empleado.nombre.toLowerCase().includes(term.toLowerCase())
-      );
-      setFilteredEmpleados(filtered);
-      setShowDropdown(true);
-    } else {
-      setFilteredEmpleados([]);
-      setShowDropdown(false);
-    }
-  };
-
-  const handleEmpleadoSelect = (empleado) => {
-    setEmpleadoId(empleado.id);
-    setSearchTerm(empleado.nombre);
-    setShowDropdown(false);
-  };
-
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setShowDropdown(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  return (
-    <Container>
-      {loading && <Spinner animation="border" />}
-      {error && <Alert variant="danger">{error}</Alert>}
-      {success && <Alert variant="success">{success}</Alert>}
-
-      <Form onSubmit={handleSubmit}>
-        <Row>
-          <Col md={6}>
-            <Form.Group controlId="fecha">
-              <Form.Label>Fecha *</Form.Label>
-              <Form.Control
-                type="date"
-                value={fecha}
-                onChange={(e) => setFecha(e.target.value)}
-                required
-              />
-            </Form.Group>
-          </Col>
-          <Col md={6}>
-            <Form.Group controlId="motivo">
-              <Form.Label>Motivo *</Form.Label>
-              <Form.Control
-                as="select"
-                value={motivo}
-                onChange={(e) => setMotivo(e.target.value)}
-                required
-              >
-                <option value="">Seleccione un motivo</option>
-                <option value="vale">Vale</option>
-                <option value="gasto">Gasto</option>
-                <option value="ingreso pedido">Ingreso Pedido</option>
-                <option value="ingreso cochera">Ingreso Cochera</option>
-                <option value="extraccion">Extracción</option>
-                <option value="ingreso">Ingreso</option>
-              </Form.Control>
-            </Form.Group>
-          </Col>
-        </Row>
-        <Row>
-          <Col md={6}>
-            <Form.Group controlId="monto">
-              <Form.Label>Monto *</Form.Label>
-              <Form.Control
-                type="number"
-                value={monto}
-                onChange={(e) => setMonto(e.target.value)}
-                required
-              />
-            </Form.Group>
-          </Col>
-          <Col md={6}>
-            <Form.Group controlId="moneda">
-              <Form.Label>Moneda *</Form.Label>
-              <Form.Control
-                as="select"
-                value={moneda}
-                onChange={(e) => setMoneda(e.target.value)}
-                required
-              >
-                <option value="peso">Peso</option>
-                <option value="dolar">Dólar</option>
-              </Form.Control>
-            </Form.Group>
-          </Col>
-        </Row>
-        <Form.Group controlId="descripcion">
-          <Form.Label>Descripción</Form.Label>
-          <Form.Control
-            as="textarea"
-            rows={3}
-            value={descripcion}
-            onChange={handleDescripcionChange}
-            isInvalid={!!descripcionError}
-          />
-          <Form.Control.Feedback type="invalid">
-            {descripcionError}
-          </Form.Control.Feedback>
-          <Form.Text muted>
-            {descripcion.length}/{MAX_DESCRIPCION_LENGTH} caracteres
-          </Form.Text>
-        </Form.Group>
-        <Row>
-          <Col md={6}>
-            <Form.Group controlId="searchEmpleado" ref={dropdownRef}>
-              <Form.Label>Buscar Empleado</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Buscar por nombre"
-                value={searchTerm}
-                onChange={handleSearchChange}
-                onClick={() => setShowDropdown(true)}
-              />
-              {showDropdown && (
-                <Dropdown.Menu show style={{ width: "100%" }}>
-                  {filteredEmpleados.length > 0 ? (
-                    filteredEmpleados.map((empleado) => (
-                      <Dropdown.Item
-                        key={empleado.id}
-                        onClick={() => handleEmpleadoSelect(empleado)}
-                      >
-                        {empleado.nombre} ({empleado.rol})
-                      </Dropdown.Item>
-                    ))
-                  ) : (
-                    <Dropdown.Item disabled>No se encontraron resultados</Dropdown.Item>
-                  )}
-                </Dropdown.Menu>
-              )}
-            </Form.Group>
-          </Col>
-
-          <Col md={6}>
-            <Form.Group controlId="pedidoId">
-              <Form.Label>ID del Pedido</Form.Label>
-              <Form.Control
-                type="number"
-                value={pedidoId}
-                onChange={(e) => setPedidoId(e.target.value)}
-              />
-            </Form.Group>
-          </Col>
-        </Row>
-        <div className="d-flex justify-content-end mt-4">
-          <Button variant="secondary" onClick={onHide} className="me-2">
-            Cancelar
-          </Button>
-          <Button variant="primary" type="submit">
-            Agregar
-          </Button>
-        </div>
-      </Form>
-    </Container>
-  );
-};
-
-export default AgregarEntrada;
- */
-
-
-
-
-
-
-
-
-
-
-
-

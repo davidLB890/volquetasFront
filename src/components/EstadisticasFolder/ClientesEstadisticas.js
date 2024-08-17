@@ -17,8 +17,8 @@ import {
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
-import BuscarEmpresaPorNombre from "../EmpresasFolder/BuscarEmpresaPorNombre";
-import BuscarParticularPorNombre from "../ParticularesFolder/BuscarParticularPorNombre";
+import SelectEmpresaPorNombre from "../EmpresasFolder/SelectEmpresaPorNombre";
+import SelectParticularPorNombre from "../ParticularesFolder/SelectParticularPorNombre";
 import { ESTADOS_PEDIDO } from "../../config/config"; // Asegúrate de tener esta configuración
 
 const ClientesEstadisticas = () => {
@@ -231,7 +231,7 @@ const ClientesEstadisticas = () => {
             {tipoBusqueda === "empresa" && !empresaId && (
               <Row>
                 <Col md={12}>
-                  <BuscarEmpresaPorNombre
+                  <SelectEmpresaPorNombre
                     onSeleccionar={handleEmpresaSeleccionada}
                   />
                 </Col>
@@ -240,7 +240,7 @@ const ClientesEstadisticas = () => {
             {tipoBusqueda === "particular" && !particularId && (
               <Row>
                 <Col md={12}>
-                  <BuscarParticularPorNombre
+                  <SelectParticularPorNombre
                     onSeleccionar={handleParticularSeleccionado}
                   />
                 </Col>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Form, InputGroup, Button, Spinner, Alert, ListGroup } from "react-bootstrap";
 import { getParticularNombre } from "../../api";
 import useAuth from "../../hooks/useAuth";
@@ -9,8 +9,10 @@ const SelectParticularPorNombre = ({ onSeleccionar }) => {
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showResults, setShowResults] = useState(false); // Controlar la visibilidad de la lista de resultados
+  const [showResults, setShowResults] = useState(false);
   const getToken = useAuth();
+  const inputRef = useRef(null); // Para detectar clics fuera del componente
+  const listRef = useRef(null); // Referencia para la lista de resultados
 
   const handleSearch = async () => {
     const usuarioToken = getToken();
@@ -19,7 +21,7 @@ const SelectParticularPorNombre = ({ onSeleccionar }) => {
     try {
       const response = await getParticularNombre(searchTerm, usuarioToken);
       setResultados(response.data);
-      setShowResults(true); // Mostrar los resultados después de buscar
+      setShowResults(true);
       setLoading(false);
     } catch (error) {
       console.error("Error al buscar los particulares:", error.response?.data?.error || error.message);
@@ -31,45 +33,60 @@ const SelectParticularPorNombre = ({ onSeleccionar }) => {
   const handleSeleccionar = (id, nombre) => {
     onSeleccionar(id, nombre);
     setSearchTerm(nombre);
-    setShowResults(false); // Ocultar la lista de resultados después de seleccionar una opción
+    setShowResults(false);
   };
 
+  const handleClickOutside = (event) => {
+    if (inputRef.current && !inputRef.current.contains(event.target) && listRef.current && !listRef.current.contains(event.target)) {
+      setShowResults(false); // Ocultar lista si el clic fue fuera del componente
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <>
-      <InputGroup className="mb-0">
-        <Form.Control
-          type="text"
-          placeholder="Busca el nombre del particular"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onClick={() => setShowResults(resultados.length > 0)} // Mostrar resultados al hacer clic en el campo de texto si ya hay resultados
-          style={{ height: "34px" }}
-        />
-        <Button
-          variant="outline-secondary"
-          onClick={handleSearch}
-          style={{ height: "34px", display: "flex", alignItems: "center" }}
-          disabled={!searchTerm.trim()} // Deshabilitar si searchTerm está vacío o solo contiene espacios en blanco
-        >
-          <i className="bi bi-search"></i>
-        </Button>
-      </InputGroup>
-      {loading && <Spinner animation="border" />}
-      {error && <Alert variant="danger">{error}</Alert>}
-      {showResults && (
-        <ListGroup className="result-list">
-          {resultados.slice(0, 10).map((particular) => (
-            <ListGroup.Item
-              key={particular.id}
-              action
-              onClick={() => handleSeleccionar(particular.id, particular.nombre)}
-            >
-              {particular.nombre}
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
-      )}
-    </>
+    <div ref={inputRef}>
+      <Form.Group controlId="searchFormGroup" className="mb-0">
+        <InputGroup className="mb-0">
+          <Form.Control
+            type="text"
+            placeholder="Busca el nombre del particular"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onClick={() => setShowResults(resultados.length > 0)}
+            style={{ height: "34px" }}
+          />
+          <Button
+            variant="outline-secondary"
+            onClick={handleSearch}
+            style={{ height: "34px", display: "flex", alignItems: "center" }}
+            disabled={!searchTerm.trim()}
+          >
+            <i className="bi bi-search"></i>
+          </Button>
+        </InputGroup>
+        {loading && <Spinner animation="border" />}
+        {error && <Alert variant="danger">{error}</Alert>}
+        {showResults && (
+          <ListGroup className="result-list" ref={listRef}>
+            {resultados.slice(0, 10).map((particular) => (
+              <ListGroup.Item
+                key={particular.id}
+                action
+                onClick={() => handleSeleccionar(particular.id, particular.nombre)}
+              >
+                {particular.nombre}
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        )}
+      </Form.Group>
+    </div>
   );
 };
 

@@ -277,14 +277,14 @@ const Deudores = () => {
           {!loading && !error && (
             <>
               <Row className="mt-4">
-                <Col md={12}>
+                <Col md={6}>
                   <h6>Empresas Deudoras</h6>
                   <Bar
                     data={getEmpresaChartData()}
                     options={chartOptions("empresa")}
                   />
                 </Col>
-                <Col md={12}>
+                <Col md={6}>
                   <h6>Particulares Deudores</h6>
                   <Bar
                     data={getParticularChartData()}

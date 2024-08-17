@@ -43,6 +43,7 @@ const DatosPedido = () => {
   const [deleteError, setDeleteError] = useState(null);
 
   const { fromFactura } = location.state;
+  const { fromCajas } = location.state;
 
   useEffect(() => {
     const usuarioToken = getToken();
@@ -143,6 +144,11 @@ const DatosPedido = () => {
       {fromFactura && (
         <Button variant="secondary" onClick={() => navigate(-1)}>
           &larr; Volver a la Factura
+        </Button>
+      )}
+      {fromCajas && (
+        <Button variant="secondary" onClick={() => navigate(-1)}>
+          &larr; Volver a lista de Entradas
         </Button>
       )}
       <Card className="mt-3">

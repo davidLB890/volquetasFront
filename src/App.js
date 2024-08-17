@@ -42,6 +42,9 @@ import ListaIMM from './components/ObrasFolder/ListaIMM';
 import Cajas from './components/CajasFolder/Cajas';
 import Estadisticas from './components/EstadisticasFolder/Estadisticas';
 import ChoferEstadisticas from './components/EstadisticasFolder/ChoferEstadisticas';
+import ClientesEstadisticas from './components/EstadisticasFolder/ClientesEstadisticas';
+import PedidosEstadisticas from './components/EstadisticasFolder/PedidosEstadisticas';
+import DeudoresEstadisticas from './components/EstadisticasFolder/DeudoresEstadisticas';
 
 function App() {
   const location = useLocation();
@@ -72,7 +75,9 @@ function App() {
     '/obras/crear', '/empresas', '/empresas/datos', '/empresas/crear', '/particulares', 
     '/particulares/datos', '/particulares/crear', '/pedidos/crear', '/pedidos/datos', 
     '/volquetas', '/volquetas/crear', '/volquetas/datos', '/facturas', '/facturas/crear',
-    '/facturas/datos', '/permisos', '/facturas/datos', '/cajas', "/estadisticas", "/imm","/reporteChofer"].includes(location.pathname);
+    '/facturas/datos', '/permisos', '/facturas/datos', '/cajas', "/imm",
+    "/reporteChofer", "/estadisticascliente", "/estadisticasdeudores", "/estadisticaspedidos"
+  ].includes(location.pathname);
 
   const showSidebarAndNavbar = !isLoginPage && !isSinginPage && !isNotFoundPage;
 
@@ -126,7 +131,9 @@ function App() {
             {/* CAJAS */}
             <Route path="/cajas" element={<Cajas />} /> 
             {/* ESTADISTICAS */}
-            <Route path="/estadisticas" element={<Estadisticas />} />
+            <Route path="/estadisticasdeudores" element={<DeudoresEstadisticas />} />
+            <Route path="/estadisticascliente" element={<ClientesEstadisticas />} />
+            <Route path="/estadisticaspedidos" element={<PedidosEstadisticas />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>

@@ -1,27 +1,22 @@
 .result-list {
-    position: absolute;
-    z-index: 1000;
-    width: 20%;
-    background-color: white;
-    border: 1px solid #ced4da;
-    max-height: 120px; /* Mostrar solo los primeros 3 elementos con scroll para más */
-    overflow-y: auto;
-    margin-top: 0; /* Asegúrate de que esté pegado al campo de búsqueda */
-    border-top: none; /* Eliminar el borde superior para que parezca una extensión del campo */
-  }
-  
-  .result-list .list-group-item {
-    padding: 0.25rem 0.75rem; /* Hacer los elementos más finos */
-    font-size: 0.875rem; /* Tamaño de fuente más pequeño */
-  }
-  
-  .input-group>.form-control {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-  
-  .input-group>.input-group-append>.btn {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-  
+  position: absolute;
+  z-index: 1000;
+  width: 30%; /* Ocupa todo el ancho del Form.Control */
+  background-color: white;
+  border: 1px solid #ced4da;
+  max-height: 120px;
+  overflow-y: auto;
+  margin-top: -1px; /* Margen superior negativo para pegarlo al Form.Control */
+  border-top: none; /* Para que parezca una extensión del Form.Control */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Añadir sombra para destacar */
+}
+
+.input-group > .form-control {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.input-group > .input-group-append > .btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, ListGroup, Button, Table, Card, Modal, Col, Row } from 'react-bootstrap';
 import ModificarCaja from './ModificarCaja';
@@ -7,6 +7,8 @@ import useAuth from '../../hooks/useAuth';
 
 const ListaCajas = ({ data }) => {
   const [showCard, setShowCard] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // Detecta si la pantalla es pequeña
+
   const [showModificarModal, setShowModificarModal] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [selectedCaja, setSelectedCaja] = useState(null);
@@ -17,9 +19,27 @@ const ListaCajas = ({ data }) => {
 
   const handleNavigateToPedido = (pedidoId) => {
     navigate('/pedidos/datos', {
-      state: { pedidoId },
+      state: { pedidoId, fromCajas: true },
     });
   };
+
+  useEffect(() => {
+    setCajas(data.cajas || []); // Actualiza el estado cuando data.cajas cambie
+  }, [data]);
+
+  useEffect(() => {
+    setCajas(data.cajas || []);
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [data]);
 
   const toggleCard = () => {
     setShowCard(!showCard);
@@ -112,68 +132,9 @@ const ListaCajas = ({ data }) => {
           </Card.Body>
         )}
       </Card>
-
+  
       <Container className="card pt-4">
-        {/* Si la pantalla es md o más grande, muestra una tabla */}
-        {window.innerWidth >= 768 ? (
-          <Table bordered hover>
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Motivo</th>
-                <th>Monto</th>
-                <th>Descripción</th>
-                <th>Empleado</th>
-                <th>Pedido</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cajas.map((c) => (
-                <tr key={c.id}>
-                  <td>{c.fecha}</td>
-                  <td>{c.motivo}</td>
-                  <td
-                    style={
-                      c.monto > 0
-                        ? { backgroundColor: '#beffcc' }
-                        : { backgroundColor: '#ffd9dc' }
-                    }
-                  >
-                    ${c.monto} {c.moneda === 'peso' ? 'UY' : 'USD'}
-                  </td>
-                  <td>{c.descripcion}</td>
-                  <td>{c.Empleado ? c.Empleado.nombre : ''}</td>
-                  <td>
-                    {c.Pedido ? (
-                      <span
-                        className="link-primary"
-                        onClick={() => handleNavigateToPedido(c.pedidoId)}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        {c.Pedido.Obra.calle}
-                      </span>
-                    ) : (
-                      ''
-                    )}
-                  </td>
-                  <td>
-                    <Button variant="secondary" onClick={() => handleShowModificarModal(c)}>
-                      Modificar
-                    </Button>
-                    <Button
-                      variant="danger"
-                      className="ms-2"
-                      onClick={() => handleShowConfirmDelete(c)}
-                    >
-                      Eliminar
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        ) : (
+        {isMobile ? (
           // Para pantallas más pequeñas, muestra tarjetas
           cajas.map((c) => (
             <Card key={c.id} className="mb-3">
@@ -239,9 +200,68 @@ const ListaCajas = ({ data }) => {
               </Card.Body>
             </Card>
           ))
+        ) : (
+          // Para pantallas más grandes, muestra una tabla
+          <Table bordered hover responsive>
+            <thead>
+              <tr>
+                <th style={{ width: '15%' }}>Fecha</th>
+                <th style={{ width: '20%' }}>Motivo</th>
+                <th style={{ width: '15%' }}>Monto</th>
+                <th style={{ width: '20%' }}>Descripción</th>
+                <th style={{ width: '15%' }}>Empleado</th>
+                <th style={{ width: '15%' }}>Pedido</th>
+                <th style={{ width: '15%' }}>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cajas.map((c) => (
+                <tr key={c.id}>
+                  <td>{c.fecha}</td>
+                  <td>{c.motivo}</td>
+                  <td
+                    style={
+                      c.monto > 0
+                        ? { backgroundColor: '#beffcc' }
+                        : { backgroundColor: '#ffd9dc' }
+                    }
+                  >
+                    ${c.monto} {c.moneda === 'peso' ? 'UY' : 'USD'}
+                  </td>
+                  <td>{c.descripcion}</td>
+                  <td>{c.Empleado ? c.Empleado.nombre : ''}</td>
+                  <td style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                    {c.Pedido ? (
+                      <span
+                        className="link-primary"
+                        onClick={() => handleNavigateToPedido(c.pedidoId)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {c.Pedido.Obra.calle}
+                      </span>
+                    ) : (
+                      ''
+                    )}
+                  </td>
+                  <td>
+                    <Button variant="secondary" onClick={() => handleShowModificarModal(c)}>
+                      Modificar
+                    </Button>
+                    <Button
+                      variant="danger"
+                      className="ms-2"
+                      onClick={() => handleShowConfirmDelete(c)}
+                    >
+                      Eliminar
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
         )}
       </Container>
-
+  
       {showModificarModal && (
         <ModificarCaja
           cajaId={selectedCaja.id}
@@ -250,7 +270,7 @@ const ListaCajas = ({ data }) => {
           onHide={handleCloseModificarModal}
         />
       )}
-
+  
       {/* Modal de Confirmación para Eliminar */}
       <Modal show={showConfirmDelete} onHide={handleCloseConfirmDelete}>
         <Modal.Header closeButton>
@@ -270,6 +290,6 @@ const ListaCajas = ({ data }) => {
       </Modal>
     </>
   );
-};
+}  
 
 export default ListaCajas;

@@ -356,10 +356,24 @@ const Navigation = ({ userRole }) => {
                 >
                   <Nav.Link
                     as={Link}
-                    to="/estadisticas"
+                    to="/estadisticascliente"
                     onClick={handleMouseLeave}
                   >
-                    Estadisticas
+                    Cliente
+                  </Nav.Link>
+                  <Nav.Link
+                    as={Link}
+                    to="/estadisticasdeudores"
+                    onClick={handleMouseLeave}
+                  >
+                    Deudores
+                  </Nav.Link>
+                  <Nav.Link
+                    as={Link}
+                    to="/estadisticaspedidos"
+                    onClick={handleMouseLeave}
+                  >
+                    Pedidos
                   </Nav.Link>
                 </div>
               </Nav.Item>

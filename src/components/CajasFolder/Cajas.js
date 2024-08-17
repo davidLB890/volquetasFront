@@ -35,6 +35,7 @@ const Cajas = () => {
   };
 
   const fetchCajas = async (inicio = fechaInicio, fin = fechaFin) => {
+    console.log('fetchCajas', inicio, fin);
     const usuarioToken = getToken();
     if (!usuarioToken) {
       navigate('/login');
@@ -46,13 +47,14 @@ const Cajas = () => {
           ...datosDeCaja,
           cajas: datosDeCaja.cajas || [] // Asegúrate de que 'cajas' siempre sea un array
         });
-        setLoading(false);
       } catch (error) {
-        console.error('Error al obtener Cajas:', error.response.data.error);
-        setLoading(false);
+        console.error('Error al obtener Cajas:', error.response?.data?.error || error.message);
+      } finally {
+        setLoading(false); // Asegúrate de ocultar el spinner incluso si hay un error
       }
     }
   };
+  
 
   const handleShowModalAgregar = () => setShowModalAgregar(true);
   const handleCloseModalAgregar = () => setShowModalAgregar(false);
@@ -77,13 +79,13 @@ const Cajas = () => {
           <div className="row">
             <div className="col">
               <Form.Group controlId="fechaInicio">
-                <Form.Label>Fecha de Inicio</Form.Label>
+                <Form.Label>Traer Registros Desde:</Form.Label>
                 <Form.Control type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
               </Form.Group>
             </div>
             <div className="col">
               <Form.Group controlId="fechaFin">
-                <Form.Label>Fecha de Fin</Form.Label>
+                <Form.Label>Traer Registros Hasta:</Form.Label>
                 <Form.Control type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
               </Form.Group>
             </div>
