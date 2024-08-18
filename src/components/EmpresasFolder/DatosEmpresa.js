@@ -146,8 +146,8 @@ const DatosEmpresa = () => {
             <Col xs={12} md={8} className="d-flex flex-column flex-md-row">
               <Button
                 onClick={() => setShowConfirmDelete(true)} // Muestra el modal de confirmación
-                className="mb-2 mb-md-0 me-md-2"
                 variant="danger"
+                className="mb-2 mb-md-0 me-md-2"
                 style={{
                   padding: "0.5rem 1rem",
                 }}

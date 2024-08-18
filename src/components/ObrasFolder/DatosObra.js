@@ -151,11 +151,13 @@ const DatosObra = ({ obraId, onObraModificada }) => {
             )}
           </div>
         </Col>
-        <Col md={6}>
-          {obra?.empresa && (
-            <ContactosObra obra={obra} handleSeleccionarContacto={handleSeleccionarContacto} />
-          )}
-        </Col>
+        {location.pathname !== '/pedidos/datos' && (
+          <Col md={6}>
+            {obra?.empresa && (
+              <ContactosObra obra={obra} handleSeleccionarContacto={handleSeleccionarContacto} />
+            )}
+          </Col>
+        )}
       </Row>
 
       <Modal show={showSeleccionarContacto} onHide={() => setShowSeleccionarContacto(false)}>

@@ -38,13 +38,17 @@ ChartJS.register(
 );
 
 const Deudores = () => {
-  const [topEmpresasNoPagados, setTopEmpresasNoPagados] = useState([]);
-  const [topParticularesNoPagados, setTopParticularesNoPagados] = useState([]);
+  const [topEmpresasNoPagadosMonto, setTopEmpresasNoPagadosMonto] = useState([]);
+  const [topParticularesNoPagadosMonto, setTopParticularesNoPagadosMonto] =
+    useState([]);
+  const [topEmpresasNoPagadosCantidad, setTopEmpresasNoPagadosCantidad] =
+    useState([]);
+  const [topParticularesNoPagadosCantidad, setTopParticularesNoPagadosCantidad] =
+    useState([]);
   const [empresaNombres, setEmpresaNombres] = useState({});
   const [particularNombres, setParticularNombres] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [showModal, setShowModal] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [fechaInicio, setFechaInicio] = useState(
     moment().startOf("month").format("YYYY-MM-DD")
@@ -52,7 +56,6 @@ const Deudores = () => {
   const [fechaFin, setFechaFin] = useState(
     moment().endOf("month").format("YYYY-MM-DD")
   );
-  const [tipo, setTipo] = useState("cantidad");
   const [deudores, setDeudores] = useState(3);
   const getToken = useAuth();
   const navigate = useNavigate();
@@ -87,22 +90,24 @@ const Deudores = () => {
     }
   };
 
-  const fetchDeudores = async (fechaInicio, fechaFin, tipo, deudores) => {
+  const fetchDeudores = async (fechaInicio, fechaFin, deudores) => {
     const usuarioToken = getToken();
     try {
-      const response = await getDeudoresEstadisticas(
-        fechaInicio,
-        fechaFin,
-        tipo,
-        deudores,
-        usuarioToken
-      );
-      setTopEmpresasNoPagados(response.data.topEmpresasNoPagados);
-      setTopParticularesNoPagados(response.data.topParticularesNoPagados);
+      const [montoResponse, cantidadResponse] = await Promise.all([
+        getDeudoresEstadisticas(fechaInicio, fechaFin, "monto", deudores, usuarioToken),
+        getDeudoresEstadisticas(fechaInicio, fechaFin, "cantidad", deudores, usuarioToken),
+      ]);
+
+      setTopEmpresasNoPagadosMonto(montoResponse.data.topEmpresasNoPagados);
+      setTopParticularesNoPagadosMonto(montoResponse.data.topParticularesNoPagados);
+      setTopEmpresasNoPagadosCantidad(cantidadResponse.data.topEmpresasNoPagados);
+      setTopParticularesNoPagadosCantidad(cantidadResponse.data.topParticularesNoPagados);
+
       await fetchNombres(
-        response.data.topEmpresasNoPagados,
-        response.data.topParticularesNoPagados
+        [...montoResponse.data.topEmpresasNoPagados, ...cantidadResponse.data.topEmpresasNoPagados],
+        [...montoResponse.data.topParticularesNoPagados, ...cantidadResponse.data.topParticularesNoPagados]
       );
+
       setLoading(false);
     } catch (error) {
       setError("Error al obtener los deudores");
@@ -111,15 +116,13 @@ const Deudores = () => {
   };
 
   useEffect(() => {
-    fetchDeudores(fechaInicio, fechaFin, tipo, deudores);
+    fetchDeudores(fechaInicio, fechaFin, deudores);
   }, [getToken]);
 
-  const handleShowModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
   const handleFormSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    fetchDeudores(fechaInicio, fechaFin, tipo, deudores);
+    fetchDeudores(fechaInicio, fechaFin, deudores);
   };
 
   const handleEmpresaClick = (empresaId) => {
@@ -134,20 +137,22 @@ const Deudores = () => {
     if (elements.length > 0) {
       const index = elements[0].index;
       if (type === "empresa") {
-        handleEmpresaClick(topEmpresasNoPagados[index].id);
+        handleEmpresaClick(topEmpresasNoPagadosMonto[index].id);
       } else {
-        handleParticularClick(topParticularesNoPagados[index].id);
+        handleParticularClick(topParticularesNoPagadosMonto[index].id);
       }
     }
   };
 
-  const getEmpresaChartData = () => {
+  const getMontoChartData = () => {
     return {
-      labels: topEmpresasNoPagados.map((empresa) => empresaNombres[empresa.id]),
+      labels: topEmpresasNoPagadosMonto.map(
+        (empresa) => empresaNombres[empresa.id]
+      ),
       datasets: [
         {
           label: "Monto adeudado",
-          data: topEmpresasNoPagados.map((empresa) => empresa.monto),
+          data: topEmpresasNoPagadosMonto.map((empresa) => empresa.monto),
           backgroundColor: "rgba(75, 192, 192, 0.2)",
           borderColor: "rgba(75, 192, 192, 1)",
           borderWidth: 1,
@@ -156,15 +161,15 @@ const Deudores = () => {
     };
   };
 
-  const getParticularChartData = () => {
+  const getCantidadChartData = () => {
     return {
-      labels: topParticularesNoPagados.map(
-        (particular) => particularNombres[particular.id]
+      labels: topEmpresasNoPagadosCantidad.map(
+        (empresa) => empresaNombres[empresa.id]
       ),
       datasets: [
         {
-          label: "Monto adeudado",
-          data: topParticularesNoPagados.map((particular) => particular.monto),
+          label: "Cantidad de deudas",
+          data: topEmpresasNoPagadosCantidad.map((empresa) => empresa.cantidad),
           backgroundColor: "rgba(153, 102, 255, 0.2)",
           borderColor: "rgba(153, 102, 255, 1)",
           borderWidth: 1,
@@ -183,9 +188,9 @@ const Deudores = () => {
             const value = context.raw;
             let cantidad;
             if (type === "empresa") {
-              cantidad = topEmpresasNoPagados[index].cantidad;
+              cantidad = topEmpresasNoPagadosMonto[index].cantidad;
             } else {
-              cantidad = topParticularesNoPagados[index].cantidad;
+              cantidad = topParticularesNoPagadosMonto[index].cantidad;
             }
             return `${label}: ${value} (Cantidad de deudas: ${cantidad})`;
           },
@@ -254,20 +259,6 @@ const Deudores = () => {
                     />
                   </Form.Group>
                 </Col>
-                <Col md={6}>
-                  <Form.Group controlId="tipo">
-                    <Form.Label>Tipo</Form.Label>
-                    <Form.Control
-                      as="select"
-                      value={tipo}
-                      onChange={(e) => setTipo(e.target.value)}
-                      required
-                    >
-                      <option value="cantidad">Cantidad</option>
-                      <option value="monto">Monto</option>
-                    </Form.Control>
-                  </Form.Group>
-                </Col>
               </Row>
               <Button variant="primary" type="submit">
                 Aplicar
@@ -278,16 +269,32 @@ const Deudores = () => {
             <>
               <Row className="mt-4">
                 <Col md={6}>
-                  <h6>Empresas Deudoras</h6>
+                  <h6>Empresas Deudoras - Monto</h6>
                   <Bar
-                    data={getEmpresaChartData()}
+                    data={getMontoChartData()}
                     options={chartOptions("empresa")}
                   />
                 </Col>
                 <Col md={6}>
-                  <h6>Particulares Deudores</h6>
+                  <h6>Empresas Deudoras - Cantidad</h6>
                   <Bar
-                    data={getParticularChartData()}
+                    data={getCantidadChartData()}
+                    options={chartOptions("empresa")}
+                  />
+                </Col>
+              </Row>
+              <Row className="mt-4">
+                <Col md={6}>
+                  <h6>Particulares Deudores - Monto</h6>
+                  <Bar
+                    data={getMontoChartData()}
+                    options={chartOptions("particular")}
+                  />
+                </Col>
+                <Col md={6}>
+                  <h6>Particulares Deudores - Cantidad</h6>
+                  <Bar
+                    data={getCantidadChartData()}
                     options={chartOptions("particular")}
                   />
                 </Col>

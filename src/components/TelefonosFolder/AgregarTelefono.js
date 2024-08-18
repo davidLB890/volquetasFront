@@ -46,13 +46,17 @@ const AgregarTelefono = ({
         empresaId,
         contactoEmpresaId,
       };
+      console.log("requestBody",requestBody);
       const response = await postTelefono(requestBody, usuarioToken);
 
       setSuccess("Teléfono agregado correctamente");
       setTelefono("");
       setTipo("telefono");
       setExtension("");
-      setTimeout(() => setSuccess(""), 7000);
+      setTimeout(() => setSuccess(""), 2000);
+      setTimeout(() => {
+        onHide();
+      }, 2000);
 
       onTelefonoAgregado(response.data);
     } catch (error) {

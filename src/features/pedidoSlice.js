@@ -95,6 +95,19 @@ const pedidoSlice = createSlice({
         }
       }
     },
+    addTelefonoToObra: (state, action) => {
+      if (state.obra && state.obra.particular) {
+        state.obra.particular.Telefonos.push(action.payload);
+      }
+    },
+    addContactoSuccess: (state, action) => {
+      if (state.obra) {
+        if (!state.obra.contactosDesignados) {
+          state.obra.contactosDesignados = [];
+        }
+        state.obra.contactosDesignados.push(action.payload);
+      }
+    },
     
   },
   extraReducers: (builder) => {
@@ -147,6 +160,6 @@ const pedidoSlice = createSlice({
   },
 });
 
-export const { updatePedido, addMovimiento, modifyMovimiento, addSugerencia, updateObra, deleteMovimiento, deleteSugerencia, modifySugerencia } = pedidoSlice.actions;
+export const { updatePedido, addMovimiento, modifyMovimiento, addSugerencia, updateObra, deleteMovimiento, deleteSugerencia, modifySugerencia, addTelefonoToObra, addContactoSuccess  } = pedidoSlice.actions;
 
 export default pedidoSlice.reducer;

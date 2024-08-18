@@ -70,6 +70,16 @@ const empresaSlice = createSlice({
       state.contactos.push(nuevoContacto);
       state.success = "Contacto agregado correctamente";
     },
+    modifyContactoSuccess(state, action) {
+      const updatedContacto = action.payload;
+      state.contactos = state.contactos.map(contacto => 
+        contacto.id === updatedContacto.id 
+          ? { ...contacto, ...updatedContacto } // Mantiene los Telefonos y sobrescribe los demás campos
+          : contacto
+      );
+      state.success = "Contacto modificado correctamente";
+    },
+    
     modifyTelefonoSuccess(state, action) {
       const { contactId, obraId, telefono } = action.payload;
       if (contactId) {
@@ -127,8 +137,9 @@ export const {
   createTelefonoSuccess,
   createTelefonoFailure,
   createContactoSuccess,
-  modifyTelefonoSuccess,
+  modifyContactoSuccess,
   deleteContactoSuccess, // Exporta la acción para eliminar el contacto
+  modifyTelefonoSuccess,
   fetchPermisosStart,
   fetchPermisosSuccess,
   fetchPermisosFailure,

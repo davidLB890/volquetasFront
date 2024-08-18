@@ -10,13 +10,16 @@ import {
   createContactoSuccess,
   createTelefonoSuccess,
 } from "../../features/empresaSlice"; // Asegúrate de importar correctamente las acciones
+import { addContactoSuccess } from "../../features/pedidoSlice"; // Asegúrate de importar correctamente las acciones
 import { useDispatch } from "react-redux";
+import { useLocation } from "react-router-dom";
 
-const AgregarContactoEmpresa = ({ empresaId, obras = [], show, onHide }) => {
+const AgregarContactoEmpresa = ({ empresaId, obras = [], obraId, show, onHide }) => {
   const nombreRef = useRef("");
   const descripcionRef = useRef("");
   const emailRef = useRef("");
   const empresaIdRef = useRef("");
+  const [contacto, setContacto] = useState({});
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [contactoSeleccionado, setContactoSeleccionado] = useState(null);
@@ -26,6 +29,7 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], show, onHide }) => {
   const [tipo, setTipo] = useState("telefono");
   const [extension, setExtension] = useState("");
   const [formularioVisible, setFormularioVisible] = useState(true);
+  const location = useLocation();
 
   const refs = [nombreRef, emailRef];
   const boton = useHabilitarBoton(refs);
@@ -61,33 +65,41 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], show, onHide }) => {
       descripcion: descripcionRef.current.value,
       email: emailRef.current.value,
       empresaId: empresaId || empresaIdRef.current.value,
-      obraId: obraSeleccionada,
+      obraId: obraId ? obraId : obraSeleccionada,
     };
-
+  
     try {
       const response = await postContactoEmpresa(nuevoContacto, usuarioToken);
       const contacto = response.data;
-
+      setContacto(response.data);
+  
       // Dispatch para agregar el contacto
       dispatch(createContactoSuccess(contacto));
-
+      if (obraId && !telefono) {
+        dispatch(addContactoSuccess(contacto));
+      }
+  
       setContactoSeleccionado(contacto);
       setSuccess("Contacto agregado correctamente");
       setError("");
       setFormularioVisible(false); // Ocultar el formulario al crear el contacto con éxito
-
+  
       // Si el campo teléfono no está vacío, intentar agregar el teléfono
       if (telefono) {
-        await agregarTelefono(contacto.id);
+        const telefonoResponse = await agregarTelefono(contacto);
+        if (!telefonoResponse.error) {
+          onHide(); // Cerrar el modal si todo es exitoso
+        }
       } else {
         setTimeout(() => {
           setSuccess("");
-        }, 4000);
+          onHide(); // Cerrar el modal si no se agrega un teléfono
+        }, 2000);
       }
     } catch (error) {
-      console.error(
+      console.log(
         "Error al agregar el contacto:",
-        error.response?.data?.error || error.message
+        error
       );
       setError(error.response?.data?.error || "Error al agregar el contacto");
       setSuccess("");
@@ -96,53 +108,68 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], show, onHide }) => {
       }, 4000);
     }
   };
-
-  const agregarTelefono = async (contactoEmpresaId) => {
+  
+  const agregarTelefono = async (contactoEmpresa) => {
     const usuarioToken = getToken();
-
+  
     try {
       const response = await postTelefono(
         {
-          contactoEmpresaId,
+          contactoEmpresaId: contactoEmpresa.id,
           tipo,
           telefono,
           extension,
         },
         usuarioToken
       );
-
+  
+      const telefonoFiltrado = {
+        telefono: response.data.nuevoTelefono.telefono,
+        tipo: response.data.nuevoTelefono.tipo,
+        extension: response.data.nuevoTelefono.extension,
+      };
+      const contactoCompleto = {
+        ...contactoEmpresa,
+        Telefonos: [telefonoFiltrado]
+      };
+      console.log("contactoCompleto", contactoCompleto);
+      if (obraId) {
+        dispatch(addContactoSuccess(contactoCompleto));
+      }
+  
       const datos = response.data;
-
+  
       if (datos.error) {
         console.error(datos.error);
         setError(datos.error.message || "Error al agregar el teléfono");
         setSuccess("");
+        setShowAgregarTelefono(true); // Mostrar el formulario de agregar teléfono si hay un error
         setTimeout(() => {
           setError("");
         }, 4000);
+        return { error: true }; // Retornar un objeto indicando que hubo un error
       } else {
         console.log("Teléfono agregado correctamente", datos);
         setSuccess("Teléfono agregado correctamente");
         setError("");
-
+  
         const tel = {
           id: datos.nuevoTelefono.id,
           tipo: datos.nuevoTelefono.tipo,
           telefono: datos.nuevoTelefono.telefono,
           extension: datos.nuevoTelefono.extension,
         };
-        // Dispatch para agregar el teléfono
         const telefonoPayload = {
-          contactId: contactoEmpresaId,
+          contactId: contactoEmpresa.id,
           telefono: tel,
         };
-        console.log();
         dispatch(createTelefonoSuccess(telefonoPayload));
-
+  
         setTimeout(() => {
           setSuccess("");
         }, 4000);
       }
+      return { error: false }; // Retornar un objeto indicando que no hubo errores
     } catch (error) {
       console.error(
         "Error al conectar con el servidor:",
@@ -150,11 +177,14 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], show, onHide }) => {
       );
       setError(error.response?.data?.error || "Error al agregar el teléfono");
       setSuccess("");
+      setShowAgregarTelefono(true); // Mostrar el formulario de agregar teléfono si hay un error
       setTimeout(() => {
         setError("");
       }, 4000);
+      return { error: true }; // Retornar un objeto indicando que hubo un error
     }
   };
+  
 
   const handleTelefonoAgregado = (telefono) => {
     const tel = {
@@ -167,7 +197,21 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], show, onHide }) => {
       contactId: telefono.nuevoTelefono.contactoEmpresaId,
       telefono: tel,
     };
-    console.log();
+
+    const telefonoFiltrado = {
+      telefono: telefono.nuevoTelefono.telefono,
+      tipo: telefono.nuevoTelefono.tipo,
+      extension: telefono.nuevoTelefono.extension,
+    };
+    const contactoCompleto = {
+      ...contacto,
+      Telefonos: [telefonoFiltrado]
+    };
+    console.log("contactoCompleto", contactoCompleto);
+    if(obraId){
+    dispatch(addContactoSuccess(contactoCompleto));  
+    } 
+
     dispatch(createTelefonoSuccess(telefonoPayload));
     console.log("telefono", telefono);
     setSuccess("Teléfono agregado correctamente. Puede agregar más números.");
@@ -234,11 +278,13 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], show, onHide }) => {
                 />
               </Form.Group>
             )}
-            <SelectObra
-              obras={obras}
-              obraSeleccionada={obraSeleccionada}
-              onSelect={(id) => setObraSeleccionada(id)}
-            />
+            {obraId ? null : (
+              <SelectObra
+                obras={obras}
+                obraSeleccionada={obraSeleccionada}
+                onSelect={(id) => setObraSeleccionada(id)}
+              />
+            )}
             <Row>
               <Col md={4}>
                 <Form.Group controlId="tipo">
