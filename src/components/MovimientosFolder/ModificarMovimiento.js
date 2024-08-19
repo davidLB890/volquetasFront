@@ -24,7 +24,16 @@ const ModificarMovimiento = ({ show, onHide, movimiento, choferes }) => {
 
   const formatDateForInput = (dateString) => {
     const date = new Date(dateString);
-    return date.toISOString().slice(0, 16);
+  
+    // Obtener cada parte de la fecha y tiempo
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses son de 0 a 11
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+  
+    // Combinar todo en el formato "yyyy-MM-ddThh:mm"
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
   const handleSubmit = async (e) => {

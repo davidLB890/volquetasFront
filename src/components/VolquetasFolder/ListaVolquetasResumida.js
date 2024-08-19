@@ -33,6 +33,40 @@ const ListaVolquetasResumida = () => {
     return <Alert variant="danger">{error}</Alert>;
   }
 
+  const renderUbicacion = (volqueta) => {
+    if (volqueta.ocupada) {
+      return volqueta.Movimientos && volqueta.Movimientos.length > 0 ? (
+        volqueta.Movimientos.map((movimiento, index) => (
+          <div key={index}>
+            {movimiento.tipo === "entrega"
+              ? `Entregada en ${movimiento?.Pedido?.Obra?.calle}`
+              : movimiento.tipo === "levante"
+              ? `Levantada en ${movimiento?.Pedido?.Obra?.calle}`
+              : ""}
+          </div>
+        ))
+      ) : (
+        <div>No hay movimientos registrados</div>
+      );
+    } else if (volqueta.ubicacionTemporal) {
+      return <div>{volqueta?.ubicacionTemporal}</div>;
+    } else if (volqueta.Movimientos && volqueta.Movimientos.length > 0) {
+      const ultimoMovimiento = volqueta.Movimientos[volqueta.Movimientos.length - 1];
+      return (
+        <div>
+          Último movimiento:{" "}
+          {ultimoMovimiento.tipo === "entrega"
+            ? `Entregada en ${ultimoMovimiento?.Pedido?.Obra?.calle}`
+            : ultimoMovimiento.tipo === "levante"
+            ? `Levantada en ${ultimoMovimiento?.Pedido?.Obra?.calle}`
+            : ""}
+        </div>
+      );
+    } else {
+      return <div></div>;
+    }
+  };
+
   return (
     <div>
       {/* Pestaña flotante */}
@@ -86,18 +120,8 @@ const ListaVolquetasResumida = () => {
               >
                 <Card.Body>
                   <Card.Title>Volqueta #{volqueta.numeroVolqueta}</Card.Title>
-                  <Card.Text>
-                    <strong>Último movimiento:</strong>{" "}
-                    {volqueta.Movimientos.length > 0 &&
-                      volqueta.Movimientos.map((movimiento, index) => (
-                        <div key={index}>
-                          {movimiento.tipo === "entrega"
-                            ? `Entregada en ${movimiento?.Pedido?.Obra?.calle}`
-                            : movimiento.tipo === "levante"
-                            ? `Levantada en ${movimiento?.Pedido?.Obra?.calle}`
-                            : ""}
-                        </div>
-                      ))}
+                  <Card.Text as="div">
+                    {renderUbicacion(volqueta)}
                   </Card.Text>
                   <Card.Text>
                     <strong>Tipo:</strong> {volqueta.tipo}
@@ -114,7 +138,7 @@ const ListaVolquetasResumida = () => {
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Último movimiento</th>
+                  <th>Ubicación</th>
                   <th>Tipo</th>
                   <th>Ocupada</th>
                 </tr>
@@ -128,18 +152,7 @@ const ListaVolquetasResumida = () => {
                     }
                   >
                     <td>{volqueta.numeroVolqueta}</td>
-                    <td>
-                      {volqueta.Movimientos.length > 0 &&
-                        volqueta.Movimientos.map((movimiento, index) => (
-                          <div key={index}>
-                            {movimiento.tipo === "entrega"
-                              ? `Entregada en ${movimiento?.Pedido?.Obra?.calle}`
-                              : movimiento.tipo === "levante"
-                              ? `Levantada en ${movimiento?.Pedido?.Obra?.calle}`
-                              : ""}
-                          </div>
-                        ))}
-                    </td>
+                    <td>{renderUbicacion(volqueta)}</td>
                     <td>{volqueta.tipo}</td>
                     <td>{volqueta.ocupada ? "Sí" : "No"}</td>
                   </tr>

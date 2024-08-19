@@ -13,6 +13,8 @@ const ModificarSugerencia = ({ show, onHide, sugerencia, choferes }) => {
   const [tipoSugerido, setTipoSugerido] = useState(sugerencia?.tipoSugerido || "");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [mostrarAdvertencia, setMostrarAdvertencia] = useState(false);
+  const [advertencia, setAdvertencia] = useState("");
 
   //console.log("horario Sugerido", horarioSugerido)
   useEffect(() => {
@@ -26,14 +28,20 @@ const ModificarSugerencia = ({ show, onHide, sugerencia, choferes }) => {
   // Función para formatear la fecha en un formato que acepta el input de tipo hacerla con el date sin toISO
   const formatDateForInput = (dateString) => {
     const date = new Date(dateString);
-    console.log("date", date)
-    console.log("Tolocale", date.toLocaleString())
-    console.log("TOISO", date.toISOString())
-    return date.toLocaleString().slice(0, 16);
+  
+    // Obtener cada parte de la fecha y tiempo
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses son de 0 a 11
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+  
+    // Combinar todo en el formato "yyyy-MM-ddThh:mm"
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
+  
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const confirmarSugerencia = async () => {
     const usuarioToken = getToken();
 
     const sugerenciaModificada = {
@@ -55,6 +63,45 @@ const ModificarSugerencia = ({ show, onHide, sugerencia, choferes }) => {
       setError(error.response?.data?.detalle || "Error al modificar la sugerencia");
       setSuccess("");
     }
+  }
+
+  const handleSubmit = async (e) => {
+
+    e.preventDefault();
+    const usuarioToken = getToken();
+    try {
+      console.log("horario", horarioSugerido)
+      const horario = horarioSugerido
+      const response = await verificarSugerencia(choferSugeridoId, horario, usuarioToken);
+      if (response.data.message === "No hay sugerencias en el rango de tiempo especificado") {
+        confirmarSugerencia();
+      } else {
+        const sugerenciaConflicto = response.data[0]
+        console.log("sugerenciaConflicto", sugerenciaConflicto)
+        const chofer = choferes.find((chofer) => chofer.id === parseInt(choferSugeridoId));
+        
+        if (chofer) {
+          setAdvertencia(`El chofer ${chofer.nombre} tiene un pedido a las 
+            ${new Date(sugerenciaConflicto.horarioSugerido).toLocaleTimeString()}, 
+            en ${sugerenciaConflicto.Pedido.Obra.calle}. ¿Está seguro de que quiere continuar?`);
+          setMostrarAdvertencia(true); 
+        } else {
+          console.error("No se encontró el chofer con el ID especificado.");
+        }
+      }
+    } catch (error) {
+      setError("El chofer ya tiene una sugerencia en ese horario");
+    }
+  };
+
+  const handleConfirmarAdvertencia = () => {
+    setMostrarAdvertencia(false);
+    confirmarSugerencia();
+  };
+
+  const handleCancelarAdvertencia = () => {
+    setMostrarAdvertencia(false);
+    // Permanece en el modal
   };
 
   return (
@@ -65,6 +112,7 @@ const ModificarSugerencia = ({ show, onHide, sugerencia, choferes }) => {
       <Modal.Body>
         {error && <Alert variant="danger">{error}</Alert>}
         {success && <Alert variant="success">{success}</Alert>}
+        {!mostrarAdvertencia ? (
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="formChoferId">
             <Form.Label>Chofer</Form.Label>
@@ -111,6 +159,26 @@ const ModificarSugerencia = ({ show, onHide, sugerencia, choferes }) => {
             Modificar Sugerencia
           </Button>
         </Form>
+        ) : (
+          <Alert variant="warning">
+            {advertencia}
+            <div className="mt-3">
+              <Button
+                variant="danger"
+                onClick={handleCancelarAdvertencia}
+                className="mr-2"
+              >
+                No
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleConfirmarAdvertencia}
+              >
+                Sí
+              </Button>
+            </div>
+          </Alert>
+        )}
       </Modal.Body>
     </Modal>
   );

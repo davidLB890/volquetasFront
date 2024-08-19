@@ -21,9 +21,6 @@ const AgregarSugerencia = ({
   const [success, setSuccess] = useState("");
   const [mostrarAdvertencia, setMostrarAdvertencia] = useState(false);
   const [advertencia, setAdvertencia] = useState("");
-  /* const empleados = useSelector((state) => state.empleados.empleados || []);
-  const choferess = empleados.filter((empleado) => empleado.rol === "chofer" && empleado.habilitado);
- */
   const dispatch = useDispatch();
 
   useEffect(() => {
