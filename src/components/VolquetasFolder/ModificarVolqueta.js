@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { putVolquetaAPI } from "../../api"; // Asegúrate de tener esta función en api.js
 import { Form, Button, Modal, Alert } from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import useAuth from "../../hooks/useAuth";
 import { ESTADOS_VOLQUETA } from "../../config/config";
+import { modificarVolquetaSuccess, agregarUbicacionTemporalSuccess } from "../../features/volquetasSlice";
+import UbicacionTemporal from "./UbicacionTemporal"; // Asegúrate de importar el componente
+import { putVolquetaAPI } from "../../api"; // Asegúrate de importar la función de la API
 
 const ModificarVolqueta = ({ volqueta, onHide, onUpdate }) => {
   const getToken = useAuth();
+  const dispatch = useDispatch();
 
   const [nuevaVolqueta, setNuevaVolqueta] = useState({
     numeroVolqueta: "",
@@ -19,10 +23,10 @@ const ModificarVolqueta = ({ volqueta, onHide, onUpdate }) => {
   useEffect(() => {
     if (volqueta) {
       setNuevaVolqueta({
-        numeroVolqueta: volqueta.numeroVolqueta,
-        tipo: volqueta.tipo,
-        estado: volqueta.estado,
-        ocupada: volqueta.ocupada ? "si" : "no",
+        numeroVolqueta: volqueta?.numeroVolqueta || "",
+        tipo: volqueta?.tipo || "grande",
+        estado: volqueta?.estado || "ok",
+        ocupada: volqueta?.ocupada ? "si" : "no",
       });
     }
   }, [volqueta]);
@@ -35,12 +39,20 @@ const ModificarVolqueta = ({ volqueta, onHide, onUpdate }) => {
   const handleModificar = async () => {
     const usuarioToken = getToken();
     try {
-      const response = await putVolquetaAPI(volqueta.numeroVolqueta, {
-        ...nuevaVolqueta,
-        ocupada: nuevaVolqueta.ocupada === "si",
-      }, usuarioToken);
+      const response = await putVolquetaAPI(
+        volqueta.numeroVolqueta,
+        {
+          ...nuevaVolqueta,
+          ocupada: nuevaVolqueta.ocupada === "si",
+        },
+        usuarioToken
+      );
       const datos = response.data;
       console.log("Volqueta actualizada:", datos);
+
+      // Despacha la acción para actualizar la volqueta en Redux
+      dispatch(modificarVolquetaSuccess(datos));
+
       onUpdate(datos);
       setSuccess("Volqueta actualizada correctamente");
       setTimeout(() => {
@@ -57,10 +69,26 @@ const ModificarVolqueta = ({ volqueta, onHide, onUpdate }) => {
     }
   };
 
+  const hacerDispatchUbicacion = () => {
+      setTimeout(() => {
+        setSuccess("");
+        onHide();
+      }, 1500);
+  }
+
   return (
     <Modal show={true} onHide={onHide}>
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Modal.Title>Modificar Volqueta</Modal.Title>
+        <div style={{ marginLeft: 'auto' }}>
+          <Button
+            variant="secondary"
+            onClick={onHide}
+            style={{ border: 'none', color: 'black', background: 'transparent' }}
+          >
+            ✖
+          </Button>
+        </div>
       </Modal.Header>
       <Modal.Body>
         {error && <Alert variant="danger">{error}</Alert>}
@@ -94,12 +122,17 @@ const ModificarVolqueta = ({ volqueta, onHide, onUpdate }) => {
             ))}
           </Form.Control>
         </Form.Group>
-
+        {/* Mostrar el componente UbicacionTemporal solo si la volqueta no está ocupada */}
+        {nuevaVolqueta.ocupada === "no" && (
+          <UbicacionTemporal
+            volquetaId={volqueta?.numeroVolqueta}
+            show={true}
+            onHide={onHide}
+            onSuccess={hacerDispatchUbicacion}
+          />
+        )}
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
-          Cancelar
-        </Button>
         <Button variant="primary" onClick={handleModificar}>
           Guardar Cambios
         </Button>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Dropdown } from "react-bootstrap";
 import ModificarTelefono from "../TelefonosFolder/ModificarTelefonos";
 import { modifyTelefonoSuccess, deleteTelefonoSuccess } from "../../features/particularSlice";
 import { deleteTelefono } from "../../api";
@@ -50,44 +50,46 @@ const TelefonosParticular = () => {
 
   return (
     <div>
-      <ul>
-        {telefonos.length > 0 ? (
-          telefonos.map((telefono) => (
-            <li
-              key={telefono.id}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <span>
-                {telefono?.tipo && telefono?.telefono ? (
-                  `${telefono.tipo}: ${telefono.telefono}${
-                    telefono.extension ? ` (Ext: ${telefono.extension})` : ""
-                  }`
-                ) : (
-                  "Información de teléfono no disponible"
-                )}
-              </span>
-              <button
-                className="btn btn-sm btn-warning"
-                onClick={() => handleShowModal(telefono)}
-              >
-                Editar
-              </button>
-              {/* <button
-                className="btn btn-sm btn-danger"
-                onClick={() => handleShowConfirmDelete(telefono.id)}
-              >
-                Eliminar
-              </button> */}
-            </li>
-          ))
-        ) : (
-          <li>No tiene teléfonos registrados</li>
-        )}
-      </ul>
+<ul className="list-unstyled">
+  {telefonos.length > 0 ? (
+    telefonos.map((telefono) => (
+      <li
+        key={telefono.id}
+        className="d-flex align-items-center mb-2"
+      >
+        <span className="me-3">
+          {telefono?.tipo && telefono?.telefono ? (
+            `${telefono.tipo}: ${telefono.telefono}${
+              telefono.extension ? ` (Ext: ${telefono.extension})` : ""
+            }`
+          ) : (
+            "Información de teléfono no disponible"
+          )}
+        </span>
+        <div className="btn-group">
+          <Dropdown>
+            <Dropdown.Toggle variant="light" size="sm" className="mt-3">
+              <i className="bi bi-three-dots-vertical"></i>  {/* Ícono de menú */}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => handleShowModal(telefono)}>
+                <i className="bi bi-pencil me-2"></i> Editar
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => handleShowConfirmDelete(telefono.id)}>
+                <i className="bi bi-trash me-2"></i> Eliminar
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+      </li>
+    ))
+  ) : (
+    <li>No tiene teléfonos registrados</li>
+  )}
+</ul>
+
+
 
       <ModificarTelefono
         show={showModal}

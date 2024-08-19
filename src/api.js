@@ -783,6 +783,14 @@ export const deleteVolquetaAPI = (volquetaId, usuarioToken) => {
     },
   });
 };
+export const ubicacionTemporalVolqueta = (volquetaId, ubicacionTemporal, usuarioToken) => {
+  return axios.put(`${API_URL}volquetas-ubicacion/${volquetaId}`, { ubicacionTemporal }, {
+    headers: {
+      Authorization: usuarioToken,
+    },
+  });
+};
+
 
 
 
@@ -839,6 +847,18 @@ export const putSugerencia = (sugerenciaId, sugerencia, usuarioToken) => {
 }
 export const deleteSugerenciaAPI = (sugerenciaId, usuarioToken) => {
   return axios.delete(`${API_URL}sugerencias/${sugerenciaId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
+export const verificarSugerencia = (choferId, horario, usuarioToken) => {
+  return axios.get(`${API_URL}sugerencias/verificar`, {
+    params: {
+      choferId,
+      horario,
+    },
     headers: {
       Authorization: usuarioToken,
       "Content-Type": "application/json",

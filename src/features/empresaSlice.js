@@ -62,6 +62,22 @@ const empresaSlice = createSlice({
     createTelefonoFailure(state, action) {
       state.error = action.payload;
     },
+    deleteTelefonoSuccess(state, action) {
+      const { contactId, telefonoId } = action.payload;
+      console.log("en el slice", contactId, telefonoId);
+    
+      // Buscar el contacto correspondiente por su ID
+      const contacto = state.contactos.find(contacto => contacto.id === contactId);
+      
+      if (contacto) {
+        // Filtrar el teléfono eliminado de la lista de teléfonos del contacto
+        contacto.Telefonos = contacto.Telefonos.filter(tel => tel.id !== telefonoId);
+      }
+    
+      state.success = "Teléfono eliminado correctamente";
+    },
+    
+    
     createContactoSuccess(state, action) {
       const nuevoContacto = {
         ...action.payload,
@@ -136,6 +152,7 @@ export const {
   createPermisoFailure,
   createTelefonoSuccess,
   createTelefonoFailure,
+  deleteTelefonoSuccess,
   createContactoSuccess,
   modifyContactoSuccess,
   deleteContactoSuccess, // Exporta la acción para eliminar el contacto

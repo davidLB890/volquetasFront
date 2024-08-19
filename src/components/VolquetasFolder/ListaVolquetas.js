@@ -58,7 +58,7 @@ const ListaVolquetas = () => {
   };
 
   const handleUpdateVolqueta = (volqueta) => {
-    dispatch(fetchVolquetas(getToken()));
+    //dispatch(fetchVolquetas(getToken()));
     setShowModificarVolqueta(false);
   };
 
@@ -148,7 +148,8 @@ const ListaVolquetas = () => {
             <th>Estado</th>
             <th>Tipo</th>
             <th>Ocupada</th>
-            <th>Último movimiento</th>
+            <th>Ubicación</th>
+            {/* <th>Último movimiento</th> */}
             <th>Acciones</th>
           </tr>
         </thead>
@@ -165,6 +166,42 @@ const ListaVolquetas = () => {
               <td>{volqueta.tipo}</td>
               <td>{volqueta.ocupada ? "Sí" : "No"}</td>
               <td>
+  {volqueta.ocupada ? (
+    volqueta.Movimientos && volqueta.Movimientos.length > 0 ? (
+      volqueta.Movimientos.map((movimiento, index) => (
+        <div key={index}>
+          {movimiento.tipo === "entrega"
+            ? `Entregada en ${movimiento?.Pedido?.Obra?.calle}`
+            : movimiento.tipo === "levante"
+            ? `Levantada en ${movimiento?.Pedido?.Obra?.calle}`
+            : ""}
+        </div>
+      ))
+    ) : (
+      <div>No hay movimientos registrados</div>
+    )
+  ) : volqueta.ubicacionTemporal ? (
+    <div>{volqueta?.ubicacionTemporal}</div>
+  ) : (
+    volqueta.Movimientos && volqueta.Movimientos.length > 0 ? (
+      <div>
+        Último movimiento:{" "}
+        {volqueta.Movimientos[volqueta.Movimientos.length - 1].tipo === "entrega"
+          ? `Entregada en ${volqueta.Movimientos[volqueta.Movimientos.length - 1]?.Pedido?.Obra?.calle}`
+          : volqueta.Movimientos[volqueta.Movimientos.length - 1].tipo === "levante"
+          ? `Levantada en ${volqueta.Movimientos[volqueta.Movimientos.length - 1]?.Pedido?.Obra?.calle}`
+          : ""}
+      </div>
+    ) : (
+      <div></div>
+    )
+  )}
+</td>
+
+              {/* <td>
+                {volqueta.ubicacionTemporal &&(
+                  <div>{volqueta.ubicacionTemporal}</div>
+                )}
                 {volqueta.Movimientos.length > 0 &&
                   volqueta.Movimientos.map((movimiento, index) => (
                     <div key={index}>
@@ -175,7 +212,7 @@ const ListaVolquetas = () => {
                         : ""}
                     </div>
                   ))}
-              </td>
+              </td> */}
 
               <td>
                 <Button
@@ -224,60 +261,81 @@ const ListaVolquetas = () => {
         </tbody>
       </Table>
 
-      {/* Vista de lista para pantallas pequeñas */}
-      <div className="d-md-none">
-        {volquetasFiltradas.map((volqueta) => (
-          <div key={volqueta.numeroVolqueta} className="volqueta-item">
-            <p><strong>#:</strong> {volqueta.numeroVolqueta}</p>
-            <p><strong>Estado:</strong> {volqueta.estado}</p>
-            <p><strong>Tipo:</strong> {volqueta.tipo}</p>
-            <p><strong>Ocupada:</strong> {volqueta.ocupada ? "Sí" : "No"}</p>
-            <p>
-              <strong>Último movimiento:</strong>
-              {volqueta.Movimientos.length > 0 &&
-                volqueta.Movimientos.map((movimiento, index) => (
-                  <div key={index}>
-                    {movimiento.tipo === "entrega"
-                      ? `Entregada en ${movimiento?.Pedido?.Obra?.calle}`
-                      : movimiento.tipo === "levante"
-                      ? `Levantada en ${movimiento?.Pedido?.Obra?.calle}`
-                      : ""}
-                  </div>
-                ))}
-            </p>
-            <div className="volqueta-actions">
-              <Button
-                variant="danger"
-                className="w-100"
-                onClick={() => confirmarEliminar(volqueta)}
-              >
-                Eliminar
-              </Button>
-              <Button
-                variant="primary"
-                className="w-100"
-                onClick={() => {
-                  setVolquetaSeleccionada(volqueta);
-                  setShowModificarVolqueta(true);
-                }}
-              >
-                Modificar
-              </Button>
-              <Button
-                variant="info"
-                className="w-100"
-                onClick={() =>
-                  navigate("/volquetas/datos", {
-                    state: { volquetaId: volqueta.numeroVolqueta },
-                  })
-                }
-              >
-                Datos
-              </Button>
+{/* Vista de lista para pantallas pequeñas */}
+<div className="d-md-none">
+  {volquetasFiltradas.map((volqueta) => (
+    <div key={volqueta.numeroVolqueta} className="volqueta-item">
+      <div><strong>#:</strong> {volqueta.numeroVolqueta}</div>
+      <div><strong>Estado:</strong> {volqueta.estado}</div>
+      <div><strong>Tipo:</strong> {volqueta.tipo}</div>
+      <div><strong>Ocupada:</strong> {volqueta.ocupada ? "Sí" : "No"}</div>
+      <div>
+        {volqueta.ocupada ? (
+          volqueta.Movimientos && volqueta.Movimientos.length > 0 ? (
+            volqueta.Movimientos.map((movimiento, index) => (
+              <div key={index}>
+                {movimiento.tipo === "entrega"
+                  ? `Entregada en ${movimiento?.Pedido?.Obra?.calle}`
+                  : movimiento.tipo === "levante"
+                  ? `Levantada en ${movimiento?.Pedido?.Obra?.calle}`
+                  : ""}
+              </div>
+            ))
+          ) : (
+            <div>No hay movimientos registrados</div>
+          )
+        ) : volqueta.ubicacionTemporal ? (
+          <div>{volqueta?.ubicacionTemporal}</div>
+        ) : (
+          volqueta.Movimientos && volqueta.Movimientos.length > 0 ? (
+            <div>
+              Último movimiento:{" "}
+              {volqueta.Movimientos[volqueta.Movimientos.length - 1].tipo === "entrega"
+                ? `Entregada en ${volqueta.Movimientos[volqueta.Movimientos.length - 1]?.Pedido?.Obra?.calle}`
+                : volqueta.Movimientos[volqueta.Movimientos.length - 1].tipo === "levante"
+                ? `Levantada en ${volqueta.Movimientos[volqueta.Movimientos.length - 1]?.Pedido?.Obra?.calle}`
+                : ""}
             </div>
-          </div>
-        ))}
+          ) : (
+            <div></div>
+          )
+        )}
       </div>
+      <div className="volqueta-actions">
+        <Button
+          variant="danger"
+          className="w-100"
+          onClick={() => confirmarEliminar(volqueta)}
+        >
+          Eliminar
+        </Button>
+        <Button
+          variant="primary"
+          className="w-100"
+          onClick={() => {
+            setVolquetaSeleccionada(volqueta);
+            setShowModificarVolqueta(true);
+          }}
+        >
+          Modificar
+        </Button>
+        <Button
+          variant="info"
+          className="w-100"
+          onClick={() =>
+            navigate("/volquetas/datos", {
+              state: { volquetaId: volqueta.numeroVolqueta },
+            })
+          }
+        >
+          Datos
+        </Button>
+      </div>
+    </div>
+  ))}
+</div>
+
+
 
       {showModificarVolqueta && volquetaSeleccionada && (
         <ModificarVolqueta

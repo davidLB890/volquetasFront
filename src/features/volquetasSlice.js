@@ -20,7 +20,24 @@ const volquetasSlice = createSlice({
     error: null,
   },
   reducers: {
-    // Reducer para acciones sincronas
+    modificarVolquetaSuccess(state, action) {
+      const volquetaActualizada = action.payload;
+      const index = state.volquetas.findIndex(volqueta => volqueta.numeroVolqueta === volquetaActualizada.numeroVolqueta);
+      if (index !== -1) {
+        state.volquetas[index] = volquetaActualizada;
+      }
+    },
+    deleteVolquetaSuccess(state, action) {
+      const numeroVolqueta = action.payload;
+      state.volquetas = state.volquetas.filter(volqueta => volqueta.numeroVolqueta !== numeroVolqueta);
+    },
+    agregarUbicacionTemporalSuccess(state, action) {
+      const { numeroVolqueta, ubicacionTemporal } = action.payload;
+      const index = state.volquetas.findIndex(volqueta => volqueta.numeroVolqueta === numeroVolqueta);
+      if (index !== -1) {
+        state.volquetas[index].ubicacionTemporal = ubicacionTemporal;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -38,5 +55,5 @@ const volquetasSlice = createSlice({
       });
   },
 });
-
+export const { modificarVolquetaSuccess, deleteVolquetaSuccess, agregarUbicacionTemporalSuccess } = volquetasSlice.actions;
 export default volquetasSlice.reducer;

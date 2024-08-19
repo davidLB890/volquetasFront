@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Card, Collapse, Button, Row, Col, ListGroup, Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { createTelefonoSuccess, modifyTelefonoSuccess, deleteContactoSuccess, modifyContactoSuccess } from "../../features/empresaSlice";
+import { createTelefonoSuccess, modifyTelefonoSuccess, deleteContactoSuccess, modifyContactoSuccess, deleteTelefonoSuccess } from "../../features/empresaSlice";
 import AgregarTelefono from "../TelefonosFolder/AgregarTelefono"; // Ajusta la ruta según sea necesario
 import ModificarTelefono from "../TelefonosFolder/ModificarTelefonos"; // Ajusta la ruta según sea necesario
 import ModificarContactoEmpresa from "./ModificarContactoEmpresa"; // Ajusta la ruta según sea necesario
-import { deleteContactoEmpresa } from "../../api"; // Importa tu función para eliminar contactos
+import { deleteContactoEmpresa, deleteTelefono } from "../../api"; // Importa tu función para eliminar contactos
 import useAuth from "../../hooks/useAuth"; // Importa tu hook para obtener el token
 
 const ContactosEmpresa = () => {
@@ -17,6 +17,8 @@ const ContactosEmpresa = () => {
   const [currentContactId, setCurrentContactId] = useState(null);
   const [telefonoActual, setTelefonoActual] = useState(null);
   const [contactoActual, setContactoActual] = useState(null);
+  const [telefonoIdToDelete, setTelefonoIdToDelete] = useState(null);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const dispatch = useDispatch();
   const contactos = useSelector((state) => state.empresa.contactos); // Obtén los contactos del estado de Redux
   const getToken = useAuth();
@@ -105,9 +107,36 @@ const ContactosEmpresa = () => {
     dispatch(modifyTelefonoSuccess(telPayload));
   };
 
+  //Delete telefono
+
   const handleContactoModificado = (contactoModificado) => {
     dispatch(modifyContactoSuccess(contactoModificado));
     handleHideModificarContactoModal();
+  };
+
+  const handleShowConfirmDelete = (telefonoId, contactId) => {
+    setTelefonoIdToDelete(telefonoId);
+    setCurrentContactId(contactId);
+    setShowConfirmDelete(true);
+  };
+
+  const handleHideConfirmDelete = () => {
+    setShowConfirmDelete(false);
+    setTelefonoIdToDelete(null);
+  };
+
+  const handleConfirmEliminarTelefono = async () => {
+    try {
+      const usuarioToken = getToken();
+      await deleteTelefono(telefonoIdToDelete, usuarioToken);
+      dispatch(deleteTelefonoSuccess({ 
+        telefonoId: telefonoIdToDelete, 
+        contactId: currentContactId 
+      }));
+      handleHideConfirmDelete();
+    } catch (error) {
+      console.error("Error al eliminar el teléfono:", error);
+    }
   };
 
   return (
@@ -173,6 +202,14 @@ const ContactosEmpresa = () => {
                           >
                             Modificar
                           </Button>
+                          <Button
+                              variant="danger"
+                              onClick={() =>
+                                handleShowConfirmDelete(telefono.id, contacto.id)
+                              }
+                            >
+                              Eliminar
+                            </Button>
                         </ListGroup.Item>
                       ))
                     ) : (
@@ -227,6 +264,24 @@ const ContactosEmpresa = () => {
             Cancelar
           </Button>
           <Button variant="danger" onClick={handleConfirmEliminar}>
+            Eliminar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showConfirmDelete} onHide={handleHideConfirmDelete}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Eliminación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Estás seguro de que deseas eliminar este teléfono? Esta acción no se
+          puede deshacer.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleHideConfirmDelete}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleConfirmEliminarTelefono}>
             Eliminar
           </Button>
         </Modal.Footer>

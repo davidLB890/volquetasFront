@@ -9,7 +9,7 @@ const ModificarMovimiento = ({ show, onHide, movimiento, choferes }) => {
   const dispatch = useDispatch();
   const getToken = useAuth();
   const [choferId, setChoferId] = useState(movimiento?.choferId || "");
-  const [horario, setHorario] = useState(movimiento?.horario || "");
+  const [horario, setHorario] = useState(new Date (movimiento?.horario) || "");
   const [numeroVolqueta, setNumeroVolqueta] = useState(movimiento?.numeroVolqueta || "");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");

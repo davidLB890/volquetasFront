@@ -14,6 +14,7 @@ const ModificarSugerencia = ({ show, onHide, sugerencia, choferes }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  console.log("horario Sugerido", horarioSugerido)
   useEffect(() => {
     if (sugerencia) {
       setChoferSugeridoId(sugerencia.choferSugeridoId);
@@ -22,9 +23,13 @@ const ModificarSugerencia = ({ show, onHide, sugerencia, choferes }) => {
     }
   }, [sugerencia]);
 
+  // Función para formatear la fecha en un formato que acepta el input de tipo hacerla con el date sin toISO
   const formatDateForInput = (dateString) => {
     const date = new Date(dateString);
-    return date.toISOString().slice(0, 16);
+    console.log("date", date)
+    console.log("Tolocale", date.toLocaleString())
+    console.log("TOISO", date.toISOString())
+    return date.toLocaleString().slice(0, 16);
   };
 
   const handleSubmit = async (e) => {
