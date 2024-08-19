@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { getServicioPorCamionFecha } from '../../api';
-import { Container, Table, Alert, Button } from 'react-bootstrap';
+import { getServicioPorCamionFecha, deleteServicio } from '../../api'; // Importa la función deleteServicio
+import { Container, Table, Alert, Button, Modal } from 'react-bootstrap';
 import useAuth from '../../hooks/useAuth';
 import AgregarServicio from './AgregarServicio';
 import moment from 'moment';
-/* import './ServiciosCamion.css'; */ // Importa el archivo CSS
 
 const ServiciosCamion = ({ camionId, mes, anio }) => {
   const [servicios, setServicios] = useState([]);
   const [error, setError] = useState('');
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false); // Modal de confirmación
+  const [servicioSeleccionado, setServicioSeleccionado] = useState(null); // Servicio a eliminar
 
   const getToken = useAuth();
 
@@ -41,7 +42,23 @@ const ServiciosCamion = ({ camionId, mes, anio }) => {
 
   const handleSuccess = () => {
     fetchServicios();
-    console.log(fetchServicios());
+  };
+
+  const handleConfirmDelete = (servicio) => {
+    setServicioSeleccionado(servicio);
+    setShowConfirmModal(true);
+  };
+
+  const handleDelete = async () => {
+    const usuarioToken = getToken();
+    try {
+      await deleteServicio(servicioSeleccionado.id, usuarioToken);
+      setShowConfirmModal(false);
+      fetchServicios(); // Actualiza la lista de servicios
+    } catch (error) {
+      console.error('Error al eliminar el servicio:', error);
+      setError('Error al eliminar el servicio.');
+    }
   };
 
   return (
@@ -55,6 +72,7 @@ const ServiciosCamion = ({ camionId, mes, anio }) => {
               <th>Tipo</th>
               <th>Descripción</th>
               <th>Precio</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -65,6 +83,15 @@ const ServiciosCamion = ({ camionId, mes, anio }) => {
                 <td>{servicio.descripcion}</td>
                 <td>
                   $ {servicio.precio} {servicio.moneda === 'peso' ? 'UYU' : 'USD'}
+                </td>
+                <td>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleConfirmDelete(servicio)}
+                  >
+                    Eliminar
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -80,6 +107,13 @@ const ServiciosCamion = ({ camionId, mes, anio }) => {
             <p><strong>Tipo:</strong> {servicio.tipo}</p>
             <p><strong>Descripción:</strong> {servicio.descripcion}</p>
             <p><strong>Precio:</strong> $ {servicio.precio} {servicio.moneda === 'peso' ? 'UYU' : 'USD'}</p>
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={() => handleConfirmDelete(servicio)}
+            >
+              Eliminar
+            </Button>
           </div>
         ))}
       </div>
@@ -91,6 +125,24 @@ const ServiciosCamion = ({ camionId, mes, anio }) => {
       <AgregarServicio idCamion={camionId} onSuccess={handleSuccess} show={mostrarModal} onHide={handleCloseModal} />
 
       {error && <Alert variant="danger">{error}</Alert>}
+
+      {/* Modal de confirmación para eliminar */}
+      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Eliminación</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Estás seguro de que deseas eliminar el servicio del {moment(servicioSeleccionado?.fecha).format('lll')}?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleDelete}>
+            Eliminar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

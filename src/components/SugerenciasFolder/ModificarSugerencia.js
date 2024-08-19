@@ -3,7 +3,7 @@ import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { modifySugerencia } from "../../features/pedidoSlice"; // Asegúrate de ajustar la ruta
 import useAuth from "../../hooks/useAuth";
-import { putSugerencia } from "../../api"; // Asegúrate de tener un módulo API para manejar las solicitudes
+import { putSugerencia, verificarSugerencia } from "../../api"; // Asegúrate de tener un módulo API para manejar las solicitudes
 
 const ModificarSugerencia = ({ show, onHide, sugerencia, choferes }) => {
   const dispatch = useDispatch();
@@ -14,7 +14,7 @@ const ModificarSugerencia = ({ show, onHide, sugerencia, choferes }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  console.log("horario Sugerido", horarioSugerido)
+  //console.log("horario Sugerido", horarioSugerido)
   useEffect(() => {
     if (sugerencia) {
       setChoferSugeridoId(sugerencia.choferSugeridoId);

@@ -249,7 +249,14 @@ export const getServicioPorCamionFecha = (camionId, mes, anio, usuarioToken) => 
     },
   });
 }
-
+export const deleteServicio = (servicioId, usuarioToken) => {
+  return axios.delete(`${API_URL}servicios/${servicioId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
 
 
 //JORNALES

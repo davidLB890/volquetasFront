@@ -60,7 +60,7 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
         setVolquetaId(numeroVolqueta);
         setShowUbicacionTemporal(true); // Mostrar sección de ubicación temporal
         } else {
-        dispatch(addMovimiento(successResponse));
+        dispatch(addMovimiento(response.data));
         setTimeout(() => {
           setSuccess("");
           onHide();

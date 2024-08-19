@@ -23,7 +23,6 @@ const ContactosObraPedido = () => {
 
   const navigate = useNavigate();
   const { obra, pedido } = useSelector((state) => state.pedido);
-  console.log("Pedido: ", obra, pedido);
   const dispatch = useDispatch();
   const getToken = useAuth();
 
