@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Card, Collapse, Button, Row, Col, ListGroup, Modal } from "react-bootstrap";
+import { Card, Collapse, Button, Row, Col, ListGroup, Modal, Dropdown } from "react-bootstrap";
+import { PencilSquare, Trash} from "react-bootstrap-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { createTelefonoSuccess, modifyTelefonoSuccess, deleteContactoSuccess, modifyContactoSuccess, deleteTelefonoSuccess } from "../../features/empresaSlice";
 import AgregarTelefono from "../TelefonosFolder/AgregarTelefono"; // Ajusta la ruta según sea necesario
@@ -22,7 +23,6 @@ const ContactosEmpresa = () => {
   const dispatch = useDispatch();
   const contactos = useSelector((state) => state.empresa.contactos); // Obtén los contactos del estado de Redux
   const getToken = useAuth();
-  console.log(contactos);
 
   const toggleExpandContact = (contactId) => {
     setExpandedContactId(expandedContactId === contactId ? null : contactId);
@@ -144,45 +144,66 @@ const ContactosEmpresa = () => {
       {contactos.map((contacto) => (
         <Card key={contacto.id} className="mb-3">
           <Card.Header
-            onClick={() => toggleExpandContact(contacto.id)}
-            style={{ cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-          >
-            {contacto.nombre}
-          </Card.Header>
+    onClick={() => toggleExpandContact(contacto.id)}
+    style={{
+      cursor: "pointer",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+    }}
+  >
+    {contacto.nombre}
+    <Dropdown
+      onClick={(e) => e.stopPropagation()} // Evitar que el clic en el Dropdown propague al Card
+    >
+      <Dropdown.Toggle
+        as={Button}
+        variant="link"
+        style={{
+          padding: 0,
+          margin: 0,
+          border: "none",
+          background: "none",
+          boxShadow: "none",
+        }}
+      >
+        <PencilSquare />
+      </Dropdown.Toggle>
+
+      <Dropdown.Menu>
+        <Dropdown.Item
+          onClick={(e) => {
+            e.stopPropagation();
+            handleShowModificarContactoModal(contacto);
+          }}
+        >
+          <PencilSquare className="me-2" /> Modificar Contacto
+        </Dropdown.Item>
+        <Dropdown.Item
+          onClick={(e) => {
+            e.stopPropagation();
+            handleShowConfirmModal(contacto.id);
+          }}
+        >
+          <Trash className="me-2" /> Eliminar Contacto
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  </Card.Header>
           <Collapse in={expandedContactId === contacto.id}>
             <Card.Body>
               <Row>
-                <Col>
-                  <Card.Text>
-                    <strong>Email:</strong> {contacto.email}
-                  </Card.Text>
-                  <Card.Text>
-                    <strong>Descripción:</strong> {contacto.descripcion}
-                  </Card.Text>
-                  <Button
-                    variant="danger"
-                    onClick={() => handleShowConfirmModal(contacto.id)}
-                    className="mb-2 mb-md-0 me-md-2"
-                    style={{
-                      padding: "0.5rem 1rem",
-                    }}
-                  >
-                    Eliminar Contacto
-                  </Button>
-                  <Button
-                    className="mb-2 mb-md-0 me-md-2"
-                    style={{
-                      padding: "0.5rem 1rem",
-                    }}
-                    variant="warning"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Evitar que se colapse el card al hacer click en el botón
-                      handleShowModificarContactoModal(contacto);
-                    }}
-                  >
-                    Modificar Contacto
-                  </Button>
-                </Col>
+              <Col>
+                <Card.Text>
+                  <strong>Email:</strong> {contacto.email}
+                </Card.Text>
+                <Card.Text>
+                  <strong>Descripción:</strong> {contacto.descripcion}
+                </Card.Text>
+
+                
+              </Col>
+
                 <Col>
                   <Card.Text>
                     <strong>Teléfonos:</strong>
@@ -190,26 +211,27 @@ const ContactosEmpresa = () => {
                   <ListGroup>
                     {contacto?.Telefonos && contacto?.Telefonos.length > 0 ? (
                       contacto.Telefonos.map((telefono) => (
-                        <ListGroup.Item key={telefono.id}>
-                          {telefono.tipo}: {telefono.telefono}
-                          {telefono.extension
-                            ? ` (Ext: ${telefono.extension})`
-                            : ""}
-                          <Button
-                            variant="secondary"
-                            onClick={() => handleShowModificarModal(telefono)}
-                            className="ml-2"
-                          >
-                            Modificar
-                          </Button>
-                          <Button
-                              variant="danger"
-                              onClick={() =>
-                                handleShowConfirmDelete(telefono.id, contacto.id)
-                              }
-                            >
-                              Eliminar
-                            </Button>
+                        <ListGroup.Item key={telefono.id} className="d-flex justify-content-between align-items-center">
+                          <div>
+                            {telefono.tipo}: {telefono.telefono}
+                            {telefono.extension ? ` (Ext: ${telefono.extension})` : ""}
+                          </div>
+                          <Dropdown>
+                            <Dropdown.Toggle variant="link" id={`dropdown-${telefono.id}`} className="p-0">
+                              <PencilSquare />
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu>
+                              <Dropdown.Item onClick={() => handleShowModificarModal(telefono)}>
+                                Modificar
+                              </Dropdown.Item>
+                              <Dropdown.Item
+                                onClick={() => handleShowConfirmDelete(telefono.id, contacto.id)}
+                              >
+                                Eliminar
+                              </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
                         </ListGroup.Item>
                       ))
                     ) : (

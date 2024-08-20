@@ -11,8 +11,8 @@ const SelectEmpresaPorNombre = ({ onSeleccionar }) => {
   const [error, setError] = useState("");
   const [showResults, setShowResults] = useState(false);
   const getToken = useAuth();
-  const inputRef = useRef(null); // Referencia para el campo de entrada
-  const listRef = useRef(null); // Referencia para la lista de resultados
+  const inputRef = useRef(null); 
+  const listRef = useRef(null);
 
   const handleSearch = async () => {
     const usuarioToken = getToken();
@@ -37,8 +37,11 @@ const SelectEmpresaPorNombre = ({ onSeleccionar }) => {
   };
 
   const handleClickOutside = (event) => {
-    if (inputRef.current && !inputRef.current.contains(event.target) && listRef.current && !listRef.current.contains(event.target)) {
-      setShowResults(false); // Ocultar la lista si se hace clic fuera
+    if (
+      inputRef.current && !inputRef.current.contains(event.target) &&
+      listRef.current && !listRef.current.contains(event.target)
+    ) {
+      setShowResults(false);
     }
   };
 
@@ -50,7 +53,7 @@ const SelectEmpresaPorNombre = ({ onSeleccionar }) => {
   }, []);
 
   return (
-    <div ref={inputRef}>
+    <div ref={inputRef} style={{ position: "relative" }}>
       <InputGroup className="mb-0">
         <Form.Control
           type="text"
@@ -72,7 +75,7 @@ const SelectEmpresaPorNombre = ({ onSeleccionar }) => {
       {loading && <Spinner animation="border" />}
       {error && <Alert variant="danger">{error}</Alert>}
       {showResults && (
-        <ListGroup className="result-list" ref={listRef}>
+        <ListGroup className="result-list" ref={listRef} style={{ position: "absolute", width: "100%", zIndex: 1000 }}>
           {resultados.slice(0, 10).map((empresa) => (
             <ListGroup.Item
               key={empresa.id}
@@ -89,5 +92,3 @@ const SelectEmpresaPorNombre = ({ onSeleccionar }) => {
 };
 
 export default SelectEmpresaPorNombre;
-
-

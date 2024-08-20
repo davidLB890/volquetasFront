@@ -178,7 +178,7 @@ const DatosFactura = () => {
                     variant="success"
                     onClick={() => setShowFechaPagoModal(true)}
                   >
-                    Pagar
+                    Marcar como Pagado
                   </Button>
                   <Button
                     variant="danger"

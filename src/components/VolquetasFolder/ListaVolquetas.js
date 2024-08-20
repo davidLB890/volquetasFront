@@ -130,6 +130,7 @@ const ListaVolquetas = () => {
               value={filtroEstado}
               onChange={handleFiltroEstadoChange}
             >
+              <option value="">Todos</option>
               {ESTADOS_VOLQUETA.map((estado) => (
                 <option key={estado.value} value={estado.value}>
                   {estado.label}

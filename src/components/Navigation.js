@@ -189,7 +189,7 @@ const Navigation = ({ userRole }) => {
                     to="/empleados"
                     onClick={handleMouseLeave}
                   >
-                    Lista de empleados
+                    Mantenimiento Empleados
                   </Nav.Link>
                   <Nav.Link
                     as={Link}
@@ -198,6 +198,15 @@ const Navigation = ({ userRole }) => {
                   >
                     Jornales
                   </Nav.Link>
+                  {userRole === "admin" && (
+                    <Nav.Link
+                      as={Link}
+                      to="/usuarios/confirmar"
+                      onClick={handleMouseLeave}
+                    >
+                      Confirmar usuarios
+                    </Nav.Link>
+                  )}
                 </div>
               </Nav.Item>
             </div>
@@ -256,11 +265,14 @@ const Navigation = ({ userRole }) => {
                     expanded === "listas" ? "show" : ""
                   }`}
                 >
-                  <Nav.Link as={Link} to="/permisos" onClick={handleMouseLeave}>
-                    Lista de permisos
-                  </Nav.Link>
                   <Nav.Link as={Link} to="/facturas" onClick={handleMouseLeave}>
                     Facturas
+                  </Nav.Link>
+                  <Nav.Link as={Link} to="/cajas"onClick={handleMouseLeave}>
+                    Entradas y Salidas
+                  </Nav.Link>
+                  <Nav.Link as={Link} to="/permisos" onClick={handleMouseLeave}>
+                    Lista de permisos
                   </Nav.Link>
                   <Nav.Link as={Link} to="/imm" onClick={handleMouseLeave}>
                     Lista IMM
@@ -303,7 +315,7 @@ const Navigation = ({ userRole }) => {
               </Nav.Item>
             </div>
 
-            <div
+            {/* <div
               onMouseEnter={() => handleMouseEnter("cajas")}
               onMouseLeave={handleMouseLeave}
               className="nav-item-container"
@@ -332,7 +344,7 @@ const Navigation = ({ userRole }) => {
                   </Nav.Link>
                 </div>
               </Nav.Item>
-            </div>
+            </div> */}
 
             <div
               onMouseEnter={() => handleMouseEnter("estadisticas")}
@@ -356,13 +368,6 @@ const Navigation = ({ userRole }) => {
                 >
                   <Nav.Link
                     as={Link}
-                    to="/estadisticascliente"
-                    onClick={handleMouseLeave}
-                  >
-                    Cliente
-                  </Nav.Link>
-                  <Nav.Link
-                    as={Link}
                     to="/estadisticasdeudores"
                     onClick={handleMouseLeave}
                   >
@@ -375,42 +380,16 @@ const Navigation = ({ userRole }) => {
                   >
                     Pedidos
                   </Nav.Link>
+                  <Nav.Link
+                    as={Link}
+                    to="/estadisticascliente"
+                    onClick={handleMouseLeave}
+                  >
+                    Cliente
+                  </Nav.Link>
                 </div>
               </Nav.Item>
             </div>
-
-            {userRole === "admin" && (
-              <div
-                onMouseEnter={() => handleMouseEnter("usuarios")}
-                onMouseLeave={handleMouseLeave}
-                className="nav-item-container"
-              >
-                <Nav.Item className="nav-item">
-                  <div
-                    onClick={() => toggleExpand("usuarios")}
-                    className="nav-link cursor-pointer nav-item-title"
-                  >
-                    <div className="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                      <i className="ni ni-single-02 text-success text-sm opacity-10"></i>
-                    </div>
-                    <span className="nav-link-text ms-1">Usuarios</span>
-                  </div>
-                  <div
-                    className={`nav-submenu ms-5 collapse ${
-                      expanded === "usuarios" ? "show" : ""
-                    }`}
-                  >
-                    <Nav.Link
-                      as={Link}
-                      to="/usuarios/confirmar"
-                      onClick={handleMouseLeave}
-                    >
-                      Confirmar usuarios
-                    </Nav.Link>
-                  </div>
-                </Nav.Item>
-              </div>
-            )}
           </Nav>
         </div>
       </aside>

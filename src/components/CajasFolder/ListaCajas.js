@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, ListGroup, Button, Table, Card, Modal, Col, Row } from 'react-bootstrap';
+import { Container, ListGroup, Button, Table, Card, Modal, Col, Row, Form } from 'react-bootstrap';
 import ModificarCaja from './ModificarCaja';
 import { deleteCaja } from '../../api';
 import useAuth from '../../hooks/useAuth';
@@ -14,6 +14,9 @@ const ListaCajas = ({ data }) => {
   const [selectedCaja, setSelectedCaja] = useState(null);
   const [cajas, setCajas] = useState(data.cajas || []); // Asegúrate de que 'cajas' siempre sea un array
   const getToken = useAuth();
+
+  const [filtroMotivo, setFiltroMotivo] = useState("");
+  const [ordenFechaAsc, setOrdenFechaAsc] = useState(true);
 
   const navigate = useNavigate();
 
@@ -83,17 +86,34 @@ const ListaCajas = ({ data }) => {
     setShowModificarModal(false);
   };
 
+  const handleFiltroMotivoChange = (e) => {
+    setFiltroMotivo(e.target.value);
+  };
+
+  const handleOrdenFecha = () => {
+    setOrdenFechaAsc(!ordenFechaAsc); // Cambia el orden cada vez que se hace clic
+  };
+
   const { datos } = data;
 
-  if (!cajas.length) {
-    return (
-      <Card className="mb-4" style={{ width: '100%' }}>
-        <Card.Body>
-          <strong>No hay Entradas o Salidas para esas fechas</strong>
-        </Card.Body>
-      </Card>
-    );
-  }
+  const cajasFiltradas = cajas
+  .filter(caja =>
+    filtroMotivo === "" || caja.motivo.toLowerCase() === filtroMotivo.toLowerCase()
+  )
+  .sort((a, b) => ordenFechaAsc
+    ? new Date(a.fecha) - new Date(b.fecha) // Orden ascendente
+    : new Date(b.fecha) - new Date(a.fecha) // Orden descendente
+  );
+
+if (!cajas.length) {
+  return (
+    <Card className="mb-4" style={{ width: '100%' }}>
+      <Card.Body>
+        <strong>No hay Entradas o Salidas para esas fechas</strong>
+      </Card.Body>
+    </Card>
+  );
+}
 
   return (
     <>
@@ -205,8 +225,43 @@ const ListaCajas = ({ data }) => {
           <Table bordered hover responsive>
             <thead>
               <tr>
-                <th style={{ width: '15%' }}>Fecha</th>
-                <th style={{ width: '20%' }}>Motivo</th>
+                <th style={{ width: '15%' }} onClick={handleOrdenFecha} style={{ cursor: "pointer" }}>
+                  Fecha {ordenFechaAsc ? '▲' : '▼'} {/* Muestra una flecha según el orden */}
+                </th>
+                <th style={{ width: '20%' }}>
+                  <div style={{ position: "relative", display: "inline-block" }}>
+                    <Form.Control
+                      as="select"
+                      value={filtroMotivo}
+                      onChange={handleFiltroMotivoChange}
+                      style={{
+                        display: "inline-block",
+                        width: "auto",
+                        border: "none",
+                        padding: "0 1.5rem 0 0", // Espacio a la derecha para el ícono
+                        background: "none", // Elimina fondo predeterminado
+                      }}
+                    >
+                      <option value="">Motivo</option>
+                      <option value="vale">Vale</option>
+                      <option value="gasto">Gasto</option>
+                      <option value="estraccion">Extracción</option>
+                      <option value="ingreso">Ingreso</option>
+                      <option value="ingreso pedido">Ingreso Pedido</option>
+                      <option value="ingreso cochera">Ingreso Cochera</option>
+                    </Form.Control>
+                    <i
+                      className="bi bi-caret-down-fill"
+                      style={{
+                        position: "absolute",
+                        right: "0.5rem",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        pointerEvents: "none",
+                      }}
+                    ></i>
+                  </div>
+                </th>
                 <th style={{ width: '15%' }}>Monto</th>
                 <th style={{ width: '20%' }}>Descripción</th>
                 <th style={{ width: '15%' }}>Empleado</th>
@@ -215,7 +270,7 @@ const ListaCajas = ({ data }) => {
               </tr>
             </thead>
             <tbody>
-              {cajas.map((c) => (
+              {cajasFiltradas.map((c) => (
                 <tr key={c.id}>
                   <td>{c.fecha}</td>
                   <td>{c.motivo}</td>

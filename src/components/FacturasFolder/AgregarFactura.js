@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Card,
-  Button,
-  Form,
-  Row,
-  Col,
-  Spinner,
-  Alert,
-} from "react-bootstrap";
+import { Container, Card, Button, Form, Row, Col, Spinner, Alert } from "react-bootstrap"
 import { getPedidosFiltro, postFactura } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import SelectEmpresaPorNombre from "../EmpresasFolder/SelectEmpresaPorNombre";
 import SelectParticularPorNombre from "../ParticularesFolder/SelectParticularPorNombre";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 const AgregarFactura = () => {
   const [empresaId, setEmpresaId] = useState(null);
@@ -33,8 +25,11 @@ const AgregarFactura = () => {
   const [descripcionError, setDescripcionError] = useState("");
   const [success, setSuccess] = useState("");
   const getToken = useAuth();
+  const navigate = useNavigate();
 
   const MAX_DESCRIPCION_LENGTH = 255;
+
+  //navigate("/facturas/datos", { state: { facturaId: idFactura } });
 
   useEffect(() => {
     if (empresaId || particularId) {
@@ -55,7 +50,8 @@ const AgregarFactura = () => {
         particularId,
         obraId: null,
       });
-      setPedidos(response.data);
+      const pedidosNoPagados = response.data.filter(pedido => !pedido.pagoPedido.pagado);
+      setPedidos(pedidosNoPagados);
     } catch (error) {
       console.error("Error al obtener los pedidos:", error);
       setError("Error al obtener los pedidos");
@@ -127,7 +123,10 @@ const AgregarFactura = () => {
       console.log("Factura creada correctamente", response.data);
       setError("");
       setSuccess("Factura creada correctamente");
-      setTimeout(() => setSuccess(""), 5000);
+      setTimeout(() => 
+        navigate("/facturas/datos", { state: { facturaId: response.data.id } }),
+        setSuccess("")
+      , 500);
     } catch (error) {
       console.error(error);
       setError(error.response?.data?.error || "Error al crear la factura");
@@ -301,7 +300,7 @@ const AgregarFactura = () => {
               </Col>
             </Row>
             <Button variant="primary" type="submit">
-              Crear Factura
+              Agregar Factura
             </Button>
           </Form>
         </Card.Body>

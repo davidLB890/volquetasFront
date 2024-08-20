@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Alert, Button, Modal } from 'react-bootstrap';
+import { Table, Alert, Button, Modal, Dropdown, ButtonGroup } from 'react-bootstrap';
+import { GearFill, PencilSquare, Trash } from 'react-bootstrap-icons';
 import { getJornalesEmpleado, deleteJornal } from '../../api';
 import useAuth from '../../hooks/useAuth';
 import dayjs from 'dayjs';
@@ -95,7 +96,7 @@ const JornalEspecifico = ({ empleadoId, empleadoRol, fechaInicio, fechaFin, hand
                 <th>Horas Extra</th>
                 <th>Tipo</th>
                 {empleadoRol === 'chofer' && <th>Viajes Realizados</th>}
-                {rolUsuario === 'admin' && <th>Acciones</th>}
+                {rolUsuario === 'admin' && <th></th>}
               </tr>
             </thead>
             <tbody>
@@ -120,20 +121,36 @@ const JornalEspecifico = ({ empleadoId, empleadoRol, fechaInicio, fechaFin, hand
                   {empleadoRol === 'chofer' && <td>-viajes: {jornal.viajes} -entregas: {jornal.entregas} -levantes: {jornal.levantes}</td>}
                   {rolUsuario === 'admin' && (
                     <td>
-                      <Button
-                        variant="info"
-                        onClick={() => handleMostrarModificar(jornal)}
+                    <Dropdown as={ButtonGroup} style={{ marginLeft: "0.5rem" }}>
+                      <Dropdown.Toggle
+                        as={Button}
+                        variant="link"
+                        style={{
+                          padding: 0,
+                          margin: 0,
+                          border: "none",
+                          background: "none",
+                          boxShadow: "none",
+                        }}
                       >
-                        Modificar
-                      </Button>
-                      <Button
-                        variant="danger"
-                        onClick={() => confirmEliminarJornal(jornal)}
-                        className="ml-2"
-                      >
-                        Eliminar
-                      </Button>
-                    </td>
+                        <GearFill size={24} />
+                      </Dropdown.Toggle>
+                  
+                      <Dropdown.Menu>
+                        <Dropdown.Item
+                          onClick={() => handleMostrarModificar(jornal)}
+                        >
+                          <PencilSquare className="me-2" /> Modificar
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                          onClick={() => confirmEliminarJornal(jornal)}
+                        >
+                          <Trash className="me-2" /> Eliminar
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </td>
+                  
                   )}
                 </tr>
               ))}
@@ -162,20 +179,34 @@ const JornalEspecifico = ({ empleadoId, empleadoRol, fechaInicio, fechaFin, hand
               )}
               {rolUsuario === 'admin' && (
                 <div className="jornal-actions">
-                  <Button
-                    variant="info"
-                    className="mb-2 w-100"
-                    onClick={() => handleMostrarModificar(jornal)}
-                  >
-                    Modificar
-                  </Button>
-                  <Button
-                    variant="danger"
-                    className="w-100"
-                    onClick={() => confirmEliminarJornal(jornal)}
-                  >
-                    Eliminar
-                  </Button>
+                  <Dropdown as={ButtonGroup} style={{ marginLeft: "0.5rem" }}>
+                      <Dropdown.Toggle
+                        as={Button}
+                        variant="link"
+                        style={{
+                          padding: 0,
+                          margin: 0,
+                          border: "none",
+                          background: "none",
+                          boxShadow: "none",
+                        }}
+                      >
+                        <GearFill size={24} />
+                      </Dropdown.Toggle>
+                  
+                      <Dropdown.Menu>
+                        <Dropdown.Item
+                          onClick={() => handleMostrarModificar(jornal)}
+                        >
+                          <PencilSquare className="me-2" /> Modificar
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                          onClick={() => confirmEliminarJornal(jornal)}
+                        >
+                          <Trash className="me-2" /> Eliminar
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
                 </div>
               )}
             </div>

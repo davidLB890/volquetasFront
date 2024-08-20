@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Card,
-  Spinner,
-  Alert,
-  Button,
-  Container,
-  Row,
-  Col,
-  Modal
-} from "react-bootstrap";
+import { Card, Spinner, Alert, Button, Container, Row, Col, Modal, Dropdown} from "react-bootstrap";
+import { GearFill } from "react-bootstrap-icons";
 import useAuth from "../../hooks/useAuth";
 import { getParticularId } from "../../api";
 import {
@@ -130,9 +122,33 @@ const DatosParticular = () => {
         </Button>
       )}
       <Card className="mt-3">
-        <Card.Header>
-          <h2>{particular?.nombre}</h2>
-        </Card.Header>
+      <Card.Header style={{ display: "flex", alignItems: "center", padding: "0.5rem 1rem" }}>
+        <h2 style={{ margin: 0, marginRight: "0.5rem" }}>{particular?.nombre}</h2>
+  <Dropdown>
+    <Dropdown.Toggle
+      as={Button}
+      variant="link"
+      style={{
+        padding: 0,
+        margin: 0,
+        border: "none",
+        background: "none",
+        boxShadow: "none",
+      }}
+    >
+      <GearFill size={24} />
+    </Dropdown.Toggle>
+
+    <Dropdown.Menu>
+      <Dropdown.Item onClick={() => setShowModificarParticular(true)}>
+        Modificar Particular
+      </Dropdown.Item>
+      <Dropdown.Item onClick={() => setShowConfirmDelete(true)}>
+        Eliminar Particular
+      </Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
+</Card.Header>
         <Card.Body>
           <Card.Text>
             <strong>Cédula:</strong> {particular?.cedula}
@@ -147,7 +163,7 @@ const DatosParticular = () => {
           {/* Grupo de botones con disposición vertical en pantallas pequeñas */}
           <Row>
             <Col xs={12} md={8} className="d-flex flex-column flex-md-row">
-            <Button
+            {/* <Button
                 onClick={() => setShowConfirmDelete(true)} // Muestra el modal de confirmación
                 className="mb-2 mb-md-0 me-md-2"
                 variant="danger"
@@ -166,17 +182,7 @@ const DatosParticular = () => {
                 }}
               >
                 Modificar Particular
-              </Button>
-              <Button
-                variant="primary"
-                className="mb-2 mb-md-0 me-md-2"
-                style={{
-                  padding: "0.5rem 1rem",
-                }}
-                onClick={() => setShowAgregarTelefono(true)}
-              >
-                Agregar Teléfono
-              </Button>
+              </Button> */}
               <Button
                 onClick={() => setShowAgregarObra(true)}
                 className="mb-2 mb-md-0 me-md-2"
@@ -196,6 +202,16 @@ const DatosParticular = () => {
                 }}
               >
                 Agregar Permiso
+              </Button>
+              <Button
+                variant="primary"
+                className="mb-2 mb-md-0 me-md-2"
+                style={{
+                  padding: "0.5rem 1rem",
+                }}
+                onClick={() => setShowAgregarTelefono(true)}
+              >
+                Agregar Teléfono
               </Button>
             </Col>
           </Row>

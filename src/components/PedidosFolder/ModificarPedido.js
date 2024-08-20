@@ -42,6 +42,8 @@ const ModificarPedido = ({ show, onHide }) => {
   const particularObraId = pedido.Obra?.particular?.id;
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
 
+  const MAX_LENGTH = 255;
+
   const buscarObrasCliente = async () => {
     const usuarioToken = getToken();
     if (empresaObraId) {
@@ -120,6 +122,13 @@ const ModificarPedido = ({ show, onHide }) => {
 
   const handleModificar = async () => {
     const usuarioToken = getToken();
+    if(descripcion.length > MAX_LENGTH) {
+      setError("La descripción no puede superar los 255 caracteres");
+      setTimeout(() => {
+        setError("");
+      }, 1500);
+      return;
+    }
     try {
       // Primero actualizo el pedido con la obra
       const pedidoModificado = {

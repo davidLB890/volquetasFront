@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { eliminarEmpleado } from "../../api";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Alert, Modal, Row, Col } from "react-bootstrap";
+import { Button, Form, Alert, Modal, Row, Col, Dropdown, ButtonGroup } from "react-bootstrap";
+import { GearFill, PencilSquare, Trash, InfoCircle } from "react-bootstrap-icons";
 import { useSelector, useDispatch } from "react-redux";
 import useAuth from "../../hooks/useAuth";
 import DatosEmpleado from "./DatosEmpleado";
@@ -229,47 +230,50 @@ const Empleados = () => {
                       )}
                     </td>
                     <td>
-                      <>
-                        {rolUsuario === "admin" && (
-                          <Button
-                            variant="danger"
-                            style={{
-                              padding: "0.5rem 1rem",
-                              marginRight: "0.5rem",
-                            }}
-                            onClick={() => confirmarEliminar(empleado)}
-                          >
-                            Eliminar
-                          </Button>
-                        )}
-                        <Button
-                          variant="primary"
-                          style={{
-                            padding: "0.5rem 1rem",
-                            marginRight: "0.5rem",
-                          }}
-                          onClick={() => modificar(empleado)}
-                        >
-                          Modificar
-                        </Button>
-                        <Button
-                          variant="dark"
-                          style={{ marginRight: "0.5rem" }}
-                          onClick={() => toggleDatosEmpleado(empleado)}
-                        >
-                          Datos
-                        </Button>
-                        {rolUsuario === "admin" && (
-                          <HabilitarDeshabilitarEmpleado
-                            empleado={empleado}
-                            onUpdate={() =>
-                              handleUpdateEmpleado(empleado)
-                              /* dispatch(fetchEmpleados(getToken())) */
-                            }
-                          />
-                        )}
-                      </>
-                    </td>
+                      <Button
+                        variant="dark"
+                        style={{ marginRight: "0.5rem" }}
+                        onClick={() => toggleDatosEmpleado(empleado)}
+                      >
+                        Datos
+                      </Button>
+                      {rolUsuario === "admin" && (
+                        <HabilitarDeshabilitarEmpleado
+                          empleado={empleado}
+                          onUpdate={() =>
+                            handleUpdateEmpleado(empleado)
+                            /* dispatch(fetchEmpleados(getToken())) */
+                          }
+                        />
+                      )}
+                      <Dropdown as={ButtonGroup} style={{ marginLeft: "0.5rem" }}>
+                      <Dropdown.Toggle
+                        as={Button}
+                        variant="link"
+                        style={{
+                          padding: 0,
+                          margin: 0,
+                          border: "none",
+                          background: "none",
+                          boxShadow: "none",
+                        }}
+                      >
+                        <GearFill size={24} />
+                      </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          {rolUsuario === "admin" && (
+                            <>
+                              <Dropdown.Item onClick={() => confirmarEliminar(empleado)}>
+                                <Trash className="me-2" /> Eliminar
+                              </Dropdown.Item>
+                            </>
+                          )}
+                          <Dropdown.Item onClick={() => modificar(empleado)}>
+                            <PencilSquare className="me-2" /> Modificar
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+</td>
                   </tr>
 
                   {showDatosEmpleado &&

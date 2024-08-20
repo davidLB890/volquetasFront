@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Dropdown, ButtonGroup, ListGroup, Card } from "react-bootstrap";
+import { PencilSquare, Trash } from "react-bootstrap-icons";
 import ModificarTelefono from "../TelefonosFolder/ModificarTelefonos"; // Ajusta la ruta según sea necesario
 import AgregarTelefono from "../TelefonosFolder/AgregarTelefono";
 import { deleteTelefono } from "../../api"; // Ajusta la ruta según sea necesario
@@ -78,46 +79,61 @@ const TelefonosEmpleado = ({ telefonos = [], empleadoId, nombre }) => {
 
   return (
     <div>
-      <ul>
-        {telefonosList.length > 0 ? (
-          telefonosList.map((telefono) => (
-            <li
-              key={telefono.id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "8px", // Añadir espacio entre elementos
-              }}
-            >
-              <Button
-                variant="secondary"
-                onClick={() => handleShowModificarModal(telefono)}
-                style={{ marginRight: "8px" }} // Añadir espacio entre el botón y el texto
+      <Card>
+  <Card.Header>
+    <h6>Teléfonos</h6>
+  </Card.Header>
+  <ListGroup variant="flush">
+    {telefonosList.length > 0 ? (
+      telefonosList.map((telefono) => (
+        <ListGroup.Item
+          key={telefono.id}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "8px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <span>
+              {telefono?.tipo && telefono?.telefono ? (
+                `${telefono.tipo}: ${telefono.telefono}${
+                  telefono.extension ? ` (Ext: ${telefono.extension})` : ""
+                }`
+              ) : (
+                "Información de teléfono no disponible"
+              )}
+            </span>
+            <Dropdown as={ButtonGroup} className="ms-2">
+              <Dropdown.Toggle
+                split
+                variant="link"
+                style={{ padding: 0, margin: 0, border: "none" }}
               >
-                Modificar número
-              </Button>
-              <Button
-                variant="danger"
-                onClick={() => handleConfirmEliminarTelefono(telefono.id)}
-                style={{ marginRight: "8px" }} // Añadir espacio entre los botones
-              >
-                Eliminar
-              </Button>
-              <span>
-                {telefono?.tipo && telefono?.telefono ? (
-                  `${telefono.tipo}: ${telefono.telefono}${
-                    telefono.extension ? ` (Ext: ${telefono.extension})` : ""
-                  }`
-                ) : (
-                  "Información de teléfono no disponible"
-                )}
-              </span>
-            </li>
-          ))
-        ) : (
-          <li>No tiene teléfonos registrados</li>
-        )}
-      </ul>
+                <PencilSquare size={20} />
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  onClick={() => handleShowModificarModal(telefono)}
+                >
+                  <PencilSquare className="me-2" /> Modificar número
+                </Dropdown.Item>
+                <Dropdown.Item
+                  onClick={() => handleConfirmEliminarTelefono(telefono.id)}
+                >
+                  <Trash className="me-2" /> Eliminar
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+        </ListGroup.Item>
+      ))
+    ) : (
+      <ListGroup.Item>No tiene teléfonos registrados</ListGroup.Item>
+    )}
+  </ListGroup>
+</Card>
       <Button variant="primary" onClick={handleShowAgregarModal}>
         Agregar Teléfono
       </Button>

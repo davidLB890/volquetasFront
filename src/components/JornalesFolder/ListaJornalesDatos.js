@@ -159,6 +159,13 @@ const ListaJornalesDatos = ({
           {visibleJornales[empleadoId] ? 'Ocultar Jornales' : 'Ver Jornales'}
         </Button>
       )}
+      
+      <Button
+        variant="info"
+        onClick={handleMostrarAgregar}
+      >
+        Agregar Jornal
+      </Button>
 
       <Collapse in={visibleJornales[empleadoId]}>
         <div>
@@ -177,13 +184,6 @@ const ListaJornalesDatos = ({
       </Collapse>
 
       {error && <Alert variant="danger">{error}</Alert>}
-
-      <Button
-        variant="info"
-        onClick={handleMostrarAgregar}
-      >
-        Agregar Jornal
-      </Button>
 
       <AgregarJornal
         show={showAgregar}

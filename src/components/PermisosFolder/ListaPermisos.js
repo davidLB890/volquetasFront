@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {Table,Spinner,Alert,Button,Collapse,Card,Container,Modal,} from "react-bootstrap";
+import {Table,Spinner,Alert,Button,Collapse,Card,Container,Modal,Dropdown} from "react-bootstrap";
+import { GearFill } from "react-bootstrap-icons";
 import { getPermisoIdEmpresa, getPermisoIdParticular, deletePermiso } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
@@ -184,30 +185,34 @@ const ListaPermisos = ({ empresaId, particularId }) => {
                     <h5>ID: {permiso.id}</h5>
                     <p>Fecha de Creación: {moment(permiso.fechaCreacion).format("YYYY-MM-DD")}</p>
                     <p>Fecha de Vencimiento: {moment(permiso.fechaVencimiento).format("YYYY-MM-DD")}</p>
-                    <div className="d-flex flex-column flex-md-row">
-                      <Button
-                        variant="info"
-                        onClick={() => handleMostrarDatosPermiso(permiso)}
-                        className="mb-2 mb-md-0 me-md-2"
-                        style={{ padding: "0.5rem 1rem" }}
-                      >
-                        Datos
-                      </Button>
-                      <Button
-                        variant="warning"
-                        onClick={() => handleModificarPermiso(permiso)}
-                        className="mb-2 mb-md-0 me-md-2"
-                        style={{ padding: "0.5rem 1rem" }}
-                      >
-                        Modificar
-                      </Button>
-                      <Button
-                        variant="danger"
-                        onClick={() => handleConfirmarEliminar(permiso)}
-                        style={{ padding: "0.5rem 1rem" }}
-                      >
-                        Eliminar
-                      </Button>
+                    <div className="d-flex justify-content-start">
+                      <Dropdown>
+                        <Dropdown.Toggle
+                          as={Button}
+                          variant="link"
+                          style={{
+                            padding: 0,
+                            margin: 0,
+                            border: "none",
+                            background: "none",
+                            boxShadow: "none",
+                          }}
+                        >
+                          <GearFill size={18} />
+                        </Dropdown.Toggle>
+
+                        <Dropdown.Menu>
+                          <Dropdown.Item onClick={() => handleMostrarDatosPermiso(permiso)}>
+                            Datos
+                          </Dropdown.Item>
+                          <Dropdown.Item onClick={() => handleModificarPermiso(permiso)}>
+                            Modificar
+                          </Dropdown.Item>
+                          <Dropdown.Item onClick={() => handleConfirmarEliminar(permiso)}>
+                            Eliminar
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
                     </div>
                   </div>
                 ))
@@ -220,7 +225,7 @@ const ListaPermisos = ({ empresaId, particularId }) => {
                           <th>ID</th>
                           <th>Fecha de Creación</th>
                           <th>Fecha de Vencimiento</th>
-                          <th>Acciones</th>
+                          <th></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -231,7 +236,7 @@ const ListaPermisos = ({ empresaId, particularId }) => {
                               backgroundColor: moment().isAfter(
                                 moment(permiso.fechaVencimiento)
                               )
-                                ? "red"
+                                ? "#ffcccc"
                                 : "white",
                               color: moment().isAfter(
                                 moment(permiso.fechaVencimiento)
@@ -248,37 +253,33 @@ const ListaPermisos = ({ empresaId, particularId }) => {
                               {moment(permiso.fechaVencimiento).format("YYYY-MM-DD")}
                             </td>
                             <td>
-                              <Button
-                                variant="info"
-                                onClick={() => handleMostrarDatosPermiso(permiso)}
-                                style={{
-                                  padding: "0.5rem 1rem",
-                                  marginRight: "0.5rem",
-                                }}
-                              >
-                                Datos
-                              </Button>
-                              <Button
-                                variant="warning"
-                                onClick={() => handleModificarPermiso(permiso)}
-                                style={{
-                                  padding: "0.5rem 1rem",
-                                  marginRight: "0.5rem",
-                                }}
-                              >
-                                Modificar
-                              </Button>
-                              <Button
-                                variant="danger"
-                                onClick={() => handleConfirmarEliminar(permiso)}
-                                className="ml-2"
-                                style={{
-                                  padding: "0.5rem 1rem",
-                                  marginRight: "0.5rem",
-                                }}
-                              >
-                                Eliminar
-                              </Button>
+                            <Dropdown>
+    <Dropdown.Toggle
+      as={Button}
+      variant="link"
+      style={{
+        padding: 0,
+        margin: 0,
+        border: "none",
+        background: "none",
+        boxShadow: "none",
+      }}
+    >
+      <GearFill size={18} />
+    </Dropdown.Toggle>
+
+    <Dropdown.Menu>
+      <Dropdown.Item onClick={() => handleMostrarDatosPermiso(permiso)}>
+        Datos
+      </Dropdown.Item>
+      <Dropdown.Item onClick={() => handleModificarPermiso(permiso)}>
+        Modificar
+      </Dropdown.Item>
+      <Dropdown.Item onClick={() => handleConfirmarEliminar(permiso)}>
+        Eliminar
+      </Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
                             </td>
                           </tr>
                         ))}

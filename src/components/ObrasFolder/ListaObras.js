@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 import { deleteObra } from "../../api";
-import {
-  Button,
-  Form,
-  Container,
-  Modal,
-  Collapse,
-  Card
-} from "react-bootstrap";
+import { Button, Form, Container, Modal, Collapse, Card, Dropdown } from "react-bootstrap";
+import { GearFill } from "react-bootstrap-icons";
 import useAuth from "../../hooks/useAuth";
 import DatosObra from "./DatosObra";
 import { useMediaQuery } from "react-responsive";
@@ -91,31 +85,35 @@ const ListaObras = ({ obras = [], onObraEliminada }) => {
                   <Card key={obra.id} className="mb-3">
                     <Card.Body>
                       <h5>{index + 1}. {obra.calle}</h5>
-                      <p><strong>Esquina:</strong> {obra.esquina}</p>
+                      {/* <p><strong>Esquina:</strong> {obra.esquina}</p> */}
                       <p><strong>Estado:</strong> {obra.activa ? "Activa" : "No activa"}</p>
                       <div className="d-flex justify-content-start">
-                        <Button
-                          variant="info"
-                          style={{
-                            padding: "0.5rem 1rem",
-                            marginRight: "0.5rem",
-                          }}
-                          onClick={() => handleMostrarDatosObra(obra)}
-                        >
-                          Datos
-                        </Button>
-                        {rolUsuario === "admin" && (
-                          <Button
-                            variant="danger"
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            as={Button}
+                            variant="link"
                             style={{
-                              padding: "0.5rem 1rem",
-                              marginRight: "0.5rem",
+                              padding: 0,
+                              margin: 0,
+                              border: "none",
+                              background: "none",
+                              boxShadow: "none",
                             }}
-                            onClick={() => confirmarEliminar(obra)}
                           >
-                            Eliminar
-                          </Button>
-                        )}
+                            <GearFill size={24} />
+                          </Dropdown.Toggle>
+
+                          <Dropdown.Menu>
+                            <Dropdown.Item onClick={() => handleMostrarDatosObra(obra)}>
+                              Datos
+                            </Dropdown.Item>
+                            {rolUsuario === "admin" && (
+                              <Dropdown.Item onClick={() => confirmarEliminar(obra)}>
+                                Eliminar
+                              </Dropdown.Item>
+                            )}
+                          </Dropdown.Menu>
+                        </Dropdown>
                       </div>
                     </Card.Body>
                   </Card>
@@ -140,8 +138,8 @@ const ListaObras = ({ obras = [], onObraEliminada }) => {
                         </Form.Control>
                       </th>
                       <th scope="col">Calle</th>
-                      <th scope="col">Esquina</th>
-                      <th scope="col">Acciones</th>
+                      {/* <th scope="col">Esquina</th> */}
+                      <th scope="col"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -150,32 +148,34 @@ const ListaObras = ({ obras = [], onObraEliminada }) => {
                         <tr>
                           <th scope="row">{index + 1}</th>
                           <td>{obra.calle}</td>
-                          <td>{obra.esquina}</td>
+                          {/* <td>{obra.esquina}</td> */}
                           <td>
-                            <Button
-                              variant="info"
-                              style={{
-                                padding: "0.5rem 1rem",
-                                marginRight: "0.5rem",
-                              }}
-                              onClick={() => handleMostrarDatosObra(obra)}
-                            >
+                          <Dropdown>
+                          <Dropdown.Toggle
+                            as={Button}
+                            variant="link"
+                            style={{
+                              padding: 0,
+                              margin: 0,
+                              border: "none",
+                              background: "none",
+                              boxShadow: "none",
+                            }}
+                          >
+                            <GearFill size={18} />
+                          </Dropdown.Toggle>
+
+                          <Dropdown.Menu>
+                            <Dropdown.Item onClick={() => handleMostrarDatosObra(obra)}>
                               Datos
-                            </Button>
+                            </Dropdown.Item>
                             {rolUsuario === "admin" && (
-                              <>
-                                <Button
-                                  variant="danger"
-                                  style={{
-                                    padding: "0.5rem 1rem",
-                                    marginRight: "0.5rem",
-                                  }}
-                                  onClick={() => confirmarEliminar(obra)}
-                                >
-                                  Eliminar
-                                </Button>
-                              </>
+                              <Dropdown.Item onClick={() => confirmarEliminar(obra)}>
+                                Eliminar
+                              </Dropdown.Item>
                             )}
+                          </Dropdown.Menu>
+                        </Dropdown>
                           </td>
                         </tr>
                       </React.Fragment>

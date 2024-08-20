@@ -37,7 +37,7 @@ const SelectParticularPorNombre = ({ onSeleccionar }) => {
   };
 
   const handleClickOutside = (event) => {
-    if (inputRef.current && !inputRef.current.contains(event.target) && listRef.current && !listRef.current.contains(event.target)) {
+    if (inputRef.current && !inputRef.current.contains(event.target)) {
       setShowResults(false); // Ocultar lista si el clic fue fuera del componente
     }
   };
@@ -73,7 +73,7 @@ const SelectParticularPorNombre = ({ onSeleccionar }) => {
         {loading && <Spinner animation="border" />}
         {error && <Alert variant="danger">{error}</Alert>}
         {showResults && (
-          <ListGroup className="result-list" ref={listRef}>
+          <ListGroup className="result-list" ref={listRef} style={{ position: "absolute", zIndex: 1000 }}>
             {resultados.slice(0, 10).map((particular) => (
               <ListGroup.Item
                 key={particular.id}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Container, Modal } from "react-bootstrap";
+import { Button, Form, Container, Modal, Dropdown, ButtonGroup } from "react-bootstrap";
+import { Gear, PencilSquare, Trash, Wrench, Person } from "react-bootstrap-icons";
 import ModificarCamion from "./ModificarCamiones";
 import ServiciosCamion from "../ServiciosFolder/Servicios";
 import AsignarChofer from "./AsignarChofer";
@@ -150,10 +151,10 @@ const Camiones = () => {
               <th scope="col">Modelo</th>
               <th scope="col">Año</th>
               <th scope="col">Estado</th>
-              <th scope="col">Acciones</th>
+              <th scope="col"></th>
             </tr>
             <tr>
-              <th></th>
+              
               <th>
                 <Form.Control
                   type="text"
@@ -184,48 +185,31 @@ const Camiones = () => {
                   <td>{camion.anio}</td>
                   <td>{camion.estado}</td>
                   <td>
-                    {rolUsuario === "admin" && (
-                      <Button
-                        variant="danger"
-                        style={{
-                          padding: "0.5rem 1rem",
-                          marginRight: "0.5rem",
-                        }}
-                        onClick={() => confirmarEliminar(camion)}
+                    <Dropdown as={ButtonGroup}>
+                      <Dropdown.Toggle
+                        split
+                        variant="link"
+                        style={{ padding: 0, margin: 0, border: "none" }}
                       >
-                        Eliminar
-                      </Button>
-                    )}
-                    <Button
-                      variant="primary"
-                      style={{
-                        padding: "0.5rem 1rem",
-                        marginRight: "0.5rem",
-                      }}
-                      onClick={() => handleModificar(camion)}
-                    >
-                      Modificar
-                    </Button>
-                    <Button
-                      variant="info"
-                      style={{
-                        padding: "0.5rem 1rem",
-                        marginRight: "0.5rem",
-                      }}
-                      onClick={() => handleMostrarServicios(camion.id)}
-                    >
-                      Servicios
-                    </Button>
-                    <Button
-                      variant="warning"
-                      style={{
-                        padding: "0.5rem 1rem",
-                        marginRight: "0.5rem",
-                      }}
-                      onClick={() => handleMostrarAsignarChofer(camion.id)}
-                    >
-                      Chofer
-                    </Button>
+                        <Gear size={20} />
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        {rolUsuario === "admin" && (
+                          <Dropdown.Item onClick={() => confirmarEliminar(camion)}>
+                            <Trash className="me-2" /> Eliminar
+                          </Dropdown.Item>
+                        )}
+                        <Dropdown.Item onClick={() => handleModificar(camion)}>
+                          <PencilSquare className="me-2" /> Modificar
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleMostrarServicios(camion.id)}>
+                          <Wrench className="me-2" /> Servicios
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleMostrarAsignarChofer(camion.id)}>
+                          <Person className="me-2" /> Chofer
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
                   </td>
                 </tr>
                 {mostrarModificarCamion === camion && (
@@ -275,36 +259,31 @@ const Camiones = () => {
             <p><strong>Año:</strong> {camion.anio}</p>
             <p><strong>Estado:</strong> {camion.estado}</p>
             <div className="camion-actions">
-              {rolUsuario === "admin" && (
-                <Button
-                  variant="danger"
-                  className="mb-2 w-100"
-                  onClick={() => confirmarEliminar(camion)}
-                >
-                  Eliminar
-                </Button>
-              )}
-              <Button
-                variant="primary"
-                className="mb-2 w-100"
-                onClick={() => handleModificar(camion)}
-              >
-                Modificar
-              </Button>
-              <Button
-                variant="warning"
-                className="w-100"
-                onClick={() => handleMostrarAsignarChofer(camion.id)}
-              >
-                Chofer
-              </Button>
-              <Button
-                variant="info"
-                className="mb-2 w-100"
-                onClick={() => handleMostrarServicios(camion.id)}
-              >
-                Servicios
-              </Button>
+            <Dropdown as={ButtonGroup}>
+    <Dropdown.Toggle
+      split
+      variant="link"
+      style={{ padding: 0, margin: 0, border: "none" }}
+    >
+      <Gear size={20} />
+    </Dropdown.Toggle>
+    <Dropdown.Menu>
+      {rolUsuario === "admin" && (
+        <Dropdown.Item onClick={() => confirmarEliminar(camion)}>
+          <Trash className="me-2" /> Eliminar
+        </Dropdown.Item>
+      )}
+      <Dropdown.Item onClick={() => handleModificar(camion)}>
+        <PencilSquare className="me-2" /> Modificar
+      </Dropdown.Item>
+      <Dropdown.Item onClick={() => handleMostrarServicios(camion.id)}>
+        <Wrench className="me-2" /> Servicios
+      </Dropdown.Item>
+      <Dropdown.Item onClick={() => handleMostrarAsignarChofer(camion.id)}>
+        <Person className="me-2" /> Chofer
+      </Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
             </div>
             {mostrarModificarCamion === camion && (
               <div className="mt-3">

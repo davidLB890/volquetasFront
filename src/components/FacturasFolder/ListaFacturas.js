@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Container,
-  Table,
-  Spinner,
-  Alert,
-  Row,
-  Col,
-  Form,
-  Button,
-  Card,
-} from "react-bootstrap";
+import { Container, Table, Spinner, Alert, Row, Col, Form, Button, Card } from "react-bootstrap";
 import { getFacturas, getParticularId, getEmpresaId } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
 import SelectEmpresaPorNombre from "../EmpresasFolder/SelectEmpresaPorNombre";
 import SelectParticularPorNombre from "../ParticularesFolder/SelectParticularPorNombre";
 import jsPDF from "jspdf";
+import * as XLSX from "xlsx";
 import "jspdf-autotable";
 
 const ListaFacturas = () => {
@@ -138,7 +129,8 @@ const ListaFacturas = () => {
       "Numeración",
       "Monto",
       "Nombre",
-      "Creado En",
+      "Fecha Creación",
+      "Estado",
       "Fecha de Pago",
     ];
     const tableRows = [];
@@ -150,6 +142,7 @@ const ListaFacturas = () => {
         factura.monto,
         factura.nombre,
         moment(factura.createdAt).format("YYYY-MM-DD"),
+        factura.estado,
         factura.fechaPago
           ? moment(factura.fechaPago).format("YYYY-MM-DD")
           : "No Pagado",
@@ -159,7 +152,30 @@ const ListaFacturas = () => {
 
     doc.autoTable(tableColumn, tableRows, { startY: 20 });
     doc.text("Lista de Facturas", 14, 15);
-    doc.save("lista_de_facturas.pdf");
+    const currentDate = moment().format("YYYY-MM-DD");
+    doc.save(`lista_de_facturas(${currentDate}).pdf`);
+  };
+
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      facturas.map(factura => ({
+        Tipo: factura.tipo,
+        Numeración: factura.numeracion,
+        Monto: factura.monto,
+        Nombre: factura.nombre,
+        "Fecha Creación": moment(factura.createdAt).format("YYYY-MM-DD"),
+        Estado: factura.estado,
+        "Fecha de Pago": factura.fechaPago
+          ? moment(factura.fechaPago).format("YYYY-MM-DD")
+          : "No Pagado",
+      }))
+    );
+  
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Facturas");
+  
+    const currentDate = moment().format("YYYY-MM-DD");
+    XLSX.writeFile(wb, `lista_de_facturas(${currentDate}).xlsx`);
   };
 
   const handleRowClick = (factura) => {
@@ -274,12 +290,21 @@ const ListaFacturas = () => {
       <Button 
         variant="success" 
         onClick={exportToPDF} 
-        className="mb-3"
+        style={{ padding: "0.4rem 0.8rem", fontSize: "0.875rem" }} 
+        className="mb-3 me-2"  // Agrega margen a la derecha para separar los botones
         disabled={facturas.length === 0}
       >
         Exportar a PDF
       </Button>
-
+      <Button 
+        variant="info" 
+        style={{ padding: "0.4rem 0.8rem", fontSize: "0.875rem" }} 
+        onClick={exportToExcel} 
+        className="mb-3"
+        disabled={facturas.length === 0}
+      >
+        Exportar a Excel
+      </Button>
       {isSmallScreen ? (
         facturas.map((factura) => (
           <Card key={factura.id} className="mb-3">
@@ -291,6 +316,7 @@ const ListaFacturas = () => {
                 <strong>Nombre:</strong> {factura.nombre} <br />
                 <strong>Fecha creación:</strong>{" "}
                 {moment(factura.createdAt).format("YYYY-MM-DD")} <br />
+                <strong>Estado:</strong> {factura.estado} <br />
                 <strong>Fecha Pago:</strong>{" "}
                 {factura.fechaPago
                   ? moment(factura.fechaPago).format("YYYY-MM-DD")
@@ -303,29 +329,43 @@ const ListaFacturas = () => {
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th>Factura</th>
+              <th>Tipo</th>
               <th>Numeración</th>
               <th>Monto</th>
               <th>Nombre</th>
               <th>Fecha creación</th>
+              <th>Estado</th>
               <th>Fecha Pago</th>
             </tr>
           </thead>
           <tbody>
-            {facturas.map((factura) => (
-              <tr key={factura.id} onClick={() => handleRowClick(factura)}>
-                <td>{factura.tipo}</td>
-                <td>{factura.numeracion}</td>
-                <td>{factura.monto}</td>
-                <td>{factura.nombre}</td>
-                <td>{moment(factura.createdAt).format("YYYY-MM-DD")}</td>
-                <td>
-                  {factura.fechaPago
-                    ? moment(factura.fechaPago).format("YYYY-MM-DD")
-                    : "No Pagado"}
-                </td>
-              </tr>
-            ))}
+          {facturas.map((factura) => (
+            <tr
+              key={factura.id}
+              onClick={() => handleRowClick(factura)}
+              style={{
+                backgroundColor: factura.estado === "anulada" 
+                  ? "#ffcccc" 
+                  : factura.estado === "pagada"
+                  ? "#ccffcc" // Verde clarito
+                  : "white",
+              }}
+            >
+              <td>{factura.tipo}</td>
+              <td>{factura.numeracion}</td>
+              <td>{factura.monto}</td>
+              <td>{factura.nombre}</td>
+              <td>{moment(factura.createdAt).format("YYYY-MM-DD")}</td>
+              <td>{factura.estado}</td>
+              <td>
+                {factura.fechaPago
+                  ? moment(factura.fechaPago).format("YYYY-MM-DD")
+                  : "No Pagado"}
+              </td>
+            </tr>
+          ))}
+
+
           </tbody>
         </Table>
       )}

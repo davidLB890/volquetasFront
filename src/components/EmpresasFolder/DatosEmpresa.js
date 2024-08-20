@@ -1,28 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Card,
-  Spinner,
-  Alert,
-  Button,
-  Container,
-  Collapse,
-  Row,
-  Col,
-  Modal, // Importa Modal
-} from "react-bootstrap";
+import { Card, Spinner,  Alert, Button, Container, Collapse, Row,Col, Modal, Dropdown} from "react-bootstrap";
+import { PencilSquare, Trash, GearFill} from "react-bootstrap-icons";
 import useAuth from "../../hooks/useAuth";
 import { getEmpresaId } from "../../api";
-import {
-  fetchEmpresaStart,
-  fetchEmpresaSuccess,
-  fetchEmpresaFailure,
-  createContactoSuccess,
-  createObraSuccess,
-  createPermisoEmpresaSuccess,
-  deleteObraSuccess,
-} from "../../features/empresaSlice";
+import { fetchEmpresaStart, fetchEmpresaSuccess, fetchEmpresaFailure, createContactoSuccess,
+ createObraSuccess, createPermisoEmpresaSuccess, deleteObraSuccess } from "../../features/empresaSlice";
 import ContactosEmpresa from "./ContactosEmpresa";
 import AgregarContactoEmpresa from "./AgregarContactoEmpresa";
 import ModificarEmpresa from "./ModificarEmpresa";
@@ -128,8 +112,43 @@ const DatosEmpresa = () => {
         </Button>
       )}
       <Card className="mt-3">
-        <Card.Header>
-          <h2>{empresa?.nombre}</h2>
+        <Card.Header style={{ display: "flex", alignItems: "center", padding: "0.5rem 1rem" }}>    
+          <h2 style={{ margin: 0, marginRight: "0.5rem" }}>{empresa?.nombre}</h2>
+          <Dropdown
+            onClick={(e) => e.stopPropagation()} // Evitar que el clic en el Dropdown se propague
+          >
+            <Dropdown.Toggle
+              as={Button}
+              variant="link"
+              style={{
+                padding: 0,
+                margin: 0,
+                border: "none",
+                background: "none",
+                boxShadow: "none",
+              }}
+            >
+              <GearFill size={24} />
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowModificarEmpresa(true); // Muestra el modal de modificación
+                }}
+              >
+                <PencilSquare className="me-2" /> Modificar Empresa
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowConfirmDelete(true); // Muestra el modal de confirmación de eliminación
+                }}
+              >
+                <Trash className="me-2" /> Eliminar Empresa
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </Card.Header>
         <Card.Body>
           <Card.Text>
@@ -144,7 +163,7 @@ const DatosEmpresa = () => {
 
           <Row>
             <Col xs={12} md={8} className="d-flex flex-column flex-md-row">
-              <Button
+              {/* <Button
                 onClick={() => setShowConfirmDelete(true)} // Muestra el modal de confirmación
                 variant="danger"
                 className="mb-2 mb-md-0 me-md-2"
@@ -163,7 +182,7 @@ const DatosEmpresa = () => {
                 }}
               >
                 Modificar Empresa
-              </Button>
+              </Button> */}
               <Button
                 onClick={() => setShowAgregarObra(true)}
                 className="mb-2 mb-md-0 me-md-2"
@@ -177,7 +196,7 @@ const DatosEmpresa = () => {
               <Button
                 onClick={() => setShowAgregarPermiso(true)}
                 className="mb-2 mb-md-0 me-md-2"
-                variant="secondary"
+                variant="info"
                 style={{
                   padding: "0.5rem 1rem",
                 }}
@@ -188,7 +207,7 @@ const DatosEmpresa = () => {
                 onClick={() => setShowContactos(!showContactos)}
                 aria-controls="contactos-collapse"
                 aria-expanded={showContactos}
-                variant="info"
+                variant="secondary"
                 className="mb-2 mb-md-0 me-md-2"
                 style={{
                   padding: "0.5rem 1rem",

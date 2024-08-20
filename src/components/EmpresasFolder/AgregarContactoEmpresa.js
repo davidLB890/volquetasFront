@@ -31,6 +31,8 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], obraId, show, onHide })
   const [formularioVisible, setFormularioVisible] = useState(true);
   const location = useLocation();
 
+  const MAX_LENGTH = 255;
+
   const refs = [nombreRef, emailRef];
   const boton = useHabilitarBoton(refs);
   const dispatch = useDispatch();
@@ -60,6 +62,13 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], obraId, show, onHide })
 
   const handleAgregarContacto = async () => {
     const usuarioToken = getToken();
+    if(descripcionRef.current.value.length > MAX_LENGTH){
+      setError("La descripción no puede tener más de 255 caracteres");
+      setTimeout(() => {
+        setError("");
+      }, 1500);
+      return;
+    }
     const nuevoContacto = {
       nombre: nombreRef.current.value,
       descripcion: descripcionRef.current.value,
