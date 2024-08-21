@@ -1,21 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Spinner,
-  Alert,
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  Modal,
-} from "react-bootstrap";
-import {
-  fetchPedido,
-  fetchObra,
-  fetchPermisos,
-} from "../../features/pedidoSlice";
+import { Spinner, Alert, Container, Row, Col, Card, Button, Modal } from "react-bootstrap";
+import { fetchPedido, fetchObra, fetchPermisos } from "../../features/pedidoSlice";
 import useAuth from "../../hooks/useAuth";
 import MovimientosYSugerencias from "../MovimientosFolder/MovimientosYSugerencias";
 import DetallesPedido from "./DetallesPedido";

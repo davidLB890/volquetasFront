@@ -821,6 +821,14 @@ export const ubicacionTemporalVolqueta = (volquetaId, ubicacionTemporal, usuario
     },
   });
 };
+export const volquetasVencidas = (usuarioToken) => {
+  return axios.get(`${API_URL}volquetas-48hs`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
 
 
 

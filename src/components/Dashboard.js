@@ -6,10 +6,12 @@ import { Button, Container, Row, Col } from "react-bootstrap";
 import { fetchEmpleados } from "../features/empleadosSlice";
 import useAuth from "../hooks/useAuth";
 import Pedidos from "./PedidosFolder/Pedidos";
+import useVolquetasAlert from "../hooks/useVolquetasAlert";
 import Deudores from "./EstadisticasFolder/DeudoresEstadisticas";
 import ClientesEstadisticas from "./EstadisticasFolder/ClientesEstadisticas";
 import ChoferEstadisticas from "./EstadisticasFolder/ChoferEstadisticas";
 import PedidosEstadisticas from "./EstadisticasFolder/PedidosEstadisticas";
+import ListaVolquetasViaPublica from "./VolquetasFolder/ListaVolquetasViaPublica";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -25,6 +27,8 @@ const Dashboard = () => {
   const handleAgregarPedido = () => {
     navigate("/pedidos/crear");
   };
+
+  useVolquetasAlert()
 
   return (
     <Container>
@@ -45,6 +49,7 @@ const Dashboard = () => {
         </Row>
       </div> */}
       <Pedidos />
+      <ListaVolquetasViaPublica />
     </Container>
   );
 };
