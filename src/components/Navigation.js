@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Nav, Navbar, Container, Button, NavLink, Row, Col } from "react-bootstrap";
+import React, { useState, useEffect , useRef} from "react";
+import { Nav, Navbar, Container, Button, NavLink, Row, Col, Dropdown, DropdownButton, Modal, Popover, OverlayTrigger } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "./Breadcrumbs";
+import CambiarContrasena from "../components/UsuariosFolder/CambiarContrasena"; 
+import { GearFill } from "react-bootstrap-icons"; 
 import "../assets/css/navbar.css";
 import "../assets/css/CustomSidebar.css";
 
@@ -9,12 +11,38 @@ const Navigation = ({ userRole }) => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState("");
   const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef(null); // Ref para el menú
+
+  const handleShowPasswordModal = () => setShowPasswordModal(true);
+  const handleClosePasswordModal = () => setShowPasswordModal(false);
+
+  const handleClickOutside = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setShowMenu(false); // Cerrar el menú si se hace clic fuera
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handlePasswordChangeSuccess = () => {
+    setTimeout(() => {
+      setShowPasswordModal(false);
+    }, 1500);
+  };
 
   const cerrarSesion = () => {
     localStorage.clear();
-  sessionStorage.clear();
-  navigate('/login');
+    sessionStorage.clear();
+    navigate('/login');
   };
+
 
   const toggleExpand = (section) => {
     setExpanded((prevState) => (prevState === section ? "" : section));
@@ -47,6 +75,10 @@ const Navigation = ({ userRole }) => {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const toggleMenu = () => {
+    setShowMenu((prev) => !prev);
+  };
 
   return (
     <div>
@@ -93,12 +125,62 @@ const Navigation = ({ userRole }) => {
           </Nav.Link>
         </div>
         <hr className="horizontal dark mt-0" />
-        <div className="user-info-sidenav d-flex align-items-center justify-content-between px-3 mb-3">
-          <h5 className="mb-0">{localStorage.getItem("userNombre")}</h5>
-          <Button variant="secondary" onClick={cerrarSesion}>
-            Cerrar Sesión
-          </Button>
+        
+        <div>
+          <div className="user-info-sidenav d-flex align-items-center justify-content-between px-3 mb-3">
+            <h5 className="mb-0">{localStorage.getItem("userNombre")}</h5>
+
+            <div style={{ position: "relative" }} ref={menuRef}>
+              <Button
+                variant="link"
+                style={{
+                  padding: 0,
+                  margin: 0,
+                  border: "none",
+                  background: "none",
+                  boxShadow: "none",
+                }}
+                onClick={toggleMenu}
+              >
+                <GearFill size={24} />
+              </Button>
+
+              {showMenu && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%", // Just below the button
+                    right: 0,
+                    backgroundColor: "white",
+                    border: "1px solid #ced4da",
+                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                    zIndex: 1000,
+                    minWidth: "150px",
+                    borderRadius: "25px", // Bordes redondeados
+                  }}
+                >
+                  <Button variant="link" onClick={cerrarSesion} className="w-100 text-start mt-0 mb-0">
+                    Cerrar Sesión
+                  </Button>
+                  <Button variant="link" onClick={handleShowPasswordModal} className="w-100 text-start mt-0 mb-0">
+                    Cambiar Contraseña
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
+          
+        <Modal show={showPasswordModal} onHide={handleClosePasswordModal} centered>
+          <Modal.Header closeButton style={{ borderBottom: 'none' }}>
+            <button type="button" className="btn-close" onClick={handleClosePasswordModal}
+              style={{ color: 'black', backgroundColor: 'clack',
+              border: 'none', fontSize: '1.2rem', }}/>
+          </Modal.Header>
+          <Modal.Body>
+            <CambiarContrasena onSuccess={handlePasswordChangeSuccess} />
+          </Modal.Body>
+        </Modal>
         <div
           className="collapse navbar-collapse w-auto ps"
           id="sidenav-collapse-main"
@@ -106,8 +188,8 @@ const Navigation = ({ userRole }) => {
         >
           <Nav className="navbar-nav">
           <div
-              onMouseEnter={() => handleMouseEnter("pedidos")}
-              onMouseLeave={handleMouseLeave}
+              /* onMouseEnter={() => handleMouseEnter("pedidos")}
+              onMouseLeave={handleMouseLeave} */
               className="nav-item-container"
             >
               <Nav.Item className="nav-item">
@@ -132,8 +214,8 @@ const Navigation = ({ userRole }) => {
               </Nav.Item>
             </div>
             <div
-              onMouseEnter={() => handleMouseEnter("clientes")}
-              onMouseLeave={handleMouseLeave}
+              /* onMouseEnter={() => handleMouseEnter("clientes")}
+              onMouseLeave={handleMouseLeave} */
               className="nav-item-container"
             >
               <Nav.Item className="nav-item">
@@ -165,8 +247,8 @@ const Navigation = ({ userRole }) => {
               </Nav.Item>
             </div>
             <div
-              onMouseEnter={() => handleMouseEnter("empleados")}
-              onMouseLeave={handleMouseLeave}
+              /* onMouseEnter={() => handleMouseEnter("empleados")}
+              onMouseLeave={handleMouseLeave} */
               className="nav-item-container"
             >
               <Nav.Item className="nav-item">
@@ -221,8 +303,8 @@ const Navigation = ({ userRole }) => {
             </div>
 
             <div
-              onMouseEnter={() => handleMouseEnter("camiones")}
-              onMouseLeave={handleMouseLeave}
+              /* onMouseEnter={() => handleMouseEnter("camiones")}
+              onMouseLeave={handleMouseLeave} */
               className="nav-item-container"
             >
               <Nav.Item className="nav-item">
@@ -255,8 +337,8 @@ const Navigation = ({ userRole }) => {
             </div>
 
             <div
-              onMouseEnter={() => handleMouseEnter("listas")}
-              onMouseLeave={handleMouseLeave}
+              /* onMouseEnter={() => handleMouseEnter("listas")}
+              onMouseLeave={handleMouseLeave} */
               className="nav-item-container"
             >
               <Nav.Item className="nav-item">
@@ -294,8 +376,8 @@ const Navigation = ({ userRole }) => {
             </div>
 
             <div
-              onMouseEnter={() => handleMouseEnter("volquetas")}
-              onMouseLeave={handleMouseLeave}
+              /* onMouseEnter={() => handleMouseEnter("volquetas")}
+              onMouseLeave={handleMouseLeave} */
               className="nav-item-container"
             >
               <Nav.Item className="nav-item">
@@ -356,8 +438,8 @@ const Navigation = ({ userRole }) => {
             </div> */}
 
             <div
-              onMouseEnter={() => handleMouseEnter("estadisticas")}
-              onMouseLeave={handleMouseLeave}
+              /* onMouseEnter={() => handleMouseEnter("estadisticas")}
+              onMouseLeave={handleMouseLeave} */
               className="nav-item-container"
             >
               <Nav.Item className="nav-item">

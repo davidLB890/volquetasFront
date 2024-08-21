@@ -3,7 +3,7 @@ import { Form, Button, Spinner, Alert, Container, Row, Col } from "react-bootstr
 import { cambiarContrasena } from "../../api";
 import useAuth from "../../hooks/useAuth";
 
-const CambiarContrasena = () => {
+const CambiarContrasena = ({ onSuccess }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -32,6 +32,7 @@ const CambiarContrasena = () => {
       setSuccess("Contraseña cambiada exitosamente");
       setTimeout(() => {
         setSuccess("");
+        onSuccess()
       }, 1500);
       setOldPassword("");
       setNewPassword("");
