@@ -45,6 +45,8 @@ import ChoferEstadisticas from './components/EstadisticasFolder/ChoferEstadistic
 import ClientesEstadisticas from './components/EstadisticasFolder/ClientesEstadisticas';
 import PedidosEstadisticas from './components/EstadisticasFolder/PedidosEstadisticas';
 import DeudoresEstadisticas from './components/EstadisticasFolder/DeudoresEstadisticas';
+import CambiarContrasenaAdmin from './components/UsuariosFolder/CambiarContrasenaAdmin';
+import CambiarContrasena from './components/UsuariosFolder/CambiarContrasena';
 
 function App() {
   const location = useLocation();
@@ -69,9 +71,9 @@ function App() {
 
   const isLoginPage = location.pathname === '/login';
   const isSinginPage = location.pathname === '/singin';
-  const isNotFoundPage = !['/', '/login', '/singin', '/usuarios/confirmar', 
+  const isNotFoundPage = !['/', '/login', '/singin', '/usuarios/confirmar', "/usuarios/cambiar-contrasena-admin",
     '/empleados/crear', '/empleados/telefonos', '/empleados', '/empleados/jornales', 
-    '/lj', '/camiones', '/camiones/crear', '/camiones/historial', '/obras', 
+    "/usuarios/cambiar-contrasena",'/lj', '/camiones', '/camiones/crear', '/camiones/historial', '/obras', 
     '/obras/crear', '/empresas', '/empresas/datos', '/empresas/crear', '/particulares', 
     '/particulares/datos', '/particulares/crear', '/pedidos/crear', '/pedidos/datos', 
     '/volquetas', '/volquetas/crear', '/volquetas/datos', '/facturas', '/facturas/crear',
@@ -92,6 +94,8 @@ function App() {
             <Route path="/singin" element={<Singin />} />
             {/* USUARIOS */}
             <Route path="/usuarios/confirmar" element={<ConfirmarUsuario />} />
+            <Route path="/usuarios/cambiar-contrasena-admin" element={<CambiarContrasenaAdmin />} />
+            <Route path="/usuarios/cambiar-contrasena" element={<CambiarContrasena />} />
             <Route path="/empleados/crear" element={<AgregarEmpleado />} />
             <Route path="/empleados/telefonos" element={<AgregarTelefono />} />
             {/* EMPLEADOS */}

@@ -59,10 +59,12 @@ const Login = () => {
   const saveUser = async (token) => {
     try {
       const decodedToken = jwtDecode(token);
-      const { rol, id } = decodedToken;
+      console.log("Decoded token:", decodedToken);
+      const { rol, id, email } = decodedToken;
 
       localStorage.setItem("userRol", rol);
       localStorage.setItem("userId", id);
+      localStorage.setItem("userEmail", email);
       sessionStorage.setItem("activeSession", "true");
 
       const responseEmpleado = await obtenerEmpleado(id, token);
@@ -96,23 +98,23 @@ const Login = () => {
               />
             </div>
             <div className="input-group form-group">
-  <InputGroup>
-    <FormControl
-      ref={password}
-      type={showPassword ? "text" : "password"}
-      className="form-control"
-      placeholder="contraseña"
-      style={{ height: "calc(1.5em + .75rem + 2px)" }} // Ajusta la altura para que coincida con el botón
-    />
-    <Button
-      variant="outline-secondary"
-      onClick={togglePasswordVisibility}
-      style={{ height: "calc(1.5em + .75rem + 2px)" }} // Ajusta la altura para que coincida con el campo de contraseña
-    >
-      {showPassword ? "Ocultar" : "Mostrar"}
-    </Button>
-  </InputGroup>
-</div>
+              <InputGroup>
+                <FormControl
+                  ref={password}
+                  type={showPassword ? "text" : "password"}
+                  className="form-control"
+                  placeholder="contraseña"
+                  style={{ height: "calc(1.5em + .75rem + 2px)" }} // Ajusta la altura para que coincida con el botón
+                />
+                <Button
+                  variant="outline-secondary"
+                  onClick={togglePasswordVisibility}
+                  style={{ height: "calc(1.5em + .75rem + 2px)" }} // Ajusta la altura para que coincida con el campo de contraseña
+                >
+                  {showPassword ? "Ocultar" : "Mostrar"}
+                </Button>
+              </InputGroup>
+            </div>
             <AlertMessage type="error" message={error} />
             <div className="text-center">
               <input

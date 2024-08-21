@@ -50,7 +50,7 @@ const SelectParticularPorNombre = ({ onSeleccionar }) => {
   }, []);
 
   return (
-    <div ref={inputRef}>
+    <div ref={inputRef} style={{ position: "relative" }}>
       <Form.Group controlId="searchFormGroup" className="mb-0">
         <InputGroup className="mb-0">
           <Form.Control
@@ -73,7 +73,7 @@ const SelectParticularPorNombre = ({ onSeleccionar }) => {
         {loading && <Spinner animation="border" />}
         {error && <Alert variant="danger">{error}</Alert>}
         {showResults && (
-          <ListGroup className="result-list" ref={listRef} style={{ position: "absolute", zIndex: 1000 }}>
+          <ListGroup className="result-list" ref={listRef} style={{ position: "absolute", width: "100%", zIndex: 1000 }}>
             {resultados.slice(0, 10).map((particular) => (
               <ListGroup.Item
                 key={particular.id}

@@ -123,6 +123,30 @@ export const obtenerUsuarios = (usuarioToken) => {
     },
   });
 };
+export const cambiarContrasenaAdministrador = (email, newPassword, confirmNewPassword, usuarioToken) => {
+  return axios.put(
+    `${API_URL}usuarios-contrasenia-admin`,
+    { email, newPassword, confirmNewPassword },
+    {
+      headers: {
+        Authorization: usuarioToken,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+}
+export const cambiarContrasena = (email, oldPassword, newPassword, confirmNewPassword, usuarioToken) => {
+  return axios.put(
+    `${API_URL}usuarios-contrasenia`,
+    { email, oldPassword, newPassword, confirmNewPassword },
+    {
+      headers: {
+        Authorization: usuarioToken,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+}
 
 
 

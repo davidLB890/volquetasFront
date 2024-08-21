@@ -1,29 +1,15 @@
 import React, { useState, useEffect } from "react";
-import {
-  Form,
-  Button,
-  Container,
-  Row,
-  Col,
-  Spinner,
-  Alert,
-  Modal,
-} from "react-bootstrap";
+import { Form, Button, Container, Row, Col, Spinner, Alert, Modal, } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import AgregarEmpresa from "../EmpresasFolder/AgegarEmpresa";
 import AgregarParticular from "../ParticularesFolder/AgregarParticular";
-import BuscarEmpresa from "../PedidosFolder/BuscarEmpresa";
-import BuscarParticular from "../PedidosFolder/BuscarParticular";
+import SelectEmpresaConDatos from "./SelectEmpresaConDatos";
+import SelectParticularConDatos from "./SelectParticularConDatos";
 import SelectObra from "../ObrasFolder/SelectObra";
 import AgregarObra from "../ObrasFolder/AgregarObra";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import {
-  postPedidoNuevo,
-  postPedidoMultiple,
-  postPedidoEntregaLevante,
-  getPedidoId,
-} from "../../api";
+import { postPedidoNuevo, postPedidoMultiple, postPedidoEntregaLevante, getPedidoId } from "../../api";
 import SelectPermiso from "../PermisosFolder/selectPermiso";
 import { PRECIO_VOLQUETA_GRANDE } from "../../config/config";
 import { PRECIO_VOLQUETA_PEQUENA } from "../../config/config";
@@ -286,7 +272,7 @@ const AgregarPedido = () => {
         {clienteEstado === "registrado" &&
           clienteTipo === "empresa" &&
           !empresaSeleccionada && (
-            <BuscarEmpresa
+            <SelectEmpresaConDatos
               onSeleccionar={handleAgregarCliente}
               getToken={getToken}
             />
@@ -295,7 +281,7 @@ const AgregarPedido = () => {
         {clienteEstado === "registrado" &&
           clienteTipo === "particular" &&
           !particularSeleccionado && (
-            <BuscarParticular
+            <SelectParticularConDatos
               onSeleccionar={handleAgregarCliente}
               getToken={getToken}
             />

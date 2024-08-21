@@ -207,6 +207,15 @@ const Navigation = ({ userRole }) => {
                       Confirmar usuarios
                     </Nav.Link>
                   )}
+                  {userRole === "admin" && (
+                    <Nav.Link
+                      as={Link}
+                      to="/usuarios/cambiar-contrasena-admin"
+                      onClick={handleMouseLeave}
+                    >
+                      Cambiar Contraseñas
+                    </Nav.Link>
+                  )}
                 </div>
               </Nav.Item>
             </div>
