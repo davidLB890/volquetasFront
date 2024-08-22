@@ -1,32 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Button,
-  Spinner,
-  Alert,
-  Card,
-  Form,
-  Row,
-  Col,
-} from "react-bootstrap";
-import {
-  getDeudoresEstadisticas,
-  getEmpresaId,
-  getParticularId,
-} from "../../api";
+import { Container, Button, Spinner, Alert, Card, Form, Row, Col } from "react-bootstrap";
+import { getDeudoresEstadisticas, getEmpresaId, getParticularId } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 
 ChartJS.register(
   CategoryScale,
@@ -39,26 +18,25 @@ ChartJS.register(
 
 const Deudores = () => {
   const [topEmpresasNoPagadosMonto, setTopEmpresasNoPagadosMonto] = useState([]);
-  const [topParticularesNoPagadosMonto, setTopParticularesNoPagadosMonto] =
-    useState([]);
-  const [topEmpresasNoPagadosCantidad, setTopEmpresasNoPagadosCantidad] =
-    useState([]);
-  const [topParticularesNoPagadosCantidad, setTopParticularesNoPagadosCantidad] =
-    useState([]);
+  const [topParticularesNoPagadosMonto, setTopParticularesNoPagadosMonto] = useState([]);
+  const [topEmpresasNoPagadosCantidad, setTopEmpresasNoPagadosCantidad] = useState([]);
+  const [topParticularesNoPagadosCantidad, setTopParticularesNoPagadosCantidad] = useState([]);
   const [empresaNombres, setEmpresaNombres] = useState({});
   const [particularNombres, setParticularNombres] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [fechaInicio, setFechaInicio] = useState(
-    moment().startOf("month").format("YYYY-MM-DD")
-  );
-  const [fechaFin, setFechaFin] = useState(
-    moment().endOf("month").format("YYYY-MM-DD")
-  );
+  const [fechaInicio, setFechaInicio] = useState( moment().startOf("month").format("YYYY-MM-DD"));
+  const [fechaFin, setFechaFin] = useState( moment().endOf("month").format("YYYY-MM-DD") );
   const [deudores, setDeudores] = useState(3);
   const getToken = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!getToken()) {
+      navigate("/login");
+    }
+  }, [getToken, navigate]);
 
   const fetchNombres = async (deudoresEmpresas, deudoresParticulares) => {
     const usuarioToken = getToken();

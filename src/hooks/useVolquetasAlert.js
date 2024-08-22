@@ -14,7 +14,8 @@ const useVolquetasAlert = () => {
 
         if (volquetas.length > 0) {
           setTimeout(() => {
-            alert("Hay volquetas que ya cumplieron las 48hs, revise 'volquetas en vía pública' para más detalles");
+            alert("Hay pedidos que no han sido levantados en más de 48hs, revise 'volquetas en vía pública' (esquina inferior derecha) para más detalles");
+            //alert("Hay volquetas que ya cumplieron las 48hs de uso, revise 'volquetas en vía pública' (esquina inferior derecha) para más detalles");
           }, 100); // Ejecutar alert después de un pequeño retraso para permitir la carga del componente
         }
       } catch (error) {

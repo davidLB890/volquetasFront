@@ -1,27 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Button,
-  Spinner,
-  Alert,
-Card,
-  Form,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { Container, Button, Spinner, Alert, Card, Form, Row, Col } from "react-bootstrap";
 import moment from "moment";
 import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import useAuth from "../../hooks/useAuth";
 import { getEstadisticasPedidos } from "../../api";
+import { useNavigate } from "react-router-dom";
 
 // Registra los componentes necesarios de Chart.js
 ChartJS.register(
@@ -34,17 +18,20 @@ ChartJS.register(
 );
 
 const PedidosEstadisticas = () => {
-  const [fechaInicio, setFechaInicio] = useState(
-    moment().startOf("isoWeek").format("YYYY-MM-DD")
-  );
-  const [fechaFin, setFechaFin] = useState(
-    moment().endOf("isoWeek").format("YYYY-MM-DD")
-  );
+  const [fechaInicio, setFechaInicio] = useState( moment().startOf("isoWeek").format("YYYY-MM-DD"));
+  const [fechaFin, setFechaFin] = useState( moment().endOf("isoWeek").format("YYYY-MM-DD"));
   const [estadisticas, setEstadisticas] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const getToken = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!getToken()) {
+      navigate("/login");
+    }
+  }, [getToken, navigate]);
 
   useEffect(() => {
     fetchEstadisticasPedidos(fechaInicio, fechaFin);

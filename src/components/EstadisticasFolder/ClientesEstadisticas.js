@@ -42,6 +42,12 @@ const ClientesEstadisticas = () => {
   const getToken = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!getToken()) {
+      navigate("/login");
+    }
+  }, [getToken, navigate]);
+
   const buscarCliente = async (id, tipo) => {
     const usuarioToken = getToken();
     try {

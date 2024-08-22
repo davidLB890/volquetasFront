@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+/* import React, { useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import DeudoresEstadisticas from "./DeudoresEstadisticas";
 import PedidosEstadisticas from "./PedidosEstadisticas";
@@ -40,4 +40,4 @@ const Estadisticas = () => {
   );
 };
 
-export default Estadisticas;
+export default Estadisticas; */

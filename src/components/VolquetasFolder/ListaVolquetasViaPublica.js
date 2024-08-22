@@ -99,8 +99,6 @@ const ListaVolquetasViaPublica = () => {
                     >
                       {volqueta.Obra.calle}
                     </span>{" "}
-                    entregado a las{" "}
-                    {new Date(volqueta.Movimientos[0].horario).toLocaleTimeString()}{" "}
                   </p>
                 </Card.Body>
               </Card>

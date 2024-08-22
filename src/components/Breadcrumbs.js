@@ -29,6 +29,9 @@ const Breadcrumbs = () => {
     "reporteChofer": "Reportes de Chofer",
     "cajas": "Caja",
     "cambiar-contrasena-admin": "Cambiar Contraseñas",
+    "estadisticasdeudores": "Estadisticas Deudores",
+    "estadisticaspedidos": "Estadisticas Pedidos",
+    "estadisticascliente": "Estadisticas Cliente",
   };
 
   const handleClick = (to) => {
