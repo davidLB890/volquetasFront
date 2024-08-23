@@ -7,7 +7,8 @@
 }
 
 .sidenav.collapsed {
-  transform: translateX(-100%);
+  transform: translateX(-110%);
+  overflow: hidden;
   transition: transform 0.3s ease-in-out;
 }
 
@@ -95,6 +96,7 @@
 
 .collapsed .sidenav {
   transform: translateX(-100%);
+  overflow: hidden;
 }
 
 .collapsed .main-content {

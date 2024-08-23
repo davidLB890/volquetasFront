@@ -8,7 +8,7 @@ import { TIPOS_HORARIO_PEDIDO, ESTADOS_PEDIDO } from "../../config/config";
 import { getEmpresaId, getParticularId } from "../../api";
 import useAuth from "../../hooks/useAuth";
 
-const FiltrosPedido = ({ setFiltros }) => {
+const FiltrosPedido = ({ setFiltros, onCleanFiltros} ) => {
   const savedFiltros = JSON.parse(localStorage.getItem("filtrosPedido")) || {};
   const [fechaInicio, setFechaInicio] = useState(
     savedFiltros.fechaInicio || moment().startOf("day").add(1, "hours").format("YYYY-MM-DDTHH:mm")
@@ -49,6 +49,33 @@ const FiltrosPedido = ({ setFiltros }) => {
 
     setFiltros(filtrosIniciales);
   }, []);
+
+  const resetearFiltros = () => {
+    setFechaInicio(moment().startOf("day").add(1, "hours").format("YYYY-MM-DDTHH:mm"));
+    setFechaFin(moment().endOf("day").format("YYYY-MM-DDTHH:mm"));
+    setEstado("");
+    setTipoHorario("creacion");
+    setEmpresaId(null);
+    setEmpresaNombre("");
+    setParticularId(null);
+    setParticularNombre("");
+    setObraId("");
+    setFiltroTipo("");
+    setChoferSeleccionado("");
+
+    // Reseteando los filtros en el localStorage
+    const filtrosPorDefecto = {
+      tipoSugerencia: "general",
+      filtroPago: "todos",
+      filtroCliente: "todos",
+      filtroMovimiento: "todos",
+    };
+
+    localStorage.setItem("filtrosPedido", JSON.stringify(filtrosPorDefecto));
+
+    // Llama la función de reset que se pasa desde el componente padre
+    onCleanFiltros(filtrosPorDefecto);
+  };
 
   const handleFilterChange = (e) => {
     e.preventDefault();
@@ -168,7 +195,18 @@ const FiltrosPedido = ({ setFiltros }) => {
               padding: "0.5rem 1rem",
             }}
           >
-            Más Filtros
+            {openFilters ? "Menos Filtros" : "Más Filtros"}
+          </Button>
+          <Button
+            onClick={() => resetearFiltros()}
+            aria-controls="filtros-collapse"
+            aria-expanded={openFilters}
+            className="mt-3 mb-2 mb-md-0 me-md-2"
+            style={{
+              padding: "0.5rem 1rem",
+            }}
+          >
+            Limpiar campos
           </Button>
           {!openFilters && (
             <Button

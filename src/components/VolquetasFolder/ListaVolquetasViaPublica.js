@@ -62,7 +62,7 @@ const ListaVolquetasViaPublica = () => {
       >
         <div style={{ display: "flex", alignItems: "center" }}>
           <i className={`bi bi-arrow-${showLista ? "down" : "up"}`}></i>
-          <p style={{ margin: 0, marginLeft: "0.5rem" }}>Volquetas en Vía Pública</p>
+          <p style={{ margin: 0, marginLeft: "0.5rem" }}>Pedidos en Vía Pública {volquetas.length}</p>
         </div>
       </div>
 

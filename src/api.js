@@ -213,7 +213,6 @@ export const getHistoricoCamion = (camionId, usuarioToken) => {
   });
 };
 export const getHistoricoChofer = (empleadoId, usuarioToken) => {
-  console.log("id chofer " + empleadoId);
   return axios.get(`${API_URL}historico-camion?empleadoId=${empleadoId}`, {
     headers: {
       Authorization: usuarioToken,
@@ -576,7 +575,6 @@ export const putObra = (obraId, obra, usuarioToken) => {
   });
 };
 export const putObraDetalle = (obraId, obra, usuarioToken) => {
-  console.log(obraId, obra)
   return axios.put(`${API_URL}obras-detalle/${obraId}`, obra, {
     headers: {
       Authorization: usuarioToken,
@@ -734,7 +732,6 @@ export const postPedidoEntregaLevante = (pedido, usuarioToken) => {
   });
 };
 export const postPedidoRecambio = (pedido, usuarioToken) => {
-  console.log(pedido)
   return axios.post(`${API_URL}pedidos/recambio`, pedido, {
     headers: {
       Authorization: usuarioToken,

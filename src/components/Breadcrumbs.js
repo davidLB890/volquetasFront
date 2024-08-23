@@ -11,7 +11,7 @@ const Breadcrumbs = () => {
     'empleados': 'Empleados',
     'jornales': 'Jornales',
     'camiones': 'Camiones',
-    'historial': 'Historial Camiones',
+    'historial': 'Historial',
     'clientes': 'Clientes',
     'usuarios': 'Usuarios',
     'confirmar': 'Confirmar',

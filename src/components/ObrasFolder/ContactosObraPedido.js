@@ -120,19 +120,34 @@ const ContactosObraPedido = () => {
 
         {/* Modal para elegir entre agregar nuevo contacto o seleccionar existente */}
         <Modal show={showSeleccionModal} onHide={() => setShowSeleccionModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Seleccionar Tipo de Contacto</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p>¿Desea agregar un contacto nuevo o seleccionar uno existente?</p>
-            <Button variant="primary" onClick={() => handleSeleccion(false)}>
-              Seleccionar Contacto Existente
-            </Button>
-            <Button variant="success" onClick={() => handleSeleccion(true)} className="ml-2">
-              Agregar Contacto Nuevo
-            </Button>
-          </Modal.Body>
-        </Modal>
+  <Modal.Header>
+    <Modal.Title>Seleccionar Tipo de Contacto</Modal.Title>
+    <Button 
+      variant="link" 
+      onClick={() => setShowSeleccionModal(false)} 
+      style={{
+        textDecoration: "none",
+        color: "black",
+        position: "absolute",
+        top: "10px",
+        right: "10px",
+        fontSize: "1.5rem",
+      }}
+    >
+      &times;
+    </Button>
+  </Modal.Header>
+  <Modal.Body>
+    <p>¿Desea agregar un contacto nuevo o seleccionar uno existente?</p>
+    <Button variant="primary" onClick={() => handleSeleccion(false)}>
+      Seleccionar Contacto Existente
+    </Button>
+    <Button variant="success" onClick={() => handleSeleccion(true)} className="ml-2">
+      Agregar Contacto Nuevo
+    </Button>
+  </Modal.Body>
+</Modal>
+
 
         {/* Modal para Agregar Contacto Nuevo */}
         <AgregarContactoEmpresa
@@ -146,8 +161,22 @@ const ContactosObraPedido = () => {
 
         {/* Modal para Seleccionar Contacto Existente */}
         <Modal show={showSeleccionarContactoModal} onHide={() => setShowSeleccionarContactoModal(false)}>
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>Seleccionar Contacto Existente</Modal.Title>
+            <Button 
+              variant="link" 
+              onClick={() => setShowSeleccionarContactoModal(false)} 
+              style={{
+                textDecoration: "none",
+                color: "black",
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                fontSize: "1.5rem",
+              }}
+            >
+              &times;
+            </Button>
           </Modal.Header>
           <Modal.Body>
             <SeleccionarOAgregarContacto
@@ -157,6 +186,7 @@ const ContactosObraPedido = () => {
             />
           </Modal.Body>
         </Modal>
+
       </>
     );
   };

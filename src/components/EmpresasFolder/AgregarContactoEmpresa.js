@@ -241,9 +241,23 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], obraId, show, onHide })
 
   return (
     <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
-        <Modal.Title>Agregar Contacto</Modal.Title>
-      </Modal.Header>
+      <Modal.Header>
+    <Modal.Title>Agregar Contacto</Modal.Title>
+    <Button 
+      variant="link" 
+      onClick={onHide} 
+      style={{
+        textDecoration: "none",
+        color: "black",
+        position: "absolute",
+        top: "10px",
+        right: "10px",
+        fontSize: "1.5rem",
+      }}
+    >
+      &times;
+    </Button>
+  </Modal.Header>
       <Modal.Body>
         {error && <AlertMessage type="error" message={error} />}
         {success && <AlertMessage type="success" message={success} />}

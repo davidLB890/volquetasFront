@@ -16,6 +16,7 @@ const Pedidos = () => {
   const [tipoSugerencia, setTipoSugerencia] = useState("general");
   const [filtroPago, setFiltroPago] = useState("todos");
   const [filtroCliente, setFiltroCliente] = useState("todos");
+  const [filtroMovimiento, setFiltroMovimiento] = useState("todos");
 
   const empleados = useSelector((state) => state.empleados.empleados);
   const choferes = empleados.filter(
@@ -31,6 +32,7 @@ const Pedidos = () => {
       setTipoSugerencia(savedFiltros.tipoSugerencia || "general");
       setFiltroPago(savedFiltros.filtroPago || "todos");
       setFiltroCliente(savedFiltros.filtroCliente || "todos");
+      setFiltroMovimiento(savedFiltros.filtroMovimiento || "todos");
     }
   }, []);
 
@@ -72,6 +74,14 @@ const Pedidos = () => {
   const handleRowClick = (pedido) => {
     let idPedido = pedido.id;
     navigate("/pedidos/datos", { state: { pedidoId: idPedido } });
+  };
+
+  const resetFiltrosEnPedidos = (filtrosPorDefecto) => {
+    setTipoSugerencia(filtrosPorDefecto.tipoSugerencia);
+    setFiltroPago(filtrosPorDefecto.filtroPago);
+    setFiltroCliente(filtrosPorDefecto.filtroCliente);
+    setFiltroMovimiento(filtrosPorDefecto.filtroMovimiento);
+    setFiltros(filtrosPorDefecto);
   };
 
   const renderSugerencia = (pedido) => {
@@ -227,20 +237,36 @@ const Pedidos = () => {
   };
 
   const pedidosFiltrados = pedidos.filter((pedido) => {
+    console.log("Filtrando pedido:", pedido);
+  
     const esEmpresa = !!pedido.Obra.empresa;
+    console.log("Es empresa:", esEmpresa);
+  
     if (filtroCliente === "empresa" && !esEmpresa) return false;
     if (filtroCliente === "particular" && esEmpresa) return false;
-
-    if (filtroPago === "todos") return true;
-    if (filtroPago === "pagado") return pedido.pagoPedido?.pagado === true;
-    if (filtroPago === "noPagado") return pedido.pagoPedido?.pagado === false;
-
-    return true; // Default case if no filters match
+  
+    if (filtroPago === "pagado" && !pedido.pagoPedido?.pagado) return false;
+    if (filtroPago === "noPagado" && pedido.pagoPedido?.pagado) return false;
+  
+    const movimientos = pedido.Movimientos.map((mov) => mov.tipo);
+    console.log("Movimientos del pedido:", movimientos);
+  
+    if (filtroMovimiento === "sinEntrega") return !movimientos.includes("entrega");
+    if (filtroMovimiento === "entregado") return movimientos.includes("entrega") && !movimientos.includes("levante");
+    if (filtroMovimiento === "levantado") return movimientos.includes("levante");
+  
+    return true;
   });
+  
 
   const handleFiltroClienteChange = (e) => {
     setFiltroCliente(e.target.value);
     setFiltros((prev) => ({ ...prev, filtroCliente: e.target.value }));
+  };
+
+  const handleFiltroMovimientoChange = (e) => {
+    setFiltroMovimiento(e.target.value);
+    setFiltros((prev) => ({ ...prev, filtroMovimiento: e.target.value }));
   };
 
   const handleFiltroPagoChange = (e) => {
@@ -269,7 +295,7 @@ const Pedidos = () => {
       </div>
       <Row className="mb-3">
         <Col>
-          <FiltrosPedido setFiltros={setFiltros} />
+          <FiltrosPedido setFiltros={setFiltros} onCleanFiltros={resetFiltrosEnPedidos}/>
         </Col>
       </Row>
 
@@ -384,7 +410,37 @@ const Pedidos = () => {
                     ></i>
                   </div>
                 </th>
-                <th>Último movimiento</th>
+                <th>
+                  <div style={{ position: "relative", display: "inline-block" }}>
+                    <Form.Control
+                      as="select"
+                      value={filtroMovimiento}
+                      onChange={handleFiltroMovimientoChange}
+                      style={{
+                        display: "inline-block",
+                        width: "auto",
+                        border: "none",
+                        padding: "0 1.5rem 0 0", // Espacio a la derecha para el ícono
+                        background: "none", // Elimina fondo predeterminado
+                      }}
+                    >
+                      <option value="todos">Último Movimiento</option>
+                      <option value="sinEntrega">Sin Entregar</option>
+                      <option value="entregado">Entregado</option>
+                      <option value="levantado">Levantado</option>
+                    </Form.Control>
+                    <i
+                      className="bi bi-caret-down-fill"
+                      style={{
+                        position: "absolute",
+                        right: "0.5rem",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        pointerEvents: "none",
+                      }}
+                    ></i>
+                  </div>
+                  </th>
               </tr>
             </thead>
             <tbody>
@@ -490,7 +546,91 @@ const Pedidos = () => {
       {/* Vista para pantallas pequeñas */}
       {pedidos.length > 0 && (
         <div className="d-md-none">
-          {pedidos.map((pedido) => (
+          {/* Estilo personalizado para los selectores */}
+    <style>
+      {`
+        .custom-select {
+          border: 1px solid #ced4da;
+          border-radius: 8px;
+          padding: 0.5rem 1.5rem;
+          background-color: #f8f9fa;
+          color: #495057;
+          appearance: none;
+          font-size: 1rem;
+          transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .custom-select:focus {
+          border-color: #80bdff;
+          box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+          outline: none;
+        }
+
+        .custom-select-container {
+          position: relative;
+          display: inline-block;
+          margin-bottom: 1rem;
+        }
+
+        .custom-select-icon {
+          position: absolute;
+          right: 0.75rem;
+          top: 50%;
+          transform: translateY(-50%);
+          pointer-events: none;
+          color: #495057;
+        }
+      `}
+    </style>
+
+    {/* Selector de Cliente */}
+    <div className="custom-select-container">
+      <Form.Control
+        as="select"
+        value={filtroCliente}
+        onChange={handleFiltroClienteChange}
+        className="custom-select"
+      >
+        <option value="todos">Cliente</option>
+        <option value="empresa">Cliente Empresa</option>
+        <option value="particular">Cliente Particular</option>
+      </Form.Control>
+      <i className="bi bi-caret-down-fill custom-select-icon"></i>
+    </div>
+
+    {/* Selector de Pago */}
+    <div className="custom-select-container">
+      <Form.Control
+        as="select"
+        value={filtroPago}
+        onChange={handleFiltroPagoChange}
+        className="custom-select"
+      >
+        <option value="todos">Pagado</option>
+        <option value="pagado">Pagado: sí</option>
+        <option value="noPagado">Pagado: no</option>
+      </Form.Control>
+      <i className="bi bi-caret-down-fill custom-select-icon"></i>
+    </div>
+
+    {/* Selector de Sugerencia */}
+    <div className="custom-select-container">
+      <Form.Control
+        as="select"
+        value={tipoSugerencia}
+        onChange={handleTipoSugerenciaChange}
+        className="custom-select"
+      >
+        <option value="general">Sugerencia</option>
+        <option value="entrega">Sugerencia Entrega</option>
+        <option value="levante">Sugerencia Levante</option>
+        <option value="entregaChofer">Sugerencia Entrega Chofer</option>
+        <option value="levanteChofer">Sugerencia Levante Chofer</option>
+      </Form.Control>
+      <i className="bi bi-caret-down-fill custom-select-icon"></i>
+    </div>
+                  
+          {pedidosFiltrados.map((pedido) => (
             <div key={pedido.id} className="pedido-item mb-3 p-3 border">
               <p>
                 <strong>Fecha:</strong>{" "}

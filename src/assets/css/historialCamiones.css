@@ -1,0 +1,26 @@
+/* HistorialCamiones.css */
+
+@media (max-width: 768px) {
+    .historial-row {
+      flex-direction: column;
+    }
+  
+    .historial-col {
+      margin-bottom: 15px;
+    }
+  
+    .historial-table {
+      display: none;
+    }
+  
+    .historial-list {
+      display: block;
+    }
+  }
+  
+  @media (min-width: 769px) {
+    .historial-list {
+      display: none;
+    }
+  }
+  

@@ -20,7 +20,7 @@ const AgregarServicio = ({ idCamion, onSuccess, show, onHide }) => {
   const [servicioData, setServicioData] = useState({});
   const getToken = useAuth();
 
-  const refs = [tipoRef, fechaRef, monedaRef, precioRef];
+  const refs = [tipoRef, fechaRef, monedaRef, precioRef ];
   const botonHabilitado = useHabilitarBoton(refs);
 
   const handleAgregarServicio = async () => {
