@@ -79,22 +79,23 @@ const pedidoSlice = createSlice({
       const movimientoIndex = state.pedido.Movimientos.findIndex(movimiento => movimiento.id === action.payload.id);
     
       if (movimientoIndex !== -1) {
-        const movimientoActualizado = { ...state.pedido.Movimientos[movimientoIndex], ...action.payload };
+        // Actualiza el movimiento específico con los nuevos datos
+        state.pedido.Movimientos[movimientoIndex] = { 
+          ...state.pedido.Movimientos[movimientoIndex], 
+          ...action.payload 
+        };
     
-        // Actualizar el movimiento específico
-        state.pedido.Movimientos[movimientoIndex] = movimientoActualizado;
-    
-        // Actualizar el movimiento relacionado si existe
+        // Si necesitas actualizar un movimiento relacionado, puedes hacerlo aquí
         const movimientoRelacionadoIndex = state.pedido.Movimientos.findIndex(movimiento => 
-          movimiento.pedidoId === movimientoActualizado.pedidoId && 
-          movimiento.tipo !== movimientoActualizado.tipo
+          movimiento.pedidoId === state.pedido.Movimientos[movimientoIndex].pedidoId && 
+          movimiento.tipo !== state.pedido.Movimientos[movimientoIndex].tipo
         );
     
         if (movimientoRelacionadoIndex !== -1) {
-          state.pedido.Movimientos[movimientoRelacionadoIndex].numeroVolqueta = movimientoActualizado.numeroVolqueta;
+          state.pedido.Movimientos[movimientoRelacionadoIndex].numeroVolqueta = state.pedido.Movimientos[movimientoIndex].numeroVolqueta;
         }
       }
-    },
+    },    
     addTelefonoToObra: (state, action) => {
       if (state.obra && state.obra.particular) {
         state.obra.particular.Telefonos.push(action.payload);

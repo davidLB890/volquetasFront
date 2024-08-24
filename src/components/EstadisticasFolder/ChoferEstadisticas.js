@@ -1,21 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import {
-  Container,
-  Button,
-  Spinner,
-  Alert,
-  Card,
-  Form,
-  Row,
-  Col,
-  Table,
-} from "react-bootstrap";
+import { Container, Button, Spinner, Alert, Card, Form, Row,Col, Table } from "react-bootstrap";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { getChoferEstadisticas } from "../../api";
+import jsPDF from "jspdf";
+import * as XLSX from "xlsx";
+import "jspdf-autotable";
 
 const ChoferEstadisticas = () => {
   const [choferId, setChoferId] = useState("");
@@ -82,7 +75,10 @@ const ChoferEstadisticas = () => {
 
   const handleSeleccionChofer = (event) => {
     const id = event.target.value;
-    const nombre = choferes.find((chofer) => chofer.id === id)?.nombre || "";
+    console.log(id)
+    const nombre = id ? choferes.find((chofer) => chofer.id === Number(id))?.nombre || "" : "";
+    console.log(nombre)
+    console.log(choferes)
     setChoferId(id);
     setChoferNombre(nombre);
   };
@@ -91,6 +87,89 @@ const ChoferEstadisticas = () => {
     e.preventDefault();
     setLoading(true);
     fetchChoferEstadisticas(fechaInicio, fechaFin, valorJornal, valorExtra);
+  };
+
+  const exportarExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      choferEstadisticas.jornales.map((jornal) => ({
+        Día: jornal.jornal.dia,
+        Tipo: jornal.jornal.tipo,
+        Horas: jornal.jornal.horas,
+        Extra: jornal.jornal.extra,
+        Entregas: jornal.viajes.entregas,
+        Levantes: jornal.viajes.levantes,
+        Viajes: jornal.viajes.viajes,
+      }))
+    );
+  
+    // Agregar el resumen al final de la hoja
+    const resumen = [
+      [],
+      ["Resumen"],
+      ["Días de trabajo:", choferEstadisticas.datos.diasTrabajo],
+      ["Horas totales:", choferEstadisticas.datos.horas],
+      ["Horas extra:", choferEstadisticas.datos.extra],
+      ["Entregas:", choferEstadisticas.datos.entregas],
+      ["Levantes:", choferEstadisticas.datos.levantes],
+      ["Viajes:", choferEstadisticas.datos.viajes],
+      ["Promedio de horas por día:", choferEstadisticas.datos.promedioHorasPorDia],
+      ["Promedio de viajes por día:", choferEstadisticas.datos.promedioViajesPorDia],
+      ["Salario:", choferEstadisticas.datos.salario],
+      ["Info:", choferEstadisticas.datos.info],
+    ];
+  
+    XLSX.utils.sheet_add_aoa(ws, resumen, { origin: -1 }); // Agrega el resumen al final
+  
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Estadísticas Chofer");
+    XLSX.writeFile(wb, `Chofer_${choferNombre}_Estadisticas.xlsx`);
+  };
+  
+  
+  const exportarPDF = () => {
+    const doc = new jsPDF();
+    
+    // Cambia el texto del título, agregando el nombre del chofer
+    doc.text(`Reporte del Chofer: ${choferNombre}`, 20, 10);
+    console.log("chofer", choferNombre);
+  
+    // Agregar la tabla de estadísticas
+    doc.autoTable({
+      head: [["Día", "Tipo", "Horas", "Extra", "Entregas", "Levantes", "Viajes"]],
+      body: choferEstadisticas.jornales.map((jornal) => [
+        jornal.jornal.dia,
+        jornal.jornal.tipo,
+        jornal.jornal.horas,
+        jornal.jornal.extra,
+        jornal.viajes.entregas,
+        jornal.viajes.levantes,
+        jornal.viajes.viajes,
+      ]),
+      startY: 20,
+    });
+  
+    // Agregar el resumen al final del PDF
+    const startY = doc.autoTable.previous.finalY + 10; // Espacio después de la tabla
+    doc.text("Resumen", 20, startY);
+    doc.autoTable({
+      body: [
+        ["Días de trabajo:", choferEstadisticas.datos.diasTrabajo],
+        ["Horas totales:", choferEstadisticas.datos.horas],
+        ["Horas extra:", choferEstadisticas.datos.extra],
+        ["Entregas:", choferEstadisticas.datos.entregas],
+        ["Levantes:", choferEstadisticas.datos.levantes],
+        ["Viajes:", choferEstadisticas.datos.viajes],
+        ["Promedio de horas por día:", choferEstadisticas.datos.promedioHorasPorDia],
+        ["Promedio de viajes por día:", choferEstadisticas.datos.promedioViajesPorDia],
+        ["Salario:", choferEstadisticas.datos.salario],
+        ["Info:", choferEstadisticas.datos.info],
+      ],
+      startY: startY + 10,
+      theme: "plain", // Sin estilo adicional
+      margin: { left: 20 }, // Alineado a la izquierda
+    });
+  
+    doc.save(`Chofer_${choferNombre}_Estadisticas.pdf`);
   };
 
   return (
@@ -176,7 +255,14 @@ const ChoferEstadisticas = () => {
             </Button>
           </Form>
           {!loading && choferEstadisticas && (
+            
             <>
+            <Button variant="success" onClick={exportarExcel} className="mr-2">
+              Exportar a Excel
+            </Button>
+            <Button variant="danger" onClick={exportarPDF}>
+              Exportar a PDF
+            </Button>
               <div style={{ overflowX: "auto" }}>
                 <Table striped bordered hover className="mt-3">
                   <thead>

@@ -92,7 +92,7 @@ const ListaVolquetasViaPublica = () => {
               <Card key={volqueta.id} className="mb-1" style={{ fontSize: "0.9rem" }}>
                 <Card.Body>
                   <p>
-                    Volqueta: {volqueta.Movimientos[0].numeroVolqueta}{", en "}
+                    Volqueta: {volqueta.Movimientos[0]?.numeroVolqueta || "Desconocida"}{", en "}
                     <span
                       style={{ color: "blue", cursor: "pointer", textDecoration: "underline" }}
                       onClick={() => handleNavigateToPedido(volqueta.id)}

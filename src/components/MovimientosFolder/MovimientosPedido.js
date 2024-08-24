@@ -93,84 +93,90 @@ const MovimientosPedido = () => {
           <p>No hay movimientos para este pedido.</p>
         ) : (
           <>
-                 {/* Renderiza tabla para pantallas medianas y mayores */}
-        <div className="d-none d-md-block">
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Número de Volqueta</th>
-              <th>Horario</th>
-              <th>Tipo</th>
-              <th>Chofer</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {movimientos.map((movimiento) => (
-              <tr key={movimiento?.id}>
-                <td>{movimiento?.numeroVolqueta || "-"}</td>
-                <td>
-                  {movimiento?.horario
-                    ? new Date(movimiento.horario).toLocaleString()
-                    : "-"}
-                </td>
-                <td>{movimiento?.tipo || "-"}</td>
-                <td>
-                  {choferes.find(
-                    (chofer) => chofer.id === movimiento?.choferId
-                  )?.nombre || "Sin chofer asignado"}
-                </td>
-                <td>
-                  {location.pathname.includes("/pedidos/datos") ? (
-                    <>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() =>
-                          handleDeleteMovimiento(movimiento?.id)
-                        }
-                        className="mr-2"
-                        style={{
-                          padding: "0.5rem 1rem",
-                          marginRight: "0.5rem",
-                        }}
-                      >
-                        Eliminar
-                      </Button>
-                      <Button
-                        variant="warning"
-                        size="sm"
-                        onClick={() => handleModificarMovimiento(movimiento)}
-                        className="mr-2"
-                        style={{
-                          padding: "0.5rem 1rem",
-                          marginRight: "0.5rem",
-                        }}
-                      >
-                        Modificar
-                      </Button>
-                    </>
-                  ) : (
-                    <Button
-                      variant="info"
-                      size="sm"
-                      onClick={() =>
-                        handleVerPedido(
-                          movimiento?.pedidoId,
-                          movimiento?.numeroVolqueta
-                        )
-                      }
-                      className="mr-2"
-                    >
-                      Ver Pedido
-                    </Button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </div>
+            {/* Renderiza tabla para pantallas medianas y mayores */}
+            <div className="d-none d-md-block">
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>Número de Volqueta</th>
+                    <th>Horario</th>
+                    <th>Tipo</th>
+                    <th>Chofer</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {movimientos.map((movimiento) => {
+                    // Buscar el chofer correspondiente al movimiento
+                    /* const choferNombre = choferes.find(
+                      (chofer) => chofer.id === movimiento?.choferId
+                    )?.nombre; */
+                    const choferNombre = choferes.find((chofer) => chofer.id === Number(movimiento?.choferId))?.nombre ;
+
+                    return (
+                      <tr key={movimiento?.id}>
+                        <td>{movimiento?.numeroVolqueta || "-"}</td>
+                        <td>
+                          {movimiento?.horario
+                            ? new Date(movimiento.horario).toLocaleString()
+                            : "-"}
+                        </td>
+                        <td>{movimiento?.tipo || "-"}</td>
+                        <td>{choferNombre || "Sin chofer asignado"}</td>
+                        <td>
+                          {location.pathname.includes("/pedidos/datos") ? (
+                            <>
+                              <Button
+                                variant="danger"
+                                size="sm"
+                                onClick={() =>
+                                  handleDeleteMovimiento(movimiento?.id)
+                                }
+                                className="mr-2"
+                                style={{
+                                  padding: "0.5rem 1rem",
+                                  marginRight: "0.5rem",
+                                }}
+                              >
+                                Eliminar
+                              </Button>
+                              <Button
+                                variant="warning"
+                                size="sm"
+                                onClick={() =>
+                                  handleModificarMovimiento(movimiento)
+                                }
+                                className="mr-2"
+                                style={{
+                                  padding: "0.5rem 1rem",
+                                  marginRight: "0.5rem",
+                                }}
+                              >
+                                Modificar
+                              </Button>
+                            </>
+                          ) : (
+                            <Button
+                              variant="info"
+                              size="sm"
+                              onClick={() =>
+                                handleVerPedido(
+                                  movimiento?.pedidoId,
+                                  movimiento?.numeroVolqueta
+                                )
+                              }
+                              className="mr-2"
+                            >
+                              Ver Pedido
+                            </Button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+            </div>
 
       {/* Renderiza un formato alternativo para pantallas pequeñas */}
       <div className="d-block d-md-none">

@@ -1,19 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Button,
-  Spinner,
-  Alert,
-  Card,
-  Form,
-  Row,
-  Col,
-} from "react-bootstrap";
-import {
-  getClienteEstadisticas,
-  getEmpresaId,
-  getParticularId,
-} from "../../api";
+import { Container, Button, Spinner, Alert, Card, Form, Row, Col } from "react-bootstrap";
+import { getClienteEstadisticas, getEmpresaId, getParticularId } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
@@ -263,6 +250,7 @@ const ClientesEstadisticas = () => {
                   <Button
                     variant="danger"
                     className="mt-3"
+                    style={{ padding: "0.25rem 0.5rem", fontSize: "0.875rem" }} // Ajustar padding y tamaño de fuente
                     onClick={handleCancelarSeleccion}
                   >
                     Otra Búsqueda

@@ -40,7 +40,6 @@ import DatosFactura from './components/FacturasFolder/DatosFactura';
 import ListaPermisosGeneral from './components/PermisosFolder/ListaPermisosGeneral';
 import ListaIMM from './components/ObrasFolder/ListaIMM';
 import Cajas from './components/CajasFolder/Cajas';
-import Estadisticas from './components/EstadisticasFolder/Estadisticas';
 import ChoferEstadisticas from './components/EstadisticasFolder/ChoferEstadisticas';
 import ClientesEstadisticas from './components/EstadisticasFolder/ClientesEstadisticas';
 import PedidosEstadisticas from './components/EstadisticasFolder/PedidosEstadisticas';

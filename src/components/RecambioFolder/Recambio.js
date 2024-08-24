@@ -30,6 +30,8 @@ const Recambio = ({ show, onHide, pedido }) => {
   const getToken = useAuth();
   const navigate = useNavigate();
 
+  const MAX_LENGTH = 255;
+
   const empleados = useSelector((state) => state.empleados.empleados);
   const choferes = empleados.filter(
     (empleado) => empleado.rol === "chofer" && empleado.habilitado
@@ -62,6 +64,12 @@ const Recambio = ({ show, onHide, pedido }) => {
     setLoading(true);
     const usuarioToken = getToken();
     let permisoId = permisoSeleccionado;
+
+    if(descripcion.length > MAX_LENGTH) {
+      setError(`La descripción no puede superar los ${MAX_LENGTH} caracteres`);
+      setLoading(false);
+      return;
+    }
 
     if (useNuevoPermiso) {
       try {

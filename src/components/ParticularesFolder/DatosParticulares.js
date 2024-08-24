@@ -5,14 +5,8 @@ import { Card, Spinner, Alert, Button, Container, Row, Col, Modal, Dropdown} fro
 import { GearFill } from "react-bootstrap-icons";
 import useAuth from "../../hooks/useAuth";
 import { getParticularId } from "../../api";
-import {
-  fetchParticularStart,
-  fetchParticularSuccess,
-  fetchParticularFailure,
-  createTelefonoSuccess,
-  createObraSuccess,
-  deleteObraSuccess,
-} from "../../features/particularSlice";
+import { fetchParticularStart, fetchParticularSuccess, fetchParticularFailure, createTelefonoSuccess,
+  createObraSuccess, deleteObraSuccess } from "../../features/particularSlice";
 import ModificarParticular from "./ModificarParticular";
 import TelefonosParticular from "./TelefonosParticular";
 import ListaObras from "../ObrasFolder/ListaObras";
@@ -124,31 +118,31 @@ const DatosParticular = () => {
       <Card className="mt-3">
       <Card.Header style={{ display: "flex", alignItems: "center", padding: "0.5rem 1rem" }}>
         <h2 style={{ margin: 0, marginRight: "0.5rem" }}>{particular?.nombre}</h2>
-  <Dropdown>
-    <Dropdown.Toggle
-      as={Button}
-      variant="link"
-      style={{
-        padding: 0,
-        margin: 0,
-        border: "none",
-        background: "none",
-        boxShadow: "none",
-      }}
-    >
-      <GearFill size={24} />
-    </Dropdown.Toggle>
+        <Dropdown>
+          <Dropdown.Toggle
+            as={Button}
+            variant="link"
+            style={{
+              padding: 0,
+              margin: 0,
+              border: "none",
+              background: "none",
+              boxShadow: "none",
+            }}
+          >
+            <GearFill size={24} />
+          </Dropdown.Toggle>
 
-    <Dropdown.Menu>
-      <Dropdown.Item onClick={() => setShowModificarParticular(true)}>
-        Modificar Particular
-      </Dropdown.Item>
-      <Dropdown.Item onClick={() => setShowConfirmDelete(true)}>
-        Eliminar Particular
-      </Dropdown.Item>
-    </Dropdown.Menu>
-  </Dropdown>
-</Card.Header>
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={() => setShowModificarParticular(true)}>
+              Modificar Particular
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => setShowConfirmDelete(true)}>
+              Eliminar Particular
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      </Card.Header>
         <Card.Body>
           <Card.Text>
             <strong>Cédula:</strong> {particular?.cedula}

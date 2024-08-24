@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Modal, Button, Dropdown } from "react-bootstrap";
+import { PencilSquare, Trash, GearFill} from "react-bootstrap-icons";
 import ModificarTelefono from "../TelefonosFolder/ModificarTelefonos";
 import { modifyTelefonoSuccess, deleteTelefonoSuccess } from "../../features/particularSlice";
 import { deleteTelefono } from "../../api";
@@ -57,7 +58,7 @@ const TelefonosParticular = () => {
         key={telefono.id}
         className="d-flex align-items-center mb-2"
       >
-        <span className="me-3">
+        <span className="me-3 mt-3">
           {telefono?.tipo && telefono?.telefono ? (
             `${telefono.tipo}: ${telefono.telefono}${
               telefono.extension ? ` (Ext: ${telefono.extension})` : ""
@@ -68,8 +69,17 @@ const TelefonosParticular = () => {
         </span>
         <div className="btn-group">
           <Dropdown>
-            <Dropdown.Toggle variant="light" size="sm" className="mt-3">
-              <i className="bi bi-three-dots-vertical"></i>  {/* Ícono de menú */}
+            <Dropdown.Toggle as={Button}
+              variant="link"
+              style={{
+                padding: 0,
+                margin: 0,
+                border: "none",
+                background: "none",
+                boxShadow: "none",
+              }}
+            >  
+            <GearFill size={14} />
             </Dropdown.Toggle>
 
             <Dropdown.Menu>

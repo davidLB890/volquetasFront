@@ -13,6 +13,7 @@ const ModificarMovimiento = ({ show, onHide, movimiento, choferes }) => {
   const [numeroVolqueta, setNumeroVolqueta] = useState(movimiento?.numeroVolqueta || "");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  //const [volquetaSigueIgual, setVolquetaSigueIgual] = useState(false);
 
   useEffect(() => {
     if (movimiento) {
@@ -40,8 +41,9 @@ const ModificarMovimiento = ({ show, onHide, movimiento, choferes }) => {
     e.preventDefault();
     const usuarioToken = getToken();
 
+    //si la volqueta no cambia, la paso en null (por restruccion de la api)
     let numero = numeroVolqueta;
-    if (numero !== null && numero !== undefined && numero > 0) {
+    if (numero !== null && numero !== undefined && numero > 0 && numero !== movimiento.numeroVolqueta) {
       numero = String(numero).trim();
     } else {
       numero = null;
@@ -52,27 +54,35 @@ const ModificarMovimiento = ({ show, onHide, movimiento, choferes }) => {
       choferId,
       horario,
       numeroVolqueta: numero || null,
+      numeroVolqueta: numero || null,
     };
 
     try {
       const response = await putMovimiento(movimiento.id, movimientoModificado, usuarioToken);
-      if (response.status === 200) {
-        dispatch(modifyMovimiento(movimientoModificado));
+      
+      if (response.status === 200 && response.data.length > 0) {
+        const movimientoModificadoApi = {
+          id: response.data[0].id,
+          choferId: response.data[0].choferId,
+          horario: response.data[0].horario,
+          numeroVolqueta: response.data[0].numeroVolqueta,
+        };
+        console.log("Movimiento modificado:", movimientoModificadoApi);
+    
+        dispatch(modifyMovimiento(movimientoModificadoApi));
         setSuccess("Movimiento modificado correctamente");
         setError("");
+    
         setTimeout(() => {
           setSuccess("");
           onHide();
         }, 2000);
+      } else {
+        setError("No se pudo modificar el movimiento");
       }
-      
     } catch (error) {
-      setError(error.response?.data?.error || "Error al modificar el movimiento");
-      setTimeout(() => {
-        setError("");
-        onHide();
-      }, 2000);
-      setSuccess("");
+      console.error("Error al modificar el movimiento:", error);
+      setError(error.response.data.error);
     }
   };
 

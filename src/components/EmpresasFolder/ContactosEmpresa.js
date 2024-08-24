@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Card, Collapse, Button, Row, Col, ListGroup, Modal, Dropdown } from "react-bootstrap";
-import { PencilSquare, Trash} from "react-bootstrap-icons";
+import { PencilSquare, Trash, GearFill} from "react-bootstrap-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { createTelefonoSuccess, modifyTelefonoSuccess, deleteContactoSuccess, modifyContactoSuccess, deleteTelefonoSuccess } from "../../features/empresaSlice";
 import AgregarTelefono from "../TelefonosFolder/AgregarTelefono"; // Ajusta la ruta según sea necesario
@@ -167,7 +167,7 @@ const ContactosEmpresa = () => {
           boxShadow: "none",
         }}
       >
-        <PencilSquare />
+        <GearFill />
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
@@ -218,7 +218,7 @@ const ContactosEmpresa = () => {
                           </div>
                           <Dropdown>
                             <Dropdown.Toggle variant="link" id={`dropdown-${telefono.id}`} className="p-0">
-                              <PencilSquare />
+                              <GearFill />
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu>
