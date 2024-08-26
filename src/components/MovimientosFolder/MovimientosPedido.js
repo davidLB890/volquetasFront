@@ -20,8 +20,9 @@ const MovimientosPedido = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { pedido } = useSelector((state) => state.pedido);
-  const movimientos = pedido?.Movimientos || [];
+  //const { pedido } = useSelector((state) => state.pedido);
+  //const movimientosViej = pedido?.Movimientos || [];
+  const movimientos = useSelector((state) => state.pedido.movimientos) || [];
   const empleados = useSelector((state) => state.empleados.empleados || []);
   const choferes = empleados.filter(
     (empleado) => empleado.rol === "chofer" && empleado.habilitado

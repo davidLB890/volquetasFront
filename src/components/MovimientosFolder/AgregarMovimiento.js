@@ -41,10 +41,14 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
       numeroVolqueta = null;
     }
 
+    // Convertir la hora local a UTC, esto para que coincida con la hora del servidor
+    const horarioUTC = new Date(horario).toISOString();
+
     const movimiento = {
       pedidoId,
       choferId,
-      horario,
+      ///horario,
+      horario: horarioUTC, // Usar la hora en UTC
       tipo,
       numeroVolqueta: numeroVolqueta || null,
     };
@@ -75,7 +79,6 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
 
   const handleUbicacionTemporalSuccess = () => {
     setShowUbicacionTemporal(false);
-    console.log("llegue")
     dispatch(addMovimiento(successResponse));
     setTimeout(() => {
       setSuccess("");
@@ -83,10 +86,34 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
     }, 1000);
   };
 
+  const cerrarModal = () => {
+    setShowUbicacionTemporal(false);
+    setSuccess("");
+    onHide();
+    if(successResponse) {
+      dispatch(addMovimiento(successResponse));
+    }
+  }
+
   return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
+    //<Modal show={show} onHide={onHide}>
+    <Modal show={show} onHide={cerrarModal}>
+      <Modal.Header>
         <Modal.Title>Agregar Movimiento</Modal.Title>
+        <Button 
+          variant="link" 
+          onClick={cerrarModal} 
+          style={{
+            textDecoration: "none",
+            color: "black",
+            position: "absolute",
+            top: "10px",
+            right: "10px",
+            fontSize: "1.5rem",
+          }}
+        >
+          &times;
+        </Button>
       </Modal.Header>
       <Modal.Body>
         {error && <Alert variant="danger">{error}</Alert>}

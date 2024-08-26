@@ -215,6 +215,7 @@ const DatosPedido = () => {
       </Card>
 
       <ListaVolquetasResumida />
+      
 
       <Modal show={showConfirmModal} onHide={handleHideConfirmModal}>
         <Modal.Header closeButton>

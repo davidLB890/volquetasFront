@@ -33,7 +33,7 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], obraId, show, onHide })
 
   const MAX_LENGTH = 255;
 
-  const refs = [nombreRef, emailRef];
+  const refs = [nombreRef];
   const boton = useHabilitarBoton(refs);
   const dispatch = useDispatch();
 
@@ -72,7 +72,7 @@ const AgregarContactoEmpresa = ({ empresaId, obras = [], obraId, show, onHide })
     const nuevoContacto = {
       nombre: nombreRef.current.value,
       descripcion: descripcionRef.current.value,
-      email: emailRef.current.value,
+      email: emailRef.current.value === "" ? null : emailRef.current.value,
       empresaId: empresaId || empresaIdRef.current.value,
       obraId: obraId ? obraId : obraSeleccionada,
     };

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const FOUR_HOURS = 4 * 60 * 60 * 1000; // 4 horas en milisegundos
 const THREE_HOURS_FIFTY_FIVE_MINUTES = (3 * 60 * 60 * 1000) + (55 * 60 * 1000); // 3 horas y 55 minutos en milisegundos
+const TEN_SECONDS = 10 * 1000; // 10 segundos en milisegundos
 
 const isTokenExpired = () => {
   const savedTimestamp = localStorage.getItem('tokenTimestamp');

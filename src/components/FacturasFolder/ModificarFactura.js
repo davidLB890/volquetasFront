@@ -32,6 +32,7 @@ const ModificarFactura = ({ factura, show, handleClose, onFacturaActualizada }) 
       descripcion,
       fechaPago: fechaPagoValue
     };
+    console.log(factura.id)
     console.log(facturaUpdates);
 
     try {

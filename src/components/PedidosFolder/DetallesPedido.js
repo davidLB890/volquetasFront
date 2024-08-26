@@ -12,6 +12,14 @@ const DetallesPedido = () => {
   const dispatch = useDispatch();
   const { pedido, obra } = useSelector((state) => state.pedido);
 
+  const movimientos = useSelector((state) => state.pedido.movimientos);
+
+  const calcularEstado = () => {
+    if (movimientos.length === 0) return "iniciado";
+    if (movimientos.length === 1) return "entregado";
+    if (movimientos.length >= 2) return "levantado";
+  };
+
   // Media query para detectar si la pantalla es menor a md (768px)
   const isSmallScreen = useMediaQuery({ query: '(max-width: 768px)' });
 
@@ -36,7 +44,7 @@ const DetallesPedido = () => {
     if (pedido?.Obra) {
       dispatch(updateObra(pedido.Obra));
     }
-  }, [pedido, dispatch]);
+  }, [pedido?.Obra, dispatch]);
 
   if (!pedido) {
     return (
@@ -65,7 +73,7 @@ const DetallesPedido = () => {
                   : "-"}
               </p>
               <p>
-                <strong>Estado:</strong> {pedido.estado}
+                <strong>Estado:</strong> {calcularEstado()}
               </p>
               {pedido.descripcion ? (
                 <p>
@@ -117,7 +125,7 @@ const DetallesPedido = () => {
                     : "-"}
                 </p>
                 <p>
-                  <strong>Estado:</strong> {pedido.estado}
+                  <strong>Estado:</strong> {calcularEstado()}
                 </p>
                 {pedido.descripcion ? (
                   <p>

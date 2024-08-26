@@ -17,9 +17,10 @@ const Sugerencias = () => {
   const getToken = useAuth();
   const dispatch = useDispatch();
 
-  const { pedido } = useSelector((state) => state.pedido);
-  const sugerencias = pedido?.Sugerencias || [];
-  const movimientos = pedido?.Movimientos || [];
+  //const { pedido } = useSelector((state) => state.pedido);
+  //const sugerencias = pedido?.Sugerencias || [];
+  const sugerencias = useSelector((state) => state.pedido.sugerencias || []);
+  const movimientos = useSelector((state) => state.pedido.movimientos || []);
   const empleados = useSelector((state) => state.empleados.empleados || []);
   const choferes = empleados.filter((empleado) => empleado.rol === "chofer" && empleado.habilitado);
   const pedidoId = useSelector((state) => state.pedido.pedido?.id);

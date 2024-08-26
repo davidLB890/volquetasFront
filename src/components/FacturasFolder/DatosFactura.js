@@ -145,6 +145,7 @@ const DatosFactura = () => {
 
   const handleFacturaActualizada = (updatedFactura) => {
     setFactura(updatedFactura);
+    console.log(updatedFactura);
     setShowModificarModal(false);
   };
 

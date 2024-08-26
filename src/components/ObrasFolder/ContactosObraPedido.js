@@ -106,47 +106,48 @@ const ContactosObraPedido = () => {
       <>
         <DropdownButton id="dropdown-contactos-designados" title="Contactos de obra" variant="light">
         {Array.isArray(obra?.contactosDesignados) && obra.contactosDesignados.length > 0 ? (
-  obra.contactosDesignados.map((contacto) => (
-    <Dropdown.Item key={contacto.id}>
-      {contacto?.nombre} - {contacto?.Telefonos?.[0]?.telefono || 'Sin teléfono'}
-    </Dropdown.Item>
-  ))
-) : (
-  <Dropdown.Item disabled>No hay contactos disponibles</Dropdown.Item>
-)}
-
-          <Dropdown.Item onClick={() => setShowSeleccionModal(true)}>Agregar Nuevo Contacto</Dropdown.Item>
+        obra.contactosDesignados.map((contacto) => (
+        <Dropdown.Item key={contacto.id}>
+          {contacto?.nombre} - {contacto?.Telefonos?.[0]?.telefono || 'Sin teléfono'}
+        </Dropdown.Item>
+      ))
+    ) : (
+      <Dropdown.Item disabled>No hay contactos disponibles</Dropdown.Item>
+    )}
+        { obra?.contactosDesignados?.length === 0 &&
+        <Dropdown.Item onClick={() => setShowSeleccionModal(true)}>Agregar Nuevo Contacto</Dropdown.Item>
+        } 
         </DropdownButton>
 
         {/* Modal para elegir entre agregar nuevo contacto o seleccionar existente */}
         <Modal show={showSeleccionModal} onHide={() => setShowSeleccionModal(false)}>
-  <Modal.Header>
-    <Modal.Title>Seleccionar Tipo de Contacto</Modal.Title>
-    <Button 
-      variant="link" 
-      onClick={() => setShowSeleccionModal(false)} 
-      style={{
-        textDecoration: "none",
-        color: "black",
-        position: "absolute",
-        top: "10px",
-        right: "10px",
-        fontSize: "1.5rem",
-      }}
-    >
-      &times;
-    </Button>
-  </Modal.Header>
-  <Modal.Body>
-    <p>¿Desea agregar un contacto nuevo o seleccionar uno existente?</p>
-    <Button variant="primary" onClick={() => handleSeleccion(false)}>
-      Seleccionar Contacto Existente
-    </Button>
-    <Button variant="success" onClick={() => handleSeleccion(true)} className="ml-2">
-      Agregar Contacto Nuevo
-    </Button>
-  </Modal.Body>
-</Modal>
+        <Modal.Header>
+          <Modal.Title>Seleccionar Tipo de Contacto</Modal.Title>
+          <Button 
+            variant="link" 
+            onClick={() => setShowSeleccionModal(false)} 
+            style={{
+              textDecoration: "none",
+              color: "black",
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              fontSize: "1.5rem",
+            }}
+          >
+            &times;
+          </Button>
+        </Modal.Header>
+        <Modal.Body>
+          <p>¿Desea agregar un contacto nuevo o seleccionar uno existente?</p>
+          <Button variant="primary" onClick={() => handleSeleccion(false)}>
+            Seleccionar Contacto Existente
+          </Button>
+          <Button variant="success" onClick={() => handleSeleccion(true)} className="ml-2">
+            Agregar Contacto Nuevo
+          </Button>
+        </Modal.Body>
+      </Modal>
 
 
         {/* Modal para Agregar Contacto Nuevo */}

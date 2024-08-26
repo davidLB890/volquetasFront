@@ -20,6 +20,10 @@ const ModificarPedido = ({ show, onHide }) => {
   const dispatch = useDispatch();
   const getToken = useAuth();
   const pedido = useSelector((state) => state.pedido.pedido);
+  const descripcionPedido = useSelector((state) => state.pedido.pedido.descripcion) || "";
+  const perisoIdPedido = useSelector((state) => state.pedido.pedido.permisoId) || "";
+  const nroPesadaPedido = useSelector((state) => state.pedido.pedido.nroPesada) || "";
+  const obraPedido = useSelector((state) => state.pedido.obra) || "";
 
   const [descripcion, setDescripcion] = useState(pedido.descripcion || "");
   const [permisoId, setPermisoId] = useState(pedido.permisoId || "");

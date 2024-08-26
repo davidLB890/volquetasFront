@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Form, Button, Dropdown } from "react-bootstrap";
 import { postCaja } from "../../api";
 import useAuth from "../../hooks/useAuth";
@@ -17,6 +17,21 @@ const AgregarSalidaCaja = ({ fecha, monto, moneda, onSuccess, onHide }) => {
   const dropdownRef = useRef(null);
 
   const empleados = useSelector((state) => state.empleados.empleados);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+  
+    document.addEventListener("mousedown", handleClickOutside);
+  
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
+  
 
   const handleSearchChange = (e) => {
     const term = e.target.value;

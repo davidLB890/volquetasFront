@@ -274,7 +274,7 @@ const AgregarFactura = () => {
                 <Form.Group controlId="numeracion">
                   <Form.Label>Numeración</Form.Label>
                   <Form.Control
-                    type="number"
+                    type="text"
                     value={numeracion}
                     onChange={(e) => setNumeracion(e.target.value)}
                   />

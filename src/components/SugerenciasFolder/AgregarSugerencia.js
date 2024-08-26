@@ -29,10 +29,15 @@ const AgregarSugerencia = ({
 
   const confirmarSugerencia = async () => {
     const usuarioToken = getToken();
+
+    // Convertir la hora local a UTC antes de enviarla a la API
+    const horarioSugeridoUTC = new Date(horarioSugerido).toISOString();
+
     const sugerencia = {
       pedidoId,
       choferSugeridoId,
       horarioSugerido,
+      //horarioSugerido: horarioSugeridoUTC, // Usar la hora en UTC
       tipoSugerido: tipo,
     };
 
@@ -59,10 +64,15 @@ const AgregarSugerencia = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     const usuarioToken = getToken();
+
+    // Convertir la hora local a UTC antes de la verificación
+    const horarioSugeridoUTC = new Date(horarioSugerido).toISOString();
+
     try {
       console.log("horario", horarioSugerido)
       const horario = horarioSugerido
       const response = await verificarSugerencia(choferSugeridoId, horario, usuarioToken);
+      //const response = await verificarSugerencia(choferSugeridoId, horarioSugeridoUTC, usuarioToken);
       if (response.data.message === "No hay sugerencias en el rango de tiempo especificado") {
         confirmarSugerencia();
       } else {

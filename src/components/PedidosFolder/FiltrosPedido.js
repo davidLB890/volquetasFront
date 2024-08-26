@@ -35,6 +35,12 @@ const FiltrosPedido = ({ setFiltros, onCleanFiltros} ) => {
   const getToken = useAuth();
 
   useEffect(() => {
+    if (!localStorage.getItem("filtrosPedido")) {
+      resetearFiltros();
+    }
+  }, []);
+
+  useEffect(() => {
     // Al montar el componente, envía los filtros iniciales al componente padre
     const filtrosIniciales = {
       estado,
@@ -264,7 +270,7 @@ const FiltrosPedido = ({ setFiltros, onCleanFiltros} ) => {
 
             <Row>
               <Col md={5}>
-                {!empresaId && !particularId && (
+                {/* {!empresaId && !particularId && ( */}
                   <Form.Group controlId="filtroTipo">
                     <Form.Label>Cliente</Form.Label>
                     <Form.Control
@@ -277,7 +283,7 @@ const FiltrosPedido = ({ setFiltros, onCleanFiltros} ) => {
                       <option value="particular">Particular</option>
                     </Form.Control>
                   </Form.Group>
-                )}
+                {/* )} */}
                 {filtroTipo &&
                   filtroTipo !== "" &&
                   (filtroTipo === "empresa" ? (

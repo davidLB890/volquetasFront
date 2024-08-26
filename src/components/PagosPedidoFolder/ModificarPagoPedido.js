@@ -1,50 +1,56 @@
-import React, { useState, useEffect } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
-import { useDispatch } from "react-redux";
-import { updatePago } from "../../features/pedidoSlice"; // Asegúrate de ajustar la ruta según sea necesario
-import useAuth from "../../hooks/useAuth";
-import AlertMessage from "../AlertMessage";
+  import React, { useState, useEffect } from "react";
+  import { Modal, Button, Form } from "react-bootstrap";
+  import { useDispatch } from "react-redux";
+  import { updatePagoPedido } from "../../features/pedidoSlice"; // Asegúrate de ajustar la ruta según sea necesario
+  import useAuth from "../../hooks/useAuth";
+  import AlertMessage from "../AlertMessage";
+  import { putPagoPedidos } from "../../api";
 
-const ModificarPagoPedido = ({ show, onHide, pago }) => {
-  const dispatch = useDispatch();
-  const getToken = useAuth();
-  const [editablePago, setEditablePago] = useState({ ...pago });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const ModificarPagoPedido = ({ show, onHide, pago }) => {
+    const dispatch = useDispatch();
+    const getToken = useAuth();
+    const [editablePago, setEditablePago] = useState({ ...pago });
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
 
-  useEffect(() => {
-    setEditablePago(pago);
-  }, [pago]);
+    useEffect(() => {
+      setEditablePago(pago);
+    }, [pago]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    
-    let updatedPago = { ...editablePago, [name]: value };
-
-    // Si se agrega un remito, establece 'pagado' en true
-    if (name === "remito" && value) {
-      updatedPago.pagado = true;
-    }
-
-    setEditablePago(updatedPago);
-  };
-
-  const handleSave = async () => {
-    const usuarioToken = getToken();
-    try {
-      await dispatch(updatePago({ pago: editablePago, usuarioToken })).unwrap();
-      setSuccess("Detalles de pago modificados correctamente");
-      setError("");
-      setTimeout(() => {
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      
+      let updatedPago = { ...editablePago, [name]: value };
+  
+      // Si se agrega un remito, establece 'pagado' en true
+      if (name === "remito" && value) {
+        updatedPago.pagado = true;
+      }
+  
+      setEditablePago(updatedPago);
+    };
+  
+    const handleSave = async () => {
+      const usuarioToken = getToken();
+      try {
+        // Llama a la API para actualizar los detalles de pago
+        const response = await putPagoPedidos(editablePago.id, editablePago, usuarioToken);
+  
+        // Despacha la actualización al store
+        dispatch(updatePagoPedido(response.data));
+        
+        setSuccess("Detalles de pago modificados correctamente");
+        setError("");
+        setTimeout(() => {
+          setSuccess("");
+          onHide();
+        }, 2000);
+      } catch (error) {
+        console.error("Error al modificar los detalles de pago:", error.response?.data?.error || error.message);
+        setError("Error al modificar los detalles de pago");
         setSuccess("");
-        onHide();
-      }, 2000);
-    } catch (error) {
-      console.error("Error al modificar los detalles de pago:", error.response?.data?.error || error.message);
-      setError("Error al modificar los detalles de pago");
-      setSuccess("");
-    }
-  };
+      }
+    };
 
   return (
     <Modal show={show} onHide={onHide}>

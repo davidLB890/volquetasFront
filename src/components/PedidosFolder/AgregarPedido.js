@@ -18,6 +18,8 @@ import { TIPOS_PAGO } from "../../config/config";
 const AgregarPedido = () => {
   const [clienteEstado, setClienteEstado] = useState("");
   const [clienteTipo, setClienteTipo] = useState("");
+  const [showAgregarEmpresa, setShowAgregarEmpresa] = useState(false);
+  const [showAgregarParticular, setShowAgregarParticular] = useState(false);
 
   const [clienteNuevo, setClienteNuevo] = useState(null);
   const [particularSeleccionado, setParticularSeleccionado] = useState(null);
@@ -78,6 +80,9 @@ const AgregarPedido = () => {
     } else if (clienteTipo === "empresa") {
       setEmpresaSeleccionada(cliente);
     }
+
+    setShowAgregarEmpresa(false);
+    setShowAgregarParticular(false);
 
     if (cliente.obras && Array.isArray(cliente.obras)) {
       setObras(cliente.obras);
@@ -194,6 +199,21 @@ const AgregarPedido = () => {
     }
   };
 
+  useEffect(() => {
+    if (clienteEstado === "nuevo" && clienteTipo === "empresa") {
+      setShowAgregarEmpresa(true);
+    } else {
+      setShowAgregarEmpresa(false);
+    }
+
+    if(clienteEstado === "nuevo" && clienteTipo === "particular") {
+      setShowAgregarParticular(true);
+    } else {
+      setShowAgregarParticular(false);
+    }
+  }, [clienteEstado, clienteTipo]); // Dependencias: el efecto se ejecutará cuando cualquiera de estos valores cambie
+  
+
   return (
     <Container>
       <h1>
@@ -255,14 +275,15 @@ const AgregarPedido = () => {
           
         </Row>
 
-        {clienteEstado === "nuevo" && clienteTipo === "empresa" && (
+          {/* TODO cerrar*/}
+        {clienteEstado === "nuevo" && clienteTipo === "empresa" && showAgregarEmpresa &&(
           <AgregarEmpresa
             onSubmit={handleAgregarCliente}
             onCancel={() => setClienteEstado("")}
           />
         )}
 
-        {clienteEstado === "nuevo" && clienteTipo === "particular" && (
+        {clienteEstado === "nuevo" && clienteTipo === "particular" && showAgregarParticular &&(
           <AgregarParticular
             onSubmit={handleAgregarCliente}
             onCancel={() => setClienteEstado("")}

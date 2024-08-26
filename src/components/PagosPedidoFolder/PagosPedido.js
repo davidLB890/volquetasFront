@@ -9,7 +9,8 @@ import {
   Form,
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { updatePago } from "../../features/pedidoSlice";
+import { updatePagoPedido } from "../../features/pedidoSlice"; 
+import { putPagoPedidos } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import AlertMessage from "../AlertMessage";
 import ModificarPagoPedido from "./ModificarPagoPedido";
@@ -20,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 const PagoPedido = () => {
   const dispatch = useDispatch();
   const getToken = useAuth();
-  const pago = useSelector((state) => state.pedido.pedido.pagoPedido);
+  const pago = useSelector((state) => state.pedido.pagoPedido);
   const [showModal, setShowModal] = useState(false);
   const [showAgregarEntradaModal, setShowAgregarEntradaModal] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -51,14 +52,14 @@ const PagoPedido = () => {
   const togglePagado = async () => {
     const usuarioToken = getToken();
     const nuevoEstadoPagado = !pago.pagado;
-
+  
     try {
-      await dispatch(
-        updatePago({
-          pago: { ...pago, pagado: nuevoEstadoPagado },
-          usuarioToken,
-        })
-      ).unwrap();
+      // Llama a la API para actualizar el pago
+      const response = await putPagoPedidos(pago.id, { ...pago, pagado: nuevoEstadoPagado }, usuarioToken);
+  
+      // Despacha la actualización del pago al estado global
+      dispatch(updatePagoPedido(response.data));
+  
       setSuccess("Estado de pago modificado correctamente");
       setError("");
       setTimeout(() => {

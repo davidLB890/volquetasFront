@@ -8,7 +8,7 @@ const ContactosObra = ({ obra, handleSeleccionarContacto }) => {
   return (
     <Card className="mt-3">
       <Card.Body>
-        <Card.Title>Contactos Asignados a esta obra</Card.Title>
+        <Card.Title>Contacto Asignado a esta Obra</Card.Title>
         {obra.contactosDesignados.length > 0 ? (
           obra.contactosDesignados.map((contacto) => (
             <Card key={contacto.id} className="mb-2">
@@ -40,6 +40,7 @@ const ContactosObra = ({ obra, handleSeleccionarContacto }) => {
         ) : (
           <Card.Text>No hay contactos asignados</Card.Text>
         )}
+        {obra.contactosDesignados.length === 0 && (
         <Button
           variant="primary"
           className="ml-2"
@@ -51,6 +52,7 @@ const ContactosObra = ({ obra, handleSeleccionarContacto }) => {
         >
           Asignar contacto existente
         </Button>
+        )}
       </Card.Body>
     </Card>
   );
