@@ -132,7 +132,7 @@ const ListaJornalesDatos = ({
                 <td>{datos.horasExtra}</td>
               </tr>
             </tbody>
-          </Table>
+          </Table>  
         ) : (
           <Alert variant="info">No se encontraron datos del empleado en ese rango de fechas.</Alert>
         )}
@@ -173,11 +173,13 @@ const ListaJornalesDatos = ({
             <JornalEspecifico
               empleadoId={empleadoId}
               empleadoRol={empleadoRol}
+              empleadoNombre={empleadoNombre}
               fechaInicio={fechaInicio}
               fechaFin={fechaFin}
               handleMostrarModificar={handleMostrarModificar}
               handleEliminarJornal={handleEliminarJornal}
               onUpdate={fetchDatos} // Pasa la función de actualización
+              datosEmpleado={datos}
             />
           )}
         </div>

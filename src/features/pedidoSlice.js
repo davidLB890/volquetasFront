@@ -45,9 +45,9 @@ const pedidoSlice = createSlice({
     updatePedido: (state, action) => {
       state.pedido = { ...state.pedido, ...action.payload };
       if (action.payload.obraId && action.payload.obraId !== state.obra?.id) {
-        state.obra = action.payload.Obra;
+        state.obra = action.payload.Obra;  // <- Aquí se espera que action.payload.Obra tenga el objeto completo de la obra
       }
-    },
+    },    
     updatePagoPedido: (state, action) => {
       state.pagoPedido = action.payload;
     },

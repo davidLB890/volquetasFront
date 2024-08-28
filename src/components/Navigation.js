@@ -283,7 +283,7 @@ const Navigation = ({ userRole }) => {
                   {userRole === "admin" && (
                     <Nav.Link
                       as={Link}
-                      to="/usuarios/confirmar"
+                      to="/empleados/confirmar"
                       onClick={handleMouseLeave}
                     >
                       Confirmar usuarios
@@ -292,7 +292,7 @@ const Navigation = ({ userRole }) => {
                   {userRole === "admin" && (
                     <Nav.Link
                       as={Link}
-                      to="/usuarios/cambiar-contrasena-admin"
+                      to="/empleados/cambiar-contrasena-admin"
                       onClick={handleMouseLeave}
                     >
                       Cambiar Contraseñas

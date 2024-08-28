@@ -315,7 +315,7 @@ const Pedidos = () => {
           <Table striped bordered hover className="mt-3">
             <thead>
               <tr>
-                <th>Fecha Creación</th>
+                <th>Fecha</th>
                 <th>
                   <div style={{ position: "relative", display: "inline-block" }}>
                     <Form.Control
@@ -638,9 +638,9 @@ const Pedidos = () => {
               </p>
               <p>
                 <strong>Cliente:</strong>{" "}
-                {pedido.Obra.empresa
-                  ? pedido.Obra.empresa.nombre
-                  : pedido.Obra.particular.nombre}
+                {pedido.Obra?.empresa
+                  ? pedido.Obra?.empresa.nombre
+                  : pedido.Obra.particular?.nombre}
               </p>
               <p>
                 <strong>Dirección:</strong> {pedido.Obra.calle}{" "}

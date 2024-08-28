@@ -7,6 +7,7 @@ import {
   getParticularId,
   getEmpresaId,
   putPedidoPermiso,
+  getObraIdSinDetalle,
 } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,10 +21,6 @@ const ModificarPedido = ({ show, onHide }) => {
   const dispatch = useDispatch();
   const getToken = useAuth();
   const pedido = useSelector((state) => state.pedido.pedido);
-  const descripcionPedido = useSelector((state) => state.pedido.pedido.descripcion) || "";
-  const perisoIdPedido = useSelector((state) => state.pedido.pedido.permisoId) || "";
-  const nroPesadaPedido = useSelector((state) => state.pedido.pedido.nroPesada) || "";
-  const obraPedido = useSelector((state) => state.pedido.obra) || "";
 
   const [descripcion, setDescripcion] = useState(pedido.descripcion || "");
   const [permisoId, setPermisoId] = useState(pedido.permisoId || "");
@@ -40,7 +37,7 @@ const ModificarPedido = ({ show, onHide }) => {
     id: "",
   });
   const [obras, setObras] = useState([]);
-  const [selectedObra, setSelectedObra] = useState(pedido.Obra?.id || "");
+  const [selectedObraId, setSelectedObraId] = useState(pedido.Obra?.id || "");
   const [showAgregarObra, setShowAgregarObra] = useState(false);
   const empresaObraId = pedido.Obra?.empresa?.id;
   const particularObraId = pedido.Obra?.particular?.id;
@@ -81,8 +78,11 @@ const ModificarPedido = ({ show, onHide }) => {
 
   useEffect(() => {
     const fetchPermisos = async () => {
-      if (selectedObra) {
-        const obra = obras.find((o) => o.id === selectedObra);
+      console.log(selectedObraId)
+      console.log(obras)
+      if (selectedObraId) {
+        const obra = obras.find((o) => o.id === selectedObraId);
+        console.log(obra)
         if (obra && obra.empresa) {
           const usuarioToken = getToken();
           try {
@@ -105,7 +105,7 @@ const ModificarPedido = ({ show, onHide }) => {
     };
 
     fetchPermisos();
-  }, [getToken, selectedObra, obras]);
+  }, [getToken, selectedObraId, obras]);
 
   useEffect(() => {
     // Esto para verificar que si se está usando un nuevo permiso, los campos estén llenos antes de habilitar el botón
@@ -124,60 +124,91 @@ const ModificarPedido = ({ show, onHide }) => {
     }
   }, [nuevoPermiso, useNewPermiso]);
 
-  const handleModificar = async () => {
-    const usuarioToken = getToken();
-    if(descripcion.length > MAX_LENGTH) {
-      setError("La descripción no puede superar los 255 caracteres");
-      setTimeout(() => {
-        setError("");
-      }, 1500);
-      return;
+  const transformarObra = (obraApi) => {
+    return {
+      id: obraApi.id,
+      calle: obraApi.calle,
+      esquina: obraApi.esquina,
+      barrio: obraApi.barrio,
+      numeroPuerta: obraApi.numeroPuerta,
+      descripcion: obraApi.descripcion,
+      particular: obraApi.particular ? {
+        id: obraApi.particularId,
+        nombre: obraApi.particular.nombre,
+      } : null,
+      empresa: obraApi.empresa ? {
+        id: obraApi.empresaId,
+        nombre: obraApi.empresa.nombre,
+      } : null,
+    };
+  };
+
+const handleModificar = async () => {
+  const usuarioToken = getToken();
+  if (descripcion.length > MAX_LENGTH) {
+    setError("La descripción no puede superar los 255 caracteres");
+    setTimeout(() => {
+      setError("");
+    }, 1500);
+    return;
+  }
+  try {
+    // Primero actualizo el pedido con la obra
+    const pedidoModificado = {
+      descripcion,
+      nroPesada,
+      obraId: selectedObraId,
+    };
+    await putPedido(pedido.id, pedidoModificado, usuarioToken);
+
+    // Luego actualizar el permiso si es necesario
+    let permisoSeleccionadoId = permisoId ? permisoId : null;
+
+    if (useNewPermiso) {
+      try {
+        const responsePermiso = await postPermiso(nuevoPermiso, usuarioToken);
+        permisoSeleccionadoId = responsePermiso.data.id;
+      } catch (error) {
+        setError("Error al crear el permiso" + " - " + error.response.data.detalle);
+        return;
+      }
     }
-    try {
-      // Primero actualizo el pedido con la obra
-      const pedidoModificado = {
+
+    // Obtener la obra completa y transformarla
+    const nuevaObraCompleta = await getObraIdSinDetalle(selectedObraId, usuarioToken);
+    const obraTransformada = transformarObra(nuevaObraCompleta.data);
+
+    setSuccess("Pedido modificado correctamente");
+    setError("");
+    console.log("Payload para updatePedido:", {
+      ...pedido,
+      descripcion,
+      nroPesada,
+      obraId: selectedObraId,
+      Obra: obraTransformada,
+      permisoId: permisoSeleccionadoId,
+    });
+
+    dispatch(
+      updatePedido({
+        ...pedido,
         descripcion,
         nroPesada,
-        obraId: selectedObra,
-      };
-      await putPedido(pedido.id, pedidoModificado, usuarioToken);
-      // Luego actualizar el permiso si es necesario
-      let permisoSeleccionadoId = permisoId ? permisoId : null;
-
-      if (useNewPermiso) {
-        try {
-          const responsePermiso = await postPermiso(nuevoPermiso, usuarioToken);
-          permisoSeleccionadoId = responsePermiso.data.id;
-        } catch (error) {
-          setError("Error al crear el permiso" + " - " + error.response.data.detalle);
-          return;
-        }
-      }
-
-      // Modifico nuevamente el pedido con el permiso seleccionado o nuevo
-      await putPedidoPermiso(pedido.id, permisoSeleccionadoId, usuarioToken);
-
-      setSuccess("Pedido modificado correctamente");
-      setError("");
-      dispatch(
-        updatePedido({
-          ...pedido,
-          descripcion,
-          nroPesada,
-          obraId: selectedObra,
-          permisoId: permisoSeleccionadoId,
-        })
-      );
-      setTimeout(() => {
-        setSuccess("");
-        onHide();
-      }, 2000);
-    } catch (error) {
-      console.error("Error al modificar el pedido:", error);
-      setError(error.response?.data?.detalle || error.message);
+        obraId: selectedObraId,
+        Obra: obraTransformada,  // Ahora la obra está en la estructura correcta
+        permisoId: permisoSeleccionadoId,
+      })
+    );
+    setTimeout(() => {
       setSuccess("");
-    }
-  };
+      onHide();
+    }, 2000);
+  } catch (error) {
+    console.error("Error al modificar el pedido:", error);
+    setError(error.response?.data?.detalle || error.message);
+    setSuccess("");
+  }
+};
 
   const handleNuevoPermisoChange = (e) => {
     const { name, value } = e.target;
@@ -186,7 +217,7 @@ const ModificarPedido = ({ show, onHide }) => {
 
   const handleObraAgregada = (nuevaObra) => {
     setObras([...obras, nuevaObra]);
-    setSelectedObra(nuevaObra.id);
+    setSelectedObraId(nuevaObra.id);
     setShowAgregarObra(false);
   };
 
@@ -211,8 +242,8 @@ const ModificarPedido = ({ show, onHide }) => {
 
             <SelectObra
               obras={obras}
-              obraSeleccionada={selectedObra}
-              onSelect={setSelectedObra}
+              obraSeleccionada={selectedObraId}
+              onSelect={setSelectedObraId}
               onNuevaObra={() => setShowAgregarObra(true)}
             />
 

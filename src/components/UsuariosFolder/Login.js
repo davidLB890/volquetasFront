@@ -67,8 +67,15 @@ const Login = () => {
       localStorage.setItem("userEmail", email);
       sessionStorage.setItem("activeSession", "true");
 
-      const responseEmpleado = await obtenerEmpleado(id, token);
-      const { nombre } = responseEmpleado.data;
+      let nombre = "";
+      if(rol === "admin") {
+        const responseEmpleado = await obtenerEmpleado(id, token);
+        nombre = responseEmpleado.data.nombre;
+      } else {
+        const nombreDesdeEmail = email.split('@')[0]; // Divide el email y toma la parte antes del @
+        const nombreFormateado = nombreDesdeEmail.charAt(0).toUpperCase() + nombreDesdeEmail.slice(1); // Capitaliza la primera letra
+        nombre = nombreFormateado;
+      }
 
       localStorage.setItem("userNombre", nombre);
     } catch (error) {

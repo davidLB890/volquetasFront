@@ -123,6 +123,14 @@ export const obtenerUsuarios = (usuarioToken) => {
     },
   });
 };
+export const obtenerUsuario = (usuarioId, usuarioToken) => {
+  return axios.get(`${API_URL}usuarios/${usuarioId}`, {
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+}
 export const cambiarContrasenaAdministrador = (email, newPassword, confirmNewPassword, usuarioToken) => {
   return axios.put(
     `${API_URL}usuarios-contrasenia-admin`,
@@ -552,6 +560,17 @@ export const getObraId = (obraId, usuarioToken) => {
   return axios.get(`${API_URL}obras/${obraId}`, {
     params: {
       detalle: "si",
+    },
+    headers: {
+      Authorization: usuarioToken,
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const getObraIdSinDetalle = (obraId, usuarioToken) => {
+  return axios.get(`${API_URL}obras/${obraId}`, {
+    params: {
+      detalle: "no",
     },
     headers: {
       Authorization: usuarioToken,

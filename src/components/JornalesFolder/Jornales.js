@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Container, Form, Dropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
@@ -12,6 +12,7 @@ const Jornales = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
+  const dropdownRef = useRef(null); // Referencia para el dropdown
   const navigate = useNavigate();
   const getToken = useAuth();
 
@@ -41,6 +42,19 @@ const Jornales = () => {
     }
     setShowDropdown(true);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleEmpleadoSelect = (empleado) => {
     setSelectedEmpleado(empleado);
@@ -79,7 +93,7 @@ const Jornales = () => {
             </Form.Group>
           </div>
         </div>
-        <Form.Group controlId="searchEmpleado">
+        <Form.Group controlId="searchEmpleado" ref={dropdownRef}>
           <Form.Label>Buscar Empleado</Form.Label>
           <Form.Control
             type="text"

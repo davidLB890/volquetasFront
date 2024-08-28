@@ -70,9 +70,9 @@ function App() {
 
   const isLoginPage = location.pathname === '/login';
   const isSinginPage = location.pathname === '/singin';
-  const isNotFoundPage = !['/', '/login', '/singin', '/usuarios/confirmar', "/usuarios/cambiar-contrasena-admin",
+  const isNotFoundPage = !['/', '/login', '/singin', '/empleados/confirmar', "/empleados/cambiar-contrasena-admin",
     '/empleados/crear', '/empleados/telefonos', '/empleados', '/empleados/jornales', 
-    "/usuarios/cambiar-contrasena",'/lj', '/camiones', '/camiones/crear', '/camiones/historial', '/obras', 
+    "/empleados/cambiar-contrasena",'/lj', '/camiones', '/camiones/crear', '/camiones/historial', '/obras', 
     '/obras/crear', '/empresas', '/empresas/datos', '/empresas/crear', '/particulares', 
     '/particulares/datos', '/particulares/crear', '/pedidos/crear', '/pedidos/datos', 
     '/volquetas', '/volquetas/crear', '/volquetas/datos', '/facturas', '/facturas/crear',
@@ -92,9 +92,9 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/singin" element={<Singin />} />
             {/* USUARIOS */}
-            <Route path="/usuarios/confirmar" element={<ConfirmarUsuario />} />
-            <Route path="/usuarios/cambiar-contrasena-admin" element={<CambiarContrasenaAdmin />} />
-            <Route path="/usuarios/cambiar-contrasena" element={<CambiarContrasena />} />
+            <Route path="/empleados/confirmar" element={<ConfirmarUsuario />} />
+            <Route path="/empleados/cambiar-contrasena-admin" element={<CambiarContrasenaAdmin />} />
+            <Route path="/empleados/cambiar-contrasena" element={<CambiarContrasena />} />
             <Route path="/empleados/crear" element={<AgregarEmpleado />} />
             <Route path="/empleados/telefonos" element={<AgregarTelefono />} />
             {/* EMPLEADOS */}

@@ -4,6 +4,7 @@ import { getPermisoIdEmpresa, getPermisoIdParticular } from '../../api';
 import useAuth from '../../hooks/useAuth';
 
 const SelectPermiso = ({ empresaId, particularId, onSelect, selectedPermisoId }) => {
+  console.log("empresaId", empresaId, "particularId", particularId, "selectedPermisoId", selectedPermisoId);
   const [permisos, setPermisos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
