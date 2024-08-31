@@ -277,6 +277,7 @@ const AgregarFactura = () => {
                     type="text"
                     value={numeracion}
                     onChange={(e) => setNumeracion(e.target.value)}
+                    required
                   />
                 </Form.Group>
               </Col>

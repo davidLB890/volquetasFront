@@ -45,8 +45,11 @@ const AgregarVolqueta = () => {
         setSuccess("");
       }, 10000);
     } catch (error) {
-      setError(error.response?.data?.error || error.message);
+      setError(error.response?.data?.error + " " + error.response?.data?.detalle || error.message);
       setSuccess("");
+      setTimeout(() => {
+        setError("");
+      }, 2000);
     }
   };
 

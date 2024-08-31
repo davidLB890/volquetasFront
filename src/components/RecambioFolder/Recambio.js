@@ -77,7 +77,7 @@ const Recambio = ({ show, onHide, pedido }) => {
         permisoId = responsePermiso.data.id;
       } catch (error) {
         setError(
-          "Error al crear el permiso" + " - " + error.response.data.detalle
+          "Error al crear el permiso" + " - " + error.response.data.error
         );
         setLoading(false);
         return;

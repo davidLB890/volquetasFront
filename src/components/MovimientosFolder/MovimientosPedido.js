@@ -57,6 +57,9 @@ const MovimientosPedido = () => {
       dispatch(deleteMovimiento(movimientoId)); // Despacha la acción de Redux para actualizar el estado
     } catch (error) {
       setError(error.response.data.error || "Error al eliminar el movimiento");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
     }
   };
 

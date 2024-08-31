@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
-import { postMovimiento } from "../../api"; // Ajusta la ruta según sea necesario
+import { postMovimiento } from "../../api";
 import useAuth from "../../hooks/useAuth";
-import { addMovimiento } from "../../features/pedidoSlice"; // Ajusta la ruta según sea necesario
+import { addMovimiento } from "../../features/pedidoSlice";
 import { useDispatch } from "react-redux";
-import { TIPOS_MOVIMIENTO } from "../../config/config"; // Ajusta la ruta según sea necesario
-import UbicacionTemporal from "../VolquetasFolder/UbicacionTemporal"; // Importa el componente UbicacionTemporal
+import { TIPOS_MOVIMIENTO } from "../../config/config";
+import UbicacionTemporal from "../VolquetasFolder/UbicacionTemporal";
 
 const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, numeroVolqueta }) => {
   const getToken = useAuth();
@@ -18,6 +18,7 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
   const [showUbicacionTemporal, setShowUbicacionTemporal] = useState(false);
   const [volquetaId, setVolquetaId] = useState(null);
   const [successResponse, setSuccessResponse] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -36,19 +37,17 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
     
     let numeroVolqueta = numero;
     if (numeroVolqueta !== null && numeroVolqueta !== undefined && numeroVolqueta > 0) {
-      numeroVolqueta = parseInt(numeroVolqueta); // Convertir a número si es necesario
+      numeroVolqueta = parseInt(numeroVolqueta);
     } else {
       numeroVolqueta = null;
     }
 
-    // Convertir la hora local a UTC, esto para que coincida con la hora del servidor
     const horarioUTC = new Date(horario).toISOString();
 
     const movimiento = {
       pedidoId,
       choferId,
-      ///horario,
-      horario: horarioUTC, // Usar la hora en UTC
+      horario: horarioUTC,
       tipo,
       numeroVolqueta: numeroVolqueta || null,
     };
@@ -58,22 +57,23 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
       setSuccess("Movimiento agregado correctamente");
       setSuccessResponse(response.data);
       setError("");
+      setIsSubmitted(true); // Marca el estado como enviado
       
-      // Si el tipo de movimiento es "levante" y hay una volqueta, mostrar la sección para agregar ubicación temporal
       if (tipo === "levante" && numeroVolqueta) {
         setVolquetaId(numeroVolqueta);
-        setShowUbicacionTemporal(true); // Mostrar sección de ubicación temporal
-        } else {
+        setShowUbicacionTemporal(true);
+      } else {
         dispatch(addMovimiento(response.data));
         setTimeout(() => {
           setSuccess("");
-          onHide();
-        }, 1000);
+          handleCloseModal();
+        }, 500);
       }
     } catch (error) {
       console.error("Error al agregar el movimiento:", error.response?.data?.error || error.message);
       setError(error.response?.data?.detalle);
       setSuccess("");
+      setIsSubmitted(false); // Restablece el estado si hay un error
     }
   };
 
@@ -82,27 +82,28 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
     dispatch(addMovimiento(successResponse));
     setTimeout(() => {
       setSuccess("");
-      onHide();
+      handleCloseModal();
     }, 1000);
   };
 
-  const cerrarModal = () => {
-    setShowUbicacionTemporal(false);
-    setSuccess("");
-    onHide();
-    if(successResponse) {
+  const handleCloseModal = () => {
+    if (successResponse && !showUbicacionTemporal && isSubmitted) {
+      // Solo despacha si la respuesta fue exitosa y el modal no requiere ubicacion temporal
       dispatch(addMovimiento(successResponse));
     }
-  }
+    setShowUbicacionTemporal(false);
+    setSuccess("");
+    setIsSubmitted(false);
+    onHide();
+  };
 
   return (
-    //<Modal show={show} onHide={onHide}>
-    <Modal show={show} onHide={cerrarModal}>
+    <Modal show={show} onHide={handleCloseModal}>
       <Modal.Header>
         <Modal.Title>Agregar Movimiento</Modal.Title>
         <Button 
           variant="link" 
-          onClick={cerrarModal} 
+          onClick={handleCloseModal} 
           style={{
             textDecoration: "none",
             color: "black",
@@ -151,7 +152,7 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
                 as="select"
                 value={tipo}
                 required
-                disabled // Disable to prevent changes, since it's pre-selected
+                disabled
               >
                 {TIPOS_MOVIMIENTO.map((tipo) => (
                   <option key={tipo} value={tipo}>
@@ -168,7 +169,7 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
                 onChange={(e) => setNumero(e.target.value)}
               />
             </Form.Group>
-            <Button variant="secondary" onClick={onHide} className="mr-2">
+            <Button variant="secondary" onClick={handleCloseModal} className="mr-2">
               Cerrar
             </Button>
             <Button variant="primary" type="submit">

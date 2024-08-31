@@ -5,15 +5,21 @@ import useAuth from '../../hooks/useAuth';
 import { obtenerCajas } from '../../api';
 import Lista from './ListaCajas';
 import AgregarEntrada from './AgregarEntrada';
+import { useSelector, useDispatch } from 'react-redux';
+import { setCajas } from '../../features/cajasSlice';  // Asegúrate de que la ruta sea correcta
+
 
 const Cajas = () => {
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
-  const [datos, setDatos] = useState({ cajas: [] }); // Asegúrate de que 'cajas' es siempre un array
   const [loading, setLoading] = useState(true);
   const [showModalAgregar, setShowModalAgregar] = useState(false);
   const navigate = useNavigate();
   const getToken = useAuth();
+  const dispatch = useDispatch();
+
+  // Obtén los datos de cajas desde el store de Redux
+  const datos = useSelector(state => state.cajas);
 
   useEffect(() => {
     const usuarioToken = getToken();
@@ -35,18 +41,26 @@ const Cajas = () => {
   };
 
   const fetchCajas = async (inicio = fechaInicio, fin = fechaFin) => {
-    console.log('fetchCajas', inicio, fin);
+    //console.log('fetchCajas', inicio, fin);
     const usuarioToken = getToken();
     if (!usuarioToken) {
       navigate('/login');
     } else {
       try {
         const response = await obtenerCajas(inicio, fin, usuarioToken);
+        //console.log('Cajas:', response.data);
         const datosDeCaja = response.data;
-        setDatos({
-          ...datosDeCaja,
-          cajas: datosDeCaja.cajas || [] // Asegúrate de que 'cajas' siempre sea un array
-        });
+        //console.log('Datos de Caja:', datosDeCaja.cajas);
+        //console.log('contadorMotivos', datosDeCaja.datos);
+        // Despacha la acción para actualizar las cajas en el store de Redux
+        dispatch(setCajas({
+          cajas: datosDeCaja.cajas || [],
+          datos: {
+            contadorMotivos: datosDeCaja.datos.contadorMotivos || {},
+            montoPeso: datosDeCaja.datos.montoPeso || 0,
+            montoDolar: datosDeCaja.datos.montoDolar || 0,
+          }
+        }));
       } catch (error) {
         console.error('Error al obtener Cajas:', error.response?.data?.error || error.message);
       } finally {
@@ -54,6 +68,7 @@ const Cajas = () => {
       }
     }
   };
+
   
 
   const handleShowModalAgregar = () => setShowModalAgregar(true);
@@ -114,6 +129,7 @@ const Cajas = () => {
       {!loading ? <Lista data={datos} /> : <Spinner animation="border" />}
     </Container>
   );
+
 };
 
 export default Cajas;

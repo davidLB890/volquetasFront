@@ -123,7 +123,7 @@ const ModificarVolqueta = ({ volqueta, onHide, onUpdate }) => {
           </Form.Control>
         </Form.Group>
         {/* Mostrar el componente UbicacionTemporal solo si la volqueta no está ocupada */}
-        {nuevaVolqueta.ocupada === "no" && (
+        {nuevaVolqueta.ocupada === "no" && nuevaVolqueta.estado !== "perdida" && (
           <UbicacionTemporal
             volquetaId={volqueta?.numeroVolqueta}
             show={true}

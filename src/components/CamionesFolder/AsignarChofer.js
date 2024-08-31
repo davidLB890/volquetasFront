@@ -6,7 +6,6 @@ import { Form, Button, Modal, Alert } from "react-bootstrap";
 const AsignarChofer = ({ camionId, onHide }) => {
   const [choferIdSeleccionado, setChoferIdSeleccionado] = useState("");
   const [choferes, setChoferes] = useState([]);
-  const [botonAsignar, setBotonAsignar] = useState(false);
   const [error, setError] = useState("");
 
   const getToken = useAuth();
@@ -32,18 +31,22 @@ const AsignarChofer = ({ camionId, onHide }) => {
     fetchEmpleados();
   }, [getToken]);
 
-  useEffect(() => {
-    // Verificar si hay un chofer seleccionado para habilitar el botón
-    setBotonAsignar(choferIdSeleccionado !== "");
-  }, [choferIdSeleccionado]);
-
   const handleAsignarChofer = async () => {
     const usuarioToken = getToken();
+    const choferId = choferIdRef.current.value;
+    const fechaInicio = fechaInicioRef.current.value;
+
+    // Verificar que ambos campos estén completos
+    if (!choferId || !fechaInicio) {
+      setError("Por favor, completa todos los campos.");
+      return;
+    }
+
     try {
       const response = await postHistoricoCamion(
         camionId,
-        choferIdRef.current.value,
-        fechaInicioRef.current.value,
+        choferId,
+        fechaInicio,
         usuarioToken
       );
       const datos = response.data;
@@ -77,6 +80,7 @@ const AsignarChofer = ({ camionId, onHide }) => {
               as="select"
               ref={choferIdRef}
               value={choferIdSeleccionado}
+              required
               onChange={(e) => setChoferIdSeleccionado(e.target.value)}
             >
               <option value="">Seleccionar Chofer</option>
@@ -100,7 +104,6 @@ const AsignarChofer = ({ camionId, onHide }) => {
         <Button
           variant="primary"
           onClick={handleAsignarChofer}
-          disabled={!botonAsignar}
         >
           Asignar
         </Button>

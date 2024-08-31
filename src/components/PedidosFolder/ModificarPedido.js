@@ -169,7 +169,7 @@ const handleModificar = async () => {
         const responsePermiso = await postPermiso(nuevoPermiso, usuarioToken);
         permisoSeleccionadoId = responsePermiso.data.id;
       } catch (error) {
-        setError("Error al crear el permiso" + " - " + error.response.data.detalle);
+        setError("Error al crear el permiso" + " - " + error.response.data.error);
         return;
       }
     }

@@ -3,6 +3,8 @@ import { Form, Button, Row, Col, Modal, Alert, Spinner, Dropdown } from "react-b
 import { putCaja } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import { useSelector } from "react-redux";
+import { useDispatch } from 'react-redux';
+import { modificarCaja } from '../../features/cajasSlice';
 
 const ModificarCaja = ({ cajaId, initialData, onSuccess, onHide }) => {
   const [fecha, setFecha] = useState(initialData?.fecha || "");
@@ -19,8 +21,9 @@ const ModificarCaja = ({ cajaId, initialData, onSuccess, onHide }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedEmpleado, setSelectedEmpleado] = useState(null);
   const [filteredEmpleados, setFilteredEmpleados] = useState([]);
+  const dispatch = useDispatch();
 
-  const empleados = useSelector((state) => state.empleados.empleados);
+  const empleados = useSelector((state) => state.empleados.empleados || []);
 
   const MAX_DESCRIPCION_LENGTH = 255;
   const getToken = useAuth();
@@ -29,13 +32,13 @@ const ModificarCaja = ({ cajaId, initialData, onSuccess, onHide }) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
+  
     if (descripcion.length > MAX_DESCRIPCION_LENGTH) {
       setDescripcionError(`La descripción no puede exceder ${MAX_DESCRIPCION_LENGTH} caracteres.`);
       setLoading(false);
       return;
     }
-
+  
     const usuarioToken = getToken();
     const caja = {
       fecha: fecha || undefined,
@@ -46,11 +49,15 @@ const ModificarCaja = ({ cajaId, initialData, onSuccess, onHide }) => {
       empleadoId: empleadoId ? parseInt(empleadoId) : undefined,
       pedidoId: pedidoId ? parseInt(pedidoId) : undefined,
     };
-
+  
     try {
       const response = await putCaja(cajaId, caja, usuarioToken);
       const updatedData = response.data;
-      onSuccess(updatedData); // Pasa la caja actualizada al callback onSuccess
+      
+      // Despacha la acción para actualizar la caja en el store de Redux
+      dispatch(modificarCaja(updatedData));
+      
+      //onSuccess(updatedData); // Pasa la caja actualizada al callback onSuccess
       onHide(); // Cierra el modal después de la operación
     } catch (err) {
       setError(err.response?.data?.error || "Error al modificar la entrada");

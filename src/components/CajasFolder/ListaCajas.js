@@ -3,36 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { Container, ListGroup, Button, Table, Card, Modal, Col, Row, Form } from 'react-bootstrap';
 import ModificarCaja from './ModificarCaja';
 import { deleteCaja } from '../../api';
+import { useSelector, useDispatch } from 'react-redux';
+import { eliminarCaja, modificarCaja } from '../../features/cajasSlice';
 import useAuth from '../../hooks/useAuth';
 
-const ListaCajas = ({ data }) => {
-  const [showCard, setShowCard] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // Detecta si la pantalla es pequeña
+const ListaCajas = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const getToken = useAuth();
 
+  const [showCard, setShowCard] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [showModificarModal, setShowModificarModal] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [selectedCaja, setSelectedCaja] = useState(null);
-  const [cajas, setCajas] = useState(data.cajas || []); // Asegúrate de que 'cajas' siempre sea un array
-  const getToken = useAuth();
+
+  // Asegúrate de que los selectores se correspondan correctamente con el estado en el store
+  const cajas = useSelector((state) => state.cajas.cajas);
+  const datos = useSelector(state => state.cajas.datos);
 
   const [filtroMotivo, setFiltroMotivo] = useState("");
   const [ordenFechaAsc, setOrdenFechaAsc] = useState(true);
 
-  const navigate = useNavigate();
-
-  const handleNavigateToPedido = (pedidoId) => {
-    navigate('/pedidos/datos', {
-      state: { pedidoId, fromCajas: true },
-    });
-  };
-
   useEffect(() => {
-    setCajas(data.cajas || []); // Actualiza el estado cuando data.cajas cambie
-  }, [data]);
-
-  useEffect(() => {
-    setCajas(data.cajas || []);
-
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -42,7 +35,13 @@ const ListaCajas = ({ data }) => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [data]);
+  }, []);
+
+  const handleNavigateToPedido = (pedidoId) => {
+    navigate('/pedidos/datos', {
+      state: { pedidoId, fromCajas: true },
+    });
+  };
 
   const toggleCard = () => {
     setShowCard(!showCard);
@@ -72,48 +71,44 @@ const ListaCajas = ({ data }) => {
     const usuarioToken = getToken();
     try {
       await deleteCaja(selectedCaja.id, usuarioToken);
-      setCajas((prevCajas) => prevCajas.filter((caja) => caja.id !== selectedCaja.id));
+      dispatch(eliminarCaja(selectedCaja.id));
       handleCloseConfirmDelete();
     } catch (error) {
       console.error("Error al eliminar la caja:", error.response?.data?.error || error.message);
     }
   };
 
-  const handleSuccessModification = (updatedCaja) => {
-    setCajas((prevCajas) =>
-      prevCajas.map((caja) => (caja.id === updatedCaja.id ? updatedCaja : caja))
-    );
+/*   const handleSuccessModification = (updatedCaja) => {
+    dispatch(modificarCaja(updatedCaja));
     setShowModificarModal(false);
-  };
+  }; */
 
   const handleFiltroMotivoChange = (e) => {
     setFiltroMotivo(e.target.value);
   };
 
   const handleOrdenFecha = () => {
-    setOrdenFechaAsc(!ordenFechaAsc); // Cambia el orden cada vez que se hace clic
+    setOrdenFechaAsc(!ordenFechaAsc);
   };
 
-  const { datos } = data;
-
   const cajasFiltradas = cajas
-  .filter(caja =>
-    filtroMotivo === "" || caja.motivo.toLowerCase() === filtroMotivo.toLowerCase()
-  )
-  .sort((a, b) => ordenFechaAsc
-    ? new Date(a.fecha) - new Date(b.fecha) // Orden ascendente
-    : new Date(b.fecha) - new Date(a.fecha) // Orden descendente
-  );
+    .filter(caja =>
+      filtroMotivo === "" || caja.motivo.toLowerCase() === filtroMotivo.toLowerCase()
+    )
+    .sort((a, b) => ordenFechaAsc
+      ? new Date(a.fecha) - new Date(b.fecha)
+      : new Date(b.fecha) - new Date(a.fecha)
+    );
 
-if (!cajas.length) {
-  return (
-    <Card className="mb-4" style={{ width: '100%' }}>
-      <Card.Body>
-        <strong>No hay Entradas o Salidas para esas fechas</strong>
-      </Card.Body>
-    </Card>
-  );
-}
+  if (!cajas.length) {
+    return (
+      <Card className="mb-4" style={{ width: '100%' }}>
+        <Card.Body>
+          <strong>No hay Entradas o Salidas para esas fechas</strong>
+        </Card.Body>
+      </Card>
+    );
+  }
 
   return (
     <>
@@ -152,10 +147,9 @@ if (!cajas.length) {
           </Card.Body>
         )}
       </Card>
-  
+
       <Container className="card pt-4">
         {isMobile ? (
-          // Para pantallas más pequeñas, muestra tarjetas
           cajas.map((c) => (
             <Card key={c.id} className="mb-3">
               <Card.Body>
@@ -221,25 +215,24 @@ if (!cajas.length) {
             </Card>
           ))
         ) : (
-          // Para pantallas más grandes, muestra una tabla
           <Table bordered hover responsive>
             <thead>
               <tr>
-                <th style={{ width: '15%' }} onClick={handleOrdenFecha} style={{ cursor: "pointer" }}>
-                  Fecha {ordenFechaAsc ? '▲' : '▼'} {/* Muestra una flecha según el orden */}
+                <th style={{ width: '15%' }} onClick={handleOrdenFecha} style={{ cursor: 'pointer' }}>
+                  Fecha {ordenFechaAsc ? '▲' : '▼'}
                 </th>
                 <th style={{ width: '20%' }}>
-                  <div style={{ position: "relative", display: "inline-block" }}>
+                  <div style={{ position: 'relative', display: 'inline-block' }}>
                     <Form.Control
                       as="select"
                       value={filtroMotivo}
                       onChange={handleFiltroMotivoChange}
                       style={{
-                        display: "inline-block",
-                        width: "auto",
-                        border: "none",
-                        padding: "0 1.5rem 0 0", // Espacio a la derecha para el ícono
-                        background: "none", // Elimina fondo predeterminado
+                        display: 'inline-block',
+                        width: 'auto',
+                        border: 'none',
+                        padding: '0 1.5rem 0 0',
+                        background: 'none',
                       }}
                     >
                       <option value="">Motivo</option>
@@ -253,11 +246,11 @@ if (!cajas.length) {
                     <i
                       className="bi bi-caret-down-fill"
                       style={{
-                        position: "absolute",
-                        right: "0.5rem",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        pointerEvents: "none",
+                        position: 'absolute',
+                        right: '0.5rem',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        pointerEvents: 'none',
                       }}
                     ></i>
                   </div>
@@ -316,17 +309,16 @@ if (!cajas.length) {
           </Table>
         )}
       </Container>
-  
+
       {showModificarModal && (
         <ModificarCaja
           cajaId={selectedCaja.id}
           initialData={selectedCaja}
-          onSuccess={handleSuccessModification}
+          //onSuccess={handleSuccessModification}
           onHide={handleCloseModificarModal}
         />
       )}
-  
-      {/* Modal de Confirmación para Eliminar */}
+
       <Modal show={showConfirmDelete} onHide={handleCloseConfirmDelete}>
         <Modal.Header closeButton>
           <Modal.Title>Confirmar Eliminación</Modal.Title>
@@ -345,6 +337,6 @@ if (!cajas.length) {
       </Modal>
     </>
   );
-}  
+};
 
 export default ListaCajas;

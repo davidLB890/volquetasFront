@@ -33,6 +33,13 @@ const ListaIMM = () => {
       const usuarioToken = getToken();
       try {
         const response = await getObrasMeses(cantidadMeses, usuarioToken);
+        // Ordenar las obras por el nombre de la empresa antes de almacenarlas en el estado
+      const sortedObras = response.data.sort((a, b) => {
+        const nombreA = a.empresa?.nombre?.toLowerCase() || "";
+        const nombreB = b.empresa?.nombre?.toLowerCase() || "";
+        return nombreA.localeCompare(nombreB);
+      });
+      
         setObras(response.data);
       } catch (error) {
         setError("Error al obtener las obras");
@@ -48,6 +55,8 @@ const ListaIMM = () => {
       obras.map((obra) => ({
         Empresa: obra.empresa?.nombre || "N/A",
         Dirección: `${obra.calle}, ${obra.esquina}, ${obra.barrio}`,
+        // Teléfono: obra.empresa?.telefono || "N/A",
+        Rut: obra.empresa?.rut || "N/A",
         "Detalle Residuos": obra.ObraDetalle?.detalleResiduos || "",
         "Res. Mezclados": obra.ObraDetalle?.residuosMezclados ? "Sí" : "No",
         "Res. Reciclados": obra.ObraDetalle?.residuosReciclados ? "Sí" : "No",
@@ -112,6 +121,7 @@ const ListaIMM = () => {
                   <Card.Title>{obra.empresa?.nombre || "N/A"}</Card.Title>
                   <Card.Text>
                     <strong>Dirección:</strong> {obra.calle}, {obra.esquina}, {obra.barrio} <br />
+                    <strong>Rut:</strong> {obra.empresa?.rut || "N/A"} <br />
                     <strong>Detalle Residuos:</strong> {obra.ObraDetalle?.detalleResiduos || ""} <br />
                     <strong>Res. Mezclados:</strong> {obra.ObraDetalle?.residuosMezclados ? "Sí" : "No"} <br />
                     <strong>Res. Reciclados:</strong> {obra.ObraDetalle?.residuosReciclados ? "Sí" : "No"} <br />
@@ -149,6 +159,8 @@ const ListaIMM = () => {
                   <tr>
                     <th>Empresa</th>
                     <th>Dirección</th>
+                    {/* <th>Teléfono</th> */}
+                    <th>Rut</th>
                     <th>Detalle Residuos</th>
                     <th>Res. Mezclados</th>
                     <th>Res. Reciclados</th>
@@ -164,6 +176,8 @@ const ListaIMM = () => {
                       <td>
                         {obra.calle}, {obra.esquina}, {obra.barrio}
                       </td>
+                      {/* <td>{obra.empresa?.telefono || "N/A"}</td> */}
+                      <td>{obra.empresa?.rut || "N/A"}</td>
                       <td>{obra.ObraDetalle?.detalleResiduos || ""}</td>
                       <td>{obra.ObraDetalle?.residuosMezclados ? "Sí" : "No"}</td>
                       <td>{obra.ObraDetalle?.residuosReciclados ? "Sí" : "No"}</td>

@@ -1,0 +1,24 @@
+/* ListaPedidosParaHoy.css */
+.chofer-card {
+    margin-bottom: 1rem;
+  }
+  
+  .chofer-header {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .compact-table tbody tr {
+    line-height: 1;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .compact-table tbody tr td {
+    padding: 0.5rem;
+  }
+  
+  .clickable-row:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+  }
+  

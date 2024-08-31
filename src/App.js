@@ -46,6 +46,7 @@ import PedidosEstadisticas from './components/EstadisticasFolder/PedidosEstadist
 import DeudoresEstadisticas from './components/EstadisticasFolder/DeudoresEstadisticas';
 import CambiarContrasenaAdmin from './components/UsuariosFolder/CambiarContrasenaAdmin';
 import CambiarContrasena from './components/UsuariosFolder/CambiarContrasena';
+import PedidosParaHoy from './components/PedidosFolder/PedidosParaHoy';
 
 function App() {
   const location = useLocation();
@@ -74,7 +75,7 @@ function App() {
     '/empleados/crear', '/empleados/telefonos', '/empleados', '/empleados/jornales', 
     "/empleados/cambiar-contrasena",'/lj', '/camiones', '/camiones/crear', '/camiones/historial', '/obras', 
     '/obras/crear', '/empresas', '/empresas/datos', '/empresas/crear', '/particulares', 
-    '/particulares/datos', '/particulares/crear', '/pedidos/crear', '/pedidos/datos', 
+    '/particulares/datos', '/particulares/crear', "/pedidos" ,'/pedidos/crear', '/pedidos/datos', "/pedidos/hoy", 
     '/volquetas', '/volquetas/crear', '/volquetas/datos', '/facturas', '/facturas/crear',
     '/facturas/datos', '/permisos', '/facturas/datos', '/cajas', "/imm",
     "/reporteChofer", "/estadisticascliente", "/estadisticasdeudores", "/estadisticaspedidos"
@@ -89,6 +90,7 @@ function App() {
         <div className="content">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/pedidos" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
             <Route path="/singin" element={<Singin />} />
             {/* USUARIOS */}
@@ -119,6 +121,7 @@ function App() {
             {/* PEDIDOS */}
             <Route path="/pedidos/crear" element={<AgregarPedido />} />
             <Route path="/pedidos/datos" element={<DatosPedido />} />
+            <Route path="/pedidos/hoy" element={<PedidosParaHoy />} />
             {/* VOLQUETAS */}
             <Route path="/volquetas" element={<Volquetas />} />
             <Route path="/volquetas/crear" element={<AgregarVolqueta />} />

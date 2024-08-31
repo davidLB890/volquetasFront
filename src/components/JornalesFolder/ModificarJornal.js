@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
+import { Modal, Form, Button, Alert } from 'react-bootstrap';
 import { putJornal } from '../../api';
 import useAuth from '../../hooks/useAuth';
 
@@ -43,7 +43,7 @@ const ModificarJornalModal = ({ show, onHide, jornal, onJornalModificado }) => {
       onJornalModificado();
     } catch (error) {
       console.error('Error al modificar el jornal:', error);
-      // Manejo de errores
+      setError(error.response.data.error)
     }
   };
 
@@ -58,6 +58,7 @@ const ModificarJornalModal = ({ show, onHide, jornal, onJornalModificado }) => {
       </Modal.Header>
       <Modal.Body>
         <Form>
+        {error && <Alert variant="danger">{error}</Alert>}
           <Form.Group controlId="formFecha">
             <Form.Label>Fecha</Form.Label>
             <Form.Control

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { postServicio } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import useHabilitarBoton from "../../hooks/useHabilitarBoton";
@@ -68,14 +68,35 @@ const AgregarServicio = ({ idCamion, onSuccess, show, onHide }) => {
     if (decision === 'si') {
       setAgregarCaja(true); // Mostrar los campos para agregar salida de caja
     } else {
+      onSuccess(); // Recargar datos, etc.
       onHide(); // Cerrar el modal si se selecciona "No"
+      resetForm();
     }
   };
 
   const handleAgregarCajaSuccess = () => {
     onSuccess(); // Recargar datos, etc.
     onHide(); // Cerrar el modal después de agregar la salida de caja
+    resetForm(); // Limpiar los campos
   };
+
+  const resetForm = () => {
+    setError('');
+    setServicioAgregado(false);
+    setAgregarCaja(false);
+    setServicioData({});
+    if (tipoRef.current) tipoRef.current.value = '';
+    if (fechaRef.current) fechaRef.current.value = '';
+    if (monedaRef.current) monedaRef.current.value = '';
+    if (precioRef.current) precioRef.current.value = '';
+    if (descripcionRef.current) descripcionRef.current.value = '';
+  };
+
+  useEffect(() => {
+    if (!show) {
+      resetForm(); // Restablece el formulario cuando el modal se cierra
+    }
+  }, [show]);
 
   return (
     <Modal show={show} onHide={onHide}>
