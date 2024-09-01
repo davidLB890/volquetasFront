@@ -36,12 +36,14 @@ const AgregarServicio = ({ idCamion, onSuccess, show, onHide }) => {
       return;
     }
 
+    const fechaUtc = new Date(fecha).toISOString(); // Convierte la fecha a UTC
+
     try {
       const response = await postServicio(
         {
           camionId: idCamion,
           tipo,
-          fecha,
+          fecha: fechaUtc,
           moneda,
           precio,
           descripcion,

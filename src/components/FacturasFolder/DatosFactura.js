@@ -107,9 +107,10 @@ const handleEstadoUpdate = async (estado) => {
   
   const usuarioToken = getToken();
   const pagoUpdates = {
-    fechaPago: estado === "pagada" ? fechaPago || null : null,
+    //fechaPago: estado === "pagada" ? fechaPago || null : null,
+    fechaPago: estado === "pagada" ? new Date(fechaPago).toISOString() : null, // Convierte la fecha a un formato ISO UTC
     estado,
-    };
+  };
     
     try {
       const response = await putFacturaEstado(factura.id, pagoUpdates, usuarioToken);

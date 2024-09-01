@@ -25,12 +25,14 @@ const ModificarFactura = ({ factura, show, handleClose, onFacturaActualizada }) 
 
     const usuarioToken = getToken();
     const fechaPagoValue = fechaPago ? fechaPago : null;
+    const fechaPagoValueUtc = fechaPago ? new Date(fechaPago).toISOString() : null;
 
     const facturaUpdates = {
       tipo,
       numeracion,
       descripcion,
-      fechaPago: fechaPagoValue
+      //fechaPago: fechaPagoValue
+      fechaPagoUtc: fechaPagoValueUtc,
     };
     
     try {
