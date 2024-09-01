@@ -32,9 +32,7 @@ const ModificarFactura = ({ factura, show, handleClose, onFacturaActualizada }) 
       descripcion,
       fechaPago: fechaPagoValue
     };
-    console.log(factura.id)
-    console.log(facturaUpdates);
-
+    
     try {
       await putFactura(factura.id, facturaUpdates, usuarioToken);
       setSuccess("Factura actualizada correctamente");

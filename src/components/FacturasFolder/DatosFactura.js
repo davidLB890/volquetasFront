@@ -11,71 +11,81 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  getFacturaId,
-  getEmpresaId,
-  getParticularId,
-  putFacturaEstado,
-} from "../../api";
+  setFactura,
+  setLoading,
+  setError,
+  updateFactura,
+} from "../../features/facturaSlice"; // Importa las acciones necesarias
 import useAuth from "../../hooks/useAuth";
 import ModificarFactura from "./ModificarFactura";
 import PagarFactura from "./PagarFactura";
+import { getFacturaId, getEmpresaId, getParticularId, putFacturaEstado } from "../../api";
 
 const DatosFactura = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const facturaId = location.state?.facturaId;
   const getToken = useAuth();
+  const dispatch = useDispatch();
 
-  const [factura, setFactura] = useState(null);
+  // Estado local para manejar datos adicionales y controles de la interfaz
   const [nombreCliente, setNombreCliente] = useState("");
   const [clienteId, setClienteId] = useState(null);
   const [clienteTipo, setClienteTipo] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [showModificarModal, setShowModificarModal] = useState(false);
   const [showFechaPagoModal, setShowFechaPagoModal] = useState(false);
   const [showConfirmAnular, setShowConfirmAnular] = useState(false);
   const [fechaPago, setFechaPago] = useState("");
   const [success, setSuccess] = useState("");
 
-  useEffect(() => {
-    const fetchFactura = async () => {
-      const usuarioToken = getToken();
-      try {
-        const response = await getFacturaId(facturaId, usuarioToken);
-        setFactura(response.data);
+  // Seleccionar el estado de la factura, carga y error desde Redux
+  const factura = useSelector((state) => state.factura.factura);
+  const loading = useSelector((state) => state.factura.loading);
+  const error = useSelector((state) => state.factura.error);
 
-        if (response.data.empresaId) {
-          const empresaResponse = await getEmpresaId(response.data.empresaId, usuarioToken);
-          setNombreCliente(empresaResponse.data.nombre);
-          setClienteId(response.data.empresaId);
-          setClienteTipo("empresa");
-        } else if (response.data.particularId) {
-          const particularResponse = await getParticularId(response.data.particularId, usuarioToken);
-          setNombreCliente(particularResponse.data.nombre);
-          setClienteId(response.data.particularId);
-          setClienteTipo("particular");
-        }
-        setLoading(false);
-      } catch (error) {
-        setError("Error al obtener los datos de la factura");
-        setLoading(false);
+  const fetchFactura = async () => {
+    const usuarioToken = getToken();
+    dispatch(setLoading(true));
+    try {
+      const response = await getFacturaId(facturaId, usuarioToken);
+      dispatch(setFactura(response.data));
+
+      if (response.data.empresaId) {
+        const empresaResponse = await getEmpresaId(response.data.empresaId, usuarioToken);
+        setNombreCliente(empresaResponse.data.nombre);
+        setClienteId(response.data.empresaId);
+        setClienteTipo("empresa");
+      } else if (response.data.particularId) {
+        const particularResponse = await getParticularId(response.data.particularId, usuarioToken);
+        setNombreCliente(particularResponse.data.nombre);
+        setClienteId(response.data.particularId);
+        setClienteTipo("particular");
       }
-    };
+      dispatch(setLoading(false));
+    } catch (error) {
+      dispatch(setError("Error al obtener los datos de la factura"));
+      dispatch(setLoading(false));
+    }
+  };
+  // Cargar la factura y el cliente cuando el componente se monta o cambia el ID de la factura
+  useEffect(() => {
 
     if (facturaId) {
       fetchFactura();
     } else {
-      setError("No se proporcionó un ID de factura");
-      setLoading(false);
+      dispatch(setError("No se proporcionó un ID de factura"));
+      dispatch(setLoading(false));
     }
-  }, [facturaId, getToken]);
+  }, [facturaId, getToken, dispatch]);
 
+  // Manejar la navegación a los detalles del pedido
   const handlePedidoClick = (pedidoId) => {
     navigate(`/pedidos/datos`, { state: { pedidoId, fromFactura: true } });
   };
 
+  // Manejar la navegación a los detalles del cliente
   const handleClienteClick = () => {
     if (clienteTipo === "empresa") {
       navigate(`/empresas/datos`, {
@@ -88,76 +98,95 @@ const DatosFactura = () => {
     }
   };
 
-  const handleEstadoUpdate = async (estado) => {
-    setLoading(true);
-    setError("");
-    setSuccess("");
+// Actualizar el estado de la factura (por ejemplo, marcar como pagada o cancelar el pago)
+const handleEstadoUpdate = async (estado) => {
+  dispatch(setLoading(true));
+  dispatch(setError(""));
+  setSuccess("");
 
-    const usuarioToken = getToken();
-    const pagoUpdates = {
-      fechaPago: estado === "pagada" ? fechaPago || null : null,
-      estado,
+  
+  const usuarioToken = getToken();
+  const pagoUpdates = {
+    fechaPago: estado === "pagada" ? fechaPago || null : null,
+    estado,
     };
-
+    
     try {
-      await putFacturaEstado(factura.id, pagoUpdates, usuarioToken);
+      const response = await putFacturaEstado(factura.id, pagoUpdates, usuarioToken);
+      console.log("response", response);
       setSuccess("Factura actualizada correctamente");
-      setFactura((prevFactura) => ({
-        ...prevFactura,
-        estado: pagoUpdates.estado,
-        fechaPago: pagoUpdates.fechaPago,
-      }));
-      if (estado !== "pagada") setShowConfirmAnular(false);
-      setShowFechaPagoModal(false);
-    } catch (error) {
-      console.log(error);
-      setError(error.response?.data?.error || "Error al actualizar la factura");
-    }
+      fetchFactura(); // Vuelve a cargar la factura antes de actualizarla
 
-    setLoading(false);
-  };
+    // Utilizar toda la respuesta para actualizar el estado de la factura
+    //dispatch(updateFactura(response.data));
 
+    if (estado !== "pagada") setShowConfirmAnular(false);
+    setShowFechaPagoModal(false);
+  } catch (error) {
+    dispatch(setError(error.response?.data?.error || "Error al actualizar la factura"));
+  }
+
+  dispatch(setLoading(false)); 
+};
+
+
+  // Manejar el envío del formulario para actualizar la fecha de pago
   const handleFechaPagoSubmit = async (e) => {
     e.preventDefault();
     await handleEstadoUpdate("pagada");
   };
 
+  // Cerrar el modal de ModificarFactura
   const handleCloseModificarModal = () => {
     setShowModificarModal(false);
   };
 
+  // Cerrar el modal de PagarFactura
   const handleClosePagarModal = () => {
     setShowFechaPagoModal(false);
   };
 
+  // Cerrar el modal de confirmación de anulación
   const handleCloseConfirmAnular = () => {
     setShowConfirmAnular(false);
   };
 
+  // Manejar la actualización exitosa del pago
   const handlePagoExitoso = (pagoUpdates) => {
-    setFactura((prevFactura) => ({
-      ...prevFactura,
-      estado: pagoUpdates.estado,
-      fechaPago: pagoUpdates.estado === "pagada" ? pagoUpdates.fechaPago : null,
-    }));
+    dispatch(updateFactura({ ...factura, estado: pagoUpdates.estado, fechaPago: pagoUpdates.fechaPago }));
     handleClosePagarModal();
   };
 
-  const handleFacturaActualizada = (updatedFactura) => {
-    setFactura(updatedFactura);
-    console.log(updatedFactura);
-    setShowModificarModal(false);
-  };
-
+  // Limpiar mensajes de error y éxito después de un tiempo
   useEffect(() => {
     if (error || success) {
       const timeout = setTimeout(() => {
-        setError("");
+        dispatch(setError(""));
         setSuccess("");
       }, 3000);
       return () => clearTimeout(timeout);
     }
-  }, [error, success]);
+  }, [error, success, dispatch]);
+
+  const handleFacturaActualizada = async (updatedFactura) => {
+    const usuarioToken = getToken();
+    dispatch(setLoading(true));
+    try {
+      // Actualiza la factura en el estado global
+      dispatch(updateFactura(updatedFactura));
+  
+      // Vuelve a obtener la factura actualizada desde la API para asegurarte de que la información es la más reciente
+      const response = await getFacturaId(facturaId, usuarioToken);
+      dispatch(setFactura(response.data));
+    } catch (error) {
+      dispatch(setError("Error al actualizar los datos de la factura"));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  
+    setShowModificarModal(false); // Cierra el modal después de la actualización
+  };
+  
 
   return (
     <Container>

@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { eliminarCaja, modificarCaja } from '../../features/cajasSlice';
 import useAuth from '../../hooks/useAuth';
 
-const ListaCajas = () => {
+const ListaCajas = ({ actualizacionSuccess }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const getToken = useAuth();
@@ -89,6 +89,12 @@ const ListaCajas = () => {
 
   const handleOrdenFecha = () => {
     setOrdenFechaAsc(!ordenFechaAsc);
+  };
+
+  const handleSuccessModification = () => {
+    //dispatch(modificarCaja(updatedCaja));
+    actualizacionSuccess()
+    setShowModificarModal(false);
   };
 
   const cajasFiltradas = cajas
@@ -218,7 +224,7 @@ const ListaCajas = () => {
           <Table bordered hover responsive>
             <thead>
               <tr>
-                <th style={{ width: '15%' }} onClick={handleOrdenFecha} style={{ cursor: 'pointer' }}>
+                <th style={{ width: '15%', cursor: 'pointer' }} onClick={handleOrdenFecha}>
                   Fecha {ordenFechaAsc ? '▲' : '▼'}
                 </th>
                 <th style={{ width: '20%' }}>
@@ -314,7 +320,7 @@ const ListaCajas = () => {
         <ModificarCaja
           cajaId={selectedCaja.id}
           initialData={selectedCaja}
-          //onSuccess={handleSuccessModification}
+          onUpdateSuccess={handleSuccessModification}
           onHide={handleCloseModificarModal}
         />
       )}

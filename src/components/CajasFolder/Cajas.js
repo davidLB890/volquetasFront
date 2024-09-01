@@ -79,6 +79,11 @@ const Cajas = () => {
     fetchCajas();
   };
 
+  const nuevoGetActualizacionCaja = () => {
+    fetchCajas();
+  }
+
+
   return (
     <Container>
       <Container className="card mb-4">
@@ -126,7 +131,7 @@ const Cajas = () => {
         </Modal.Body>
       </Modal>
 
-      {!loading ? <Lista data={datos} /> : <Spinner animation="border" />}
+      {!loading ? <Lista data={datos} actualizacionSuccess={nuevoGetActualizacionCaja}/> : <Spinner animation="border" />}
     </Container>
   );
 

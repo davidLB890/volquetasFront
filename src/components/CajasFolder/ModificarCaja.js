@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Form, Button, Row, Col, Modal, Alert, Spinner, Dropdown } from "react-bootstrap";
-import { putCaja } from "../../api";
+import { putCaja, obtenerCajas } from "../../api";
 import useAuth from "../../hooks/useAuth";
 import { useSelector } from "react-redux";
 import { useDispatch } from 'react-redux';
 import { modificarCaja } from '../../features/cajasSlice';
 
-const ModificarCaja = ({ cajaId, initialData, onSuccess, onHide }) => {
+
+const ModificarCaja = ({ cajaId, initialData, onUpdateSuccess, onHide }) => {
   const [fecha, setFecha] = useState(initialData?.fecha || "");
   const [motivo, setMotivo] = useState(initialData?.motivo || "");
   const [monto, setMonto] = useState(initialData?.monto || "");
@@ -53,9 +54,10 @@ const ModificarCaja = ({ cajaId, initialData, onSuccess, onHide }) => {
     try {
       const response = await putCaja(cajaId, caja, usuarioToken);
       const updatedData = response.data;
-      
+      console.log(updatedData);
+      onUpdateSuccess();
       // Despacha la acción para actualizar la caja en el store de Redux
-      dispatch(modificarCaja(updatedData));
+      //dispatch(modificarCaja(updatedData));
       
       //onSuccess(updatedData); // Pasa la caja actualizada al callback onSuccess
       onHide(); // Cierra el modal después de la operación

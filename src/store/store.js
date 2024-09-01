@@ -6,6 +6,7 @@ import volquetasReducer from '../features/volquetasSlice';
 import particularReducer from '../features/particularSlice';
 import empresaReducer from '../features/empresaSlice';
 import cajasReducer from '../features/cajasSlice';
+import facturaReducer from '../features/facturaSlice';
 
 export const store = configureStore({
     reducer: {
@@ -17,6 +18,6 @@ export const store = configureStore({
         volquetas: volquetasReducer, 
         empresa: empresaReducer,
         cajas: cajasReducer,
-
+        factura: facturaReducer,
     }
 });
