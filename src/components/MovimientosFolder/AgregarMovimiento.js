@@ -16,6 +16,7 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showUbicacionTemporal, setShowUbicacionTemporal] = useState(false);
+  const [omitido, setOmitido] = useState(false);
   const [volquetaId, setVolquetaId] = useState(null);
   const [successResponse, setSuccessResponse] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -83,7 +84,7 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
     setTimeout(() => {
       setSuccess("");
       handleCloseModal();
-    }, 1000);
+    }, 500);
   };
 
   const handleCloseModal = () => {
@@ -92,10 +93,21 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
       dispatch(addMovimiento(successResponse));
     }
     setShowUbicacionTemporal(false);
+    setSuccessResponse(null);
     setSuccess("");
     setIsSubmitted(false);
     onHide();
   };
+
+  const handleOmitido = () => {
+    setOmitido(true);
+    setShowUbicacionTemporal(false);
+    dispatch(addMovimiento(successResponse));
+    setTimeout(() => {
+      setSuccess("");
+      handleCloseModal();
+    }, 500);
+  }
 
   return (
     <Modal show={show} onHide={handleCloseModal}>
@@ -181,6 +193,7 @@ const AgregarMovimiento = ({ show, onHide, pedidoId, choferes, tipoMovimiento, n
             volquetaId={volquetaId}
             show={showUbicacionTemporal}
             onSuccess={handleUbicacionTemporalSuccess}
+            onOmitir={handleOmitido}
           />
         )}
       </Modal.Body>

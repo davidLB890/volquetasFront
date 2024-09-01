@@ -5,7 +5,7 @@ import useAuth from "../../hooks/useAuth"; // Importa el hook para obtener el to
 import { useDispatch } from "react-redux";
 import { agregarUbicacionTemporalSuccess } from "../../features/volquetasSlice"; // Ajusta la ruta según sea necesario
 
-const UbicacionTemporal = ({ volquetaId, onSuccess }) => {
+const UbicacionTemporal = ({ volquetaId, onSuccess, onOmitir }) => {
   const [ubicacionTemporal, setUbicacionTemporal] = useState("");
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
@@ -50,6 +50,9 @@ const UbicacionTemporal = ({ volquetaId, onSuccess }) => {
         </Form.Group>
         <Button variant="primary" type="submit">
           Asignar Ubicación
+        </Button>
+        <Button variant="primary" onClick={onOmitir}>
+          Omitir este paso
         </Button>
       </Form>
       {success && <Alert variant="success">Ubicación temporal asignada correctamente.</Alert>}
